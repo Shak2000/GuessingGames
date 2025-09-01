@@ -49,6 +49,10 @@ class FamousPersonGuesser:
         
         Please respond in this exact format:
         NAME: [Person's full name]
+        DATE OF BIRTH: [Person's date of birth]
+        PLACE OF BIRTH: [Person's place of birth]
+        DATE OF DEATH: [Person's date of death]
+        PLACE OF DEATH: [Person's place of death]
         REASONING: [Brief explanation of why you think this is the correct person based on the information provided]
         
         Information: {context}{exclusion_text}

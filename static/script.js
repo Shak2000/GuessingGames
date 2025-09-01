@@ -166,18 +166,42 @@ class FamousPersonGame {
     }
 
     displayGuess(guess) {
-        // Format the guess response to display name and reasoning in separate elements
+        // Format the guess response to display name, biographical info, and reasoning
         if (guess.includes('NAME:') && guess.includes('REASONING:')) {
             const lines = guess.split('\n');
             let name = '';
+            let dateOfBirth = '';
+            let placeOfBirth = '';
+            let dateOfDeath = '';
+            let placeOfDeath = '';
             let reasoning = '';
             
             for (const line of lines) {
                 if (line.startsWith('NAME:')) {
                     name = line.replace('NAME:', '').trim();
+                } else if (line.startsWith('DATE OF BIRTH:')) {
+                    dateOfBirth = line.replace('DATE OF BIRTH:', '').trim();
+                } else if (line.startsWith('PLACE OF BIRTH:')) {
+                    placeOfBirth = line.replace('PLACE OF BIRTH:', '').trim();
+                } else if (line.startsWith('DATE OF DEATH:')) {
+                    dateOfDeath = line.replace('DATE OF DEATH:', '').trim();
+                } else if (line.startsWith('PLACE OF DEATH:')) {
+                    placeOfDeath = line.replace('PLACE OF DEATH:', '').trim();
                 } else if (line.startsWith('REASONING:')) {
                     reasoning = line.replace('REASONING:', '').trim();
                 }
+            }
+            
+            // Build biographical information
+            let bioInfo = '';
+            if (dateOfBirth || placeOfBirth) {
+                bioInfo += '<div class="bio-section">';
+                bioInfo += '<h4>Biographical Information:</h4>';
+                if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
+                if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> ${placeOfBirth}</p>`;
+                if (dateOfDeath) bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
+                if (placeOfDeath) bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+                bioInfo += '</div>';
             }
             
             // Display name in the first element
@@ -185,6 +209,7 @@ class FamousPersonGame {
                 <div class="name-box">
                     <strong>${name}</strong>
                 </div>
+                ${bioInfo}
             `;
             
             // Display reasoning in the second element
