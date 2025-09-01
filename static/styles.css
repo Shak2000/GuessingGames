@@ -181,16 +181,36 @@ body {
 }
 
 .guess-text {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    border: 2px solid #e5e7eb;
+    background: transparent;
+    padding: 0;
+    border: none;
     font-size: 1.1rem;
     font-weight: 500;
     color: #1f2937;
-    min-height: 60px;
-    display: flex;
-    align-items: center;
+    min-height: auto;
+    display: block;
+    margin-bottom: 15px;
+}
+
+.name-box {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 1.3em;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.reasoning-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 10px;
+    color: #374151;
+    font-style: italic;
+    line-height: 1.5;
 }
 
 .feedback-buttons {

@@ -13,6 +13,7 @@ class FamousPersonGame {
         // Game elements
         this.gameSection = document.getElementById('gameSection');
         this.guessText = document.getElementById('guessText');
+        this.guessTextReasoning = document.getElementById('guessTextReasoning');
         this.correctBtn = document.getElementById('correctBtn');
         this.incorrectBtn = document.getElementById('incorrectBtn');
         
@@ -30,6 +31,7 @@ class FamousPersonGame {
             submitBtn: !!this.submitBtn,
             gameSection: !!this.gameSection,
             guessText: !!this.guessText,
+            guessTextReasoning: !!this.guessTextReasoning,
             correctBtn: !!this.correctBtn,
             incorrectBtn: !!this.incorrectBtn
         });
@@ -164,7 +166,7 @@ class FamousPersonGame {
     }
 
     displayGuess(guess) {
-        // Format the guess response to display name and reasoning in separate boxes
+        // Format the guess response to display name and reasoning in separate elements
         if (guess.includes('NAME:') && guess.includes('REASONING:')) {
             const lines = guess.split('\n');
             let name = '';
@@ -178,17 +180,23 @@ class FamousPersonGame {
                 }
             }
             
+            // Display name in the first element
             this.guessText.innerHTML = `
-                <div style="background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; text-align: center;">
-                    <strong style="font-size: 1.3em; font-weight: 600;">${name}</strong>
+                <div class="name-box">
+                    <strong>${name}</strong>
                 </div>
-                <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 10px; color: #374151; font-style: italic; line-height: 1.5;">
+            `;
+            
+            // Display reasoning in the second element
+            this.guessTextReasoning.innerHTML = `
+                <div class="reasoning-box">
                     ${reasoning}
                 </div>
             `;
         } else {
             // Fallback for old format or error messages
             this.guessText.textContent = guess;
+            this.guessTextReasoning.textContent = '';
         }
     }
 
