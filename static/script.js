@@ -194,13 +194,18 @@ class FamousPersonGame {
             
             // Build biographical information
             let bioInfo = '';
-            if (dateOfBirth || placeOfBirth) {
+            if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath) {
                 bioInfo += '<div class="bio-section">';
                 bioInfo += '<h4>Biographical Information:</h4>';
                 if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
                 if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> ${placeOfBirth}</p>`;
-                if (dateOfDeath) bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
-                if (placeOfDeath) bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+                // Only show death information if the person is actually deceased
+                if (dateOfDeath && dateOfDeath.toLowerCase() !== 'n/a' && dateOfDeath.toLowerCase() !== 'alive' && dateOfDeath.toLowerCase() !== 'still alive') {
+                    bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
+                }
+                if (placeOfDeath && placeOfDeath.toLowerCase() !== 'n/a' && placeOfDeath.toLowerCase() !== 'alive' && placeOfDeath.toLowerCase() !== 'still alive') {
+                    bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+                }
                 bioInfo += '</div>';
             }
             
