@@ -19,6 +19,7 @@ class FamousPersonGuesser:
         self.current_session = {
             'user_input': user_input,
             'guesses': [],
+            'incorrect_names': [],  # Track names that were marked as incorrect
             'session_id': len(str(hash(user_input + str(len(user_input)))))
         }
         
@@ -33,8 +34,16 @@ class FamousPersonGuesser:
             'game_over': False
         }
     
-    def _make_guess(self, context: str) -> str:
+    def _make_guess(self, context: str, incorrect_names: list = None) -> str:
         """Make a guess using Gemini API."""
+        if incorrect_names is None:
+            incorrect_names = []
+        
+        # Build the exclusion list for the prompt
+        exclusion_text = ""
+        if incorrect_names:
+            exclusion_text = f"\n\nIMPORTANT: Do NOT guess any of these people (they have already been marked as incorrect): {', '.join(incorrect_names)}"
+        
         prompt = f"""
         Based on the following information, guess who the famous person is.
         
@@ -42,7 +51,7 @@ class FamousPersonGuesser:
         NAME: [Person's full name]
         REASONING: [Brief explanation of why you think this is the correct person based on the information provided]
         
-        Information: {context}
+        Information: {context}{exclusion_text}
         
         If you're not sure, make your best guess based on the information provided and explain your reasoning.
         """
@@ -69,6 +78,19 @@ class FamousPersonGuesser:
                 }
             else:
                 self.current_session['guesses'][-1]['is_correct'] = is_correct
+            
+            # If incorrect, add the name to the incorrect list
+            if not is_correct:
+                # Extract the name from the guess
+                guess_text = last_guess if isinstance(last_guess, str) else last_guess['guess']
+                if 'NAME:' in guess_text:
+                    lines = guess_text.split('\n')
+                    for line in lines:
+                        if line.startswith('NAME:'):
+                            incorrect_name = line.replace('NAME:', '').strip()
+                            if incorrect_name and incorrect_name not in self.current_session['incorrect_names']:
+                                self.current_session['incorrect_names'].append(incorrect_name)
+                            break
         
         if is_correct:
             # Game won!
@@ -94,7 +116,7 @@ class FamousPersonGuesser:
             if incorrect_guesses:
                 context += f" (Previous incorrect guesses: {', '.join(incorrect_guesses)})"
             
-            new_guess = self._make_guess(context)
+            new_guess = self._make_guess(context, self.current_session['incorrect_names'])
             self.current_session['guesses'].append(new_guess)
             
             return {
