@@ -9,20 +9,11 @@ from main import guesser
 app = FastAPI(title="Guess the Famous Person", version="1.0.0")
 
 # Mount static files
-app.mount("/static", StaticFiles(directory="."), name="static")
-
-# Serve static files directly
-@app.get("/styles.css")
-async def get_styles():
-    return FileResponse("styles.css", media_type="text/css")
-
-@app.get("/script.js")
-async def get_script():
-    return FileResponse("script.js", media_type="application/javascript")
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/favicon.ico")
 async def get_favicon():
-    return FileResponse("favicon.ico", media_type="image/x-icon")
+    return FileResponse("static/favicon.ico", media_type="image/x-icon")
 
 @app.get("/.well-known/appspecific/com.chrome.devtools.json")
 async def get_chrome_devtools_config():
@@ -39,7 +30,7 @@ class Feedback(BaseModel):
 @app.get("/")
 async def read_index():
     """Serve the main HTML page."""
-    return FileResponse("index.html")
+    return FileResponse("static/index.html")
 
 @app.post("/api/start-guess")
 async def start_guess(user_input: UserInput):
