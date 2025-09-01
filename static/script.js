@@ -174,6 +174,7 @@ class FamousPersonGame {
             let placeOfBirth = '';
             let dateOfDeath = '';
             let placeOfDeath = '';
+            let wikipediaUrl = '';
             let reasoning = '';
             
             for (const line of lines) {
@@ -187,6 +188,8 @@ class FamousPersonGame {
                     dateOfDeath = line.replace('DATE OF DEATH:', '').trim();
                 } else if (line.startsWith('PLACE OF DEATH:')) {
                     placeOfDeath = line.replace('PLACE OF DEATH:', '').trim();
+                } else if (line.startsWith('WIKIPEDIA_URL:')) {
+                    wikipediaUrl = line.replace('WIKIPEDIA_URL:', '').trim();
                 } else if (line.startsWith('REASONING:')) {
                     reasoning = line.replace('REASONING:', '').trim();
                 }
@@ -194,7 +197,7 @@ class FamousPersonGame {
             
             // Build biographical information
             let bioInfo = '';
-            if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath) {
+            if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath || wikipediaUrl) {
                 bioInfo += '<div class="bio-section">';
                 bioInfo += '<h4>Biographical Information:</h4>';
                 if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
@@ -205,6 +208,10 @@ class FamousPersonGame {
                 }
                 if (placeOfDeath && placeOfDeath.toLowerCase() !== 'n/a' && placeOfDeath.toLowerCase() !== 'alive' && placeOfDeath.toLowerCase() !== 'still alive') {
                     bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+                }
+                // Add Wikipedia link if available
+                if (wikipediaUrl && wikipediaUrl.toLowerCase() !== 'n/a') {
+                    bioInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">View Wikipedia Page</a></p>`;
                 }
                 bioInfo += '</div>';
             }

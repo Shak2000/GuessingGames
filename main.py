@@ -45,7 +45,7 @@ class FamousPersonGuesser:
             exclusion_text = f"\n\nIMPORTANT: Do NOT guess any of these people (they have already been marked as incorrect): {', '.join(incorrect_names)}"
         
         prompt = f"""
-        Based on the following information, guess who the famous person is.
+        Based on the following information, guess who the famous person is. Source the date of birth, place of birth, date of death, and place of death from Wikipedia.
         
         Please respond in this exact format:
         NAME: [Person's full name]
@@ -53,6 +53,7 @@ class FamousPersonGuesser:
         PLACE OF BIRTH: [Person's place of birth]
         DATE OF DEATH: [Person's date of death, or "N/A" if still alive]
         PLACE OF DEATH: [Person's place of death, or "N/A" if still alive]
+        WIKIPEDIA_URL: [Wikipedia URL for this person, or "N/A" if not found]
         REASONING: [Brief explanation of why you think this is the correct person based on the information provided]
         
         Information: {context}{exclusion_text}

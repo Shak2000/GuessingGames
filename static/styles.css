@@ -239,6 +239,20 @@ body {
     color: #075985;
 }
 
+.wikipedia-link {
+    color: #0369a1;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.wikipedia-link:hover {
+    color: #075985;
+    border-bottom-color: #075985;
+    text-decoration: none;
+}
+
 .feedback-buttons {
     display: flex;
     gap: 15px;
