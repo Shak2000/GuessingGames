@@ -174,6 +174,7 @@ class FamousPersonGame {
             let placeOfBirth = '';
             let dateOfDeath = '';
             let placeOfDeath = '';
+            let imageUrl = '';
             let wikipediaUrl = '';
             let reasoning = '';
             
@@ -188,6 +189,8 @@ class FamousPersonGame {
                     dateOfDeath = line.replace('DATE OF DEATH:', '').trim();
                 } else if (line.startsWith('PLACE OF DEATH:')) {
                     placeOfDeath = line.replace('PLACE OF DEATH:', '').trim();
+                } else if (line.startsWith('IMAGE_URL:')) {
+                    imageUrl = line.replace('IMAGE_URL:', '').trim();
                 } else if (line.startsWith('WIKIPEDIA_URL:')) {
                     wikipediaUrl = line.replace('WIKIPEDIA_URL:', '').trim();
                 } else if (line.startsWith('REASONING:')) {
@@ -211,13 +214,33 @@ class FamousPersonGame {
                 }
                 // Add Wikipedia link if available
                 if (wikipediaUrl && wikipediaUrl.toLowerCase() !== 'n/a') {
-                    bioInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">View Wikipedia Page</a></p>`;
+                    bioInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
                 }
                 bioInfo += '</div>';
             }
             
-            // Display name in the first element
+            // Build image HTML if available
+            let imageHtml = '';
+            if (imageUrl && imageUrl.toLowerCase() !== 'n/a') {
+                // Use a CORS proxy for Wikipedia images
+                let proxyUrl = '';
+                if (imageUrl.includes('upload.wikimedia.org')) {
+                    // Use images.weserv.nl as a CORS proxy for Wikipedia images
+                    proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&w=200&h=200&fit=cover`;
+                } else {
+                    proxyUrl = imageUrl;
+                }
+                
+                imageHtml = `
+                    <div class="person-image-container">
+                        <img src="${proxyUrl}" alt="Photo of ${name}" class="person-image" onerror="console.log('Image failed to load:', this.src); this.style.display='none'">
+                    </div>
+                `;
+            }
+            
+            // Display image, name, and biographical info in the first element
             this.guessText.innerHTML = `
+                ${imageHtml}
                 <div class="name-box">
                     <strong>${name}</strong>
                 </div>

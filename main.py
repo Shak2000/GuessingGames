@@ -1,6 +1,9 @@
 import google.generativeai as genai
 from typing import Optional, Dict, Any
 import json
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse
 from config import GEMINI_API_KEY
 
 class FamousPersonGuesser:
@@ -53,6 +56,7 @@ class FamousPersonGuesser:
         PLACE OF BIRTH: [Person's place of birth]
         DATE OF DEATH: [Person's date of death, or "N/A" if still alive]
         PLACE OF DEATH: [Person's place of death, or "N/A" if still alive]
+        IMAGE_URL: [Image URL for this person, or "N/A" if not found]
         WIKIPEDIA_URL: [Wikipedia URL for this person, or "N/A" if not found]
         REASONING: [Brief explanation of why you think this is the correct person based on the information provided]
         
@@ -63,9 +67,94 @@ class FamousPersonGuesser:
         
         try:
             response = self.model.generate_content(prompt)
-            return response.text.strip()
+            guess_text = response.text.strip()
+            
+            # Extract Wikipedia URL from the response and get image
+            lines = guess_text.split('\n')
+            wikipedia_url = None
+            for line in lines:
+                if line.startswith('WIKIPEDIA_URL:'):
+                    wikipedia_url = line.replace('WIKIPEDIA_URL:', '').strip()
+                    break
+            
+            # If we have a Wikipedia URL, try to extract an image
+            if wikipedia_url and wikipedia_url.lower() != 'n/a':
+                image_url = self._extract_image_from_url(wikipedia_url)
+                if image_url != "N/A":
+                    # Add the image URL to the response
+                    guess_text += f"\nIMAGE_URL: {image_url}"
+            
+            return guess_text
         except Exception as e:
             return f"Error making guess: {str(e)}"
+    
+    def _extract_image_from_url(self, url: str) -> str:
+        """Extract the best image URL from a given webpage URL."""
+        try:
+            # Add headers to mimic a real browser
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Try to find the main image (usually the first large image or infobox image)
+            image_url = None
+            
+            # For Wikipedia pages, look for infobox images first
+            if 'wikipedia.org' in url:
+                infobox = soup.find('table', class_='infobox')
+                if infobox:
+                    img = infobox.find('img')
+                    if img and img.get('src'):
+                        image_url = img.get('src')
+                        # Convert to full URL if it's a relative path
+                        if image_url.startswith('//'):
+                            image_url = 'https:' + image_url
+                        elif image_url.startswith('/'):
+                            image_url = urljoin(url, image_url)
+                        return image_url
+            
+            # Look for the first large image in the content
+            images = soup.find_all('img')
+            for img in images:
+                src = img.get('src')
+                if src:
+                    # Skip small images, icons, and decorative elements
+                    width = img.get('width')
+                    height = img.get('height')
+                    
+                    # Check if it's a reasonable size for a person's photo
+                    if width and height:
+                        try:
+                            w, h = int(width), int(height)
+                            if w >= 100 and h >= 100:  # Minimum size threshold
+                                image_url = src
+                                break
+                        except ValueError:
+                            continue
+                    
+                    # If no size attributes, check the src for common patterns
+                    if not image_url and any(keyword in src.lower() for keyword in ['photo', 'portrait', 'image', 'jpg', 'jpeg', 'png']):
+                        image_url = src
+                        break
+            
+            if image_url:
+                # Convert to full URL if it's a relative path
+                if image_url.startswith('//'):
+                    image_url = 'https:' + image_url
+                elif image_url.startswith('/'):
+                    image_url = urljoin(url, image_url)
+                return image_url
+            
+            return "N/A"
+            
+        except Exception as e:
+            print(f"Error extracting image from {url}: {str(e)}")
+            return "N/A"
     
     def submit_feedback(self, session_id: int, is_correct: bool) -> Dict[str, Any]:
         """Submit feedback for the current guess and make next guess if incorrect."""

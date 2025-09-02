@@ -253,6 +253,28 @@ body {
     text-decoration: none;
 }
 
+.person-image-container {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.person-image {
+    max-width: 200px;
+    max-height: 200px;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 3px solid #e5e7eb;
+    object-fit: cover;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.person-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
 .feedback-buttons {
     display: flex;
     gap: 15px;
