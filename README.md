@@ -4,10 +4,12 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 
 ## Features
 
-- 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent person identification (cutoff: January 2024)
+- 🤖 **AI-Powered Guessing**: Uses Google Gemini 1.5 Flash API for intelligent person identification
 - 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
 - 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
 - 💭 **Detailed Explanations**: Each guess includes both the person's name and reasoning
+- 📸 **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
+- 📊 **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and separate display boxes
 - 📱 **Mobile Friendly**: Works perfectly on desktop and mobile devices
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
@@ -57,8 +59,10 @@ The application will be available at `http://localhost:8000`
 
 1. **Enter Information**: Type information about a famous person in the text area
 2. **Submit**: Click "Submit Information" or press Ctrl+Enter
-3. **Review Guess**: The AI will display its guess in two boxes:
+3. **Review Guess**: The AI will display its guess with:
+   - **Person's Photo**: Automatically extracted from Wikipedia (if available)
    - **Name Box**: The person's name in a blue gradient box
+   - **Biographical Information**: Birth/death dates, places, and Wikipedia link
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
@@ -82,9 +86,10 @@ FirstAPI/
 ```
 
 ### Key Files:
-- **`main.py`** - Core game logic with Gemini API integration and session management
+- **`main.py`** - Core game logic with Gemini API integration, image extraction, and session management
 - **`app.py`** - FastAPI web server with proper static file serving
 - **`config.py`** - API key configuration (excluded from version control)
+- **`requirements.txt`** - Python dependencies including Beautiful Soup and requests
 - **`static/`** - All frontend files organized in a dedicated directory
 
 ## API Endpoints
@@ -109,12 +114,15 @@ FirstAPI/
 
 ## Recent Updates
 
+- ✅ **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
+- ✅ **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
 - ✅ **Enhanced AI Responses**: Now includes both name and detailed reasoning
-- ✅ **Improved UI**: Separate display boxes for name and explanation
+- ✅ **Improved UI**: Separate display boxes for name, biographical info, and explanation
 - ✅ **Better File Organization**: Static files moved to dedicated `/static` directory
 - ✅ **Updated Gemini Model**: Using `gemini-1.5-flash` for better performance
 - ✅ **Configuration Management**: API key stored in `config.py` with `.gitignore` protection
 - ✅ **Enhanced User Experience**: Button states, loading indicators, and error handling
+- ✅ **Smart Image Display**: CORS proxy support for Wikipedia images with beautiful styling
 
 ## Troubleshooting
 
@@ -123,11 +131,33 @@ FirstAPI/
 - **Network Issues**: Check your internet connection for API calls
 - **Static Files Not Loading**: Ensure the `/static` directory exists and contains all frontend files
 - **Model Errors**: The app now uses `gemini-1.5-flash` - ensure your API key has access to this model
+- **Image Loading Issues**: Images are fetched from Wikipedia using Beautiful Soup - check your internet connection
+- **Dependency Issues**: Make sure to install all requirements: `pip install -r requirements.txt`
+- **CORS Issues**: Wikipedia images use a CORS proxy (images.weserv.nl) for proper display
+
+## Technology Stack
+
+### **Backend:**
+- **FastAPI**: Modern Python web framework for API endpoints
+- **Google Gemini 1.5 Flash**: AI model for person identification and reasoning
+- **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
+- **Requests**: HTTP library for web scraping
+
+### **Frontend:**
+- **Vanilla JavaScript**: Interactive game logic and API communication
+- **CSS3**: Modern styling with gradients, animations, and responsive design
+- **HTML5**: Semantic markup with accessibility features
+
+### **Image Processing:**
+- **Wikipedia Integration**: Automatic extraction of person photos from Wikipedia pages
+- **CORS Proxy**: Uses images.weserv.nl for cross-origin image loading
+- **Smart Filtering**: Size and content-based image selection
 
 ## Security Notes
 
 - **API Key Protection**: The `config.py` file is included in `.gitignore` to prevent accidental commits
 - **Environment Variables**: Alternative method for API key storage without hardcoding
 - **Static File Serving**: Proper FastAPI static file mounting for security and performance
+- **Web Scraping**: Respectful scraping with proper headers and rate limiting
 
 Enjoy guessing famous people! 🎉
