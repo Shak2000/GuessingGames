@@ -10,6 +10,7 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 - 💭 **Detailed Explanations**: Each guess includes both the person's name and reasoning
 - 📸 **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - 📊 **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
+- 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and separate display boxes
 - 📱 **Mobile Friendly**: Works perfectly on desktop and mobile devices
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
@@ -23,28 +24,41 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 pip install -r requirements.txt
 ```
 
-### 2. Get Google Gemini API Key
+### 2. Get API Keys
 
+**Google Gemini API Key:**
 1. Go to [Google AI Studio](https://makersuite.google.com/app/apikey)
 2. Create a new API key
 3. Copy the API key
 
-### 3. Configure API Key
+**Google Maps API Key:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable the following APIs:
+   - **Maps JavaScript API** (for interactive maps)
+   - **Geocoding API** (for address to coordinates conversion)
+4. Create credentials → API Key
+5. Copy the API key
 
-**Option A: Using config.py (Recommended)**
+### 3. Configure API Keys
+
+**Using config.py (Recommended)**
 1. Edit the `config.py` file
-2. Replace `"your_gemini_api_key_here"` with your actual API key:
+2. Replace the placeholder values with your actual API keys:
    ```python
-   GEMINI_API_KEY = "your_actual_api_key_here"
+   GEMINI_API_KEY = "your_actual_gemini_api_key_here"
+   GOOGLE_MAPS_API_KEY = "your_actual_google_maps_api_key_here"
    ```
 
-**Option B: Using Environment Variables**
+**Using Environment Variables**
 ```bash
 # On macOS/Linux
-export GEMINI_API_KEY="your_api_key_here"
+export GEMINI_API_KEY="your_gemini_api_key_here"
+export GOOGLE_MAPS_API_KEY="your_google_maps_api_key_here"
 
 # On Windows
-set GEMINI_API_KEY=your_api_key_here
+set GEMINI_API_KEY=your_gemini_api_key_here
+set GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 ```
 
 ### 4. Run the Application
@@ -63,6 +77,7 @@ The application will be available at `http://localhost:8000`
    - **Person's Photo**: Automatically extracted from Wikipedia (if available)
    - **Name Box**: The person's name in a blue gradient box
    - **Biographical Information**: Birth/death dates, places, and Wikipedia link
+   - **Interactive Map**: Google Maps showing birth and death locations with custom markers
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
@@ -99,6 +114,9 @@ FirstAPI/
 - `POST /api/submit-feedback` - Submits feedback for a guess
 - `GET /api/session/{session_id}` - Gets session status
 - `GET /api/health` - Health check endpoint
+- `GET /api/maps-key` - Securely serves Google Maps API key to frontend
+- `GET /api/test-maps` - Tests Google Maps API key functionality
+- `GET /api/test-static-map` - Tests Google Maps Static API (for debugging)
 - `GET /static/*` - Serves static files (CSS, JS, images)
 - `GET /favicon.ico` - Serves favicon
 - `GET /.well-known/appspecific/com.chrome.devtools.json` - Chrome DevTools config
@@ -114,37 +132,45 @@ FirstAPI/
 
 ## Recent Updates
 
+- ✅ **Interactive Google Maps**: JavaScript API integration with custom birth/death location markers
 - ✅ **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - ✅ **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
 - ✅ **Enhanced AI Responses**: Now includes both name and detailed reasoning
-- ✅ **Improved UI**: Separate display boxes for name, biographical info, and explanation
+- ✅ **Improved UI**: Separate display boxes for name, biographical info, map, and explanation
 - ✅ **Better File Organization**: Static files moved to dedicated `/static` directory
-- ✅ **Updated Gemini Model**: Using `gemini-1.5-flash` for better performance
-- ✅ **Configuration Management**: API key stored in `config.py` with `.gitignore` protection
+- ✅ **Updated Gemini Model**: Using `gemini-2.5-flash-lite` for better performance
+- ✅ **Configuration Management**: API keys stored in `config.py` with `.gitignore` protection
 - ✅ **Enhanced User Experience**: Button states, loading indicators, and error handling
 - ✅ **Smart Image Display**: CORS proxy support for Wikipedia images with beautiful styling
+- ✅ **Geocoding Integration**: Automatic conversion of place names to map coordinates
+- ✅ **Map Features**: Interactive zoom, pan, custom markers, and smart bounds fitting
 
 ## Troubleshooting
 
-- **API Key Error**: Make sure your API key is set in `config.py` or as an environment variable
+- **API Key Error**: Make sure both Gemini and Google Maps API keys are set in `config.py` or as environment variables
+- **Google Maps Not Loading**: Ensure you have enabled "Maps JavaScript API" and "Geocoding API" in Google Cloud Console
 - **Port Already in Use**: If port 8000 is busy, modify the port in `app.py`
 - **Network Issues**: Check your internet connection for API calls
 - **Static Files Not Loading**: Ensure the `/static` directory exists and contains all frontend files
-- **Model Errors**: The app now uses `gemini-1.5-flash` - ensure your API key has access to this model
+- **Model Errors**: The app now uses `gemini-2.5-flash-lite` - ensure your API key has access to this model
 - **Image Loading Issues**: Images are fetched from Wikipedia using Beautiful Soup - check your internet connection
 - **Dependency Issues**: Make sure to install all requirements: `pip install -r requirements.txt`
 - **CORS Issues**: Wikipedia images use a CORS proxy (images.weserv.nl) for proper display
+- **Map Display Issues**: Check browser console for Google Maps API errors and verify API key restrictions
+- **Billing Issues**: Google Maps APIs require billing to be enabled even for free tier usage
 
 ## Technology Stack
 
 ### **Backend:**
 - **FastAPI**: Modern Python web framework for API endpoints
-- **Google Gemini 1.5 Flash**: AI model for person identification and reasoning
+- **Google Gemini 2.5 Flash Lite**: AI model for person identification and reasoning
 - **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
 - **Requests**: HTTP library for web scraping
+- **Google Maps Python Client**: Geocoding API integration for address-to-coordinates conversion
 
 ### **Frontend:**
 - **Vanilla JavaScript**: Interactive game logic and API communication
+- **Google Maps JavaScript API**: Interactive maps with custom markers and bounds
 - **CSS3**: Modern styling with gradients, animations, and responsive design
 - **HTML5**: Semantic markup with accessibility features
 
@@ -153,11 +179,19 @@ FirstAPI/
 - **CORS Proxy**: Uses images.weserv.nl for cross-origin image loading
 - **Smart Filtering**: Size and content-based image selection
 
+### **Maps Integration:**
+- **Google Maps JavaScript API**: Interactive maps with zoom, pan, and custom markers
+- **Google Geocoding API**: Converts place names to latitude/longitude coordinates
+- **Custom Markers**: Green "B" markers for birthplaces, red "D" markers for deathplaces
+- **Smart Bounds**: Automatically fits map view to show all relevant locations
+
 ## Security Notes
 
 - **API Key Protection**: The `config.py` file is included in `.gitignore` to prevent accidental commits
 - **Environment Variables**: Alternative method for API key storage without hardcoding
 - **Static File Serving**: Proper FastAPI static file mounting for security and performance
 - **Web Scraping**: Respectful scraping with proper headers and rate limiting
+- **Secure API Key Serving**: Google Maps API key is served through backend endpoint to prevent exposure
+- **CORS Handling**: Proper cross-origin resource sharing configuration for external APIs
 
 Enjoy guessing famous people! 🎉
