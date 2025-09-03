@@ -17,10 +17,19 @@ class FamousPersonGame {
         // Game elements
         this.gameSection = document.getElementById('gameSection');
         this.guessText = document.getElementById('guessText');
+        this.guessTextFamily = document.getElementById('guessTextFamily');
         this.guessTextReasoning = document.getElementById('guessTextReasoning');
         this.mapEl = document.getElementById('map');
         this.correctBtn = document.getElementById('correctBtn');
         this.incorrectBtn = document.getElementById('incorrectBtn');
+        
+        // Family elements
+        this.parentsSection = document.getElementById('parentsSection');
+        this.parentsList = document.getElementById('parentsList');
+        this.spouseSection = document.getElementById('spouseSection');
+        this.spouseList = document.getElementById('spouseList');
+        this.childrenSection = document.getElementById('childrenSection');
+        this.childrenList = document.getElementById('childrenList');
         
         // Other sections
         this.victorySection = document.getElementById('victorySection');
@@ -29,29 +38,14 @@ class FamousPersonGame {
         this.errorMessage = document.getElementById('errorMessage');
         this.dismissErrorBtn = document.getElementById('dismissErrorBtn');
         this.newGameBtn = document.getElementById('newGameBtn');
-        
-        // Debug: Check if elements are found
-        console.log('Elements found:', {
-            userInput: !!this.userInput,
-            submitBtn: !!this.submitBtn,
-            gameSection: !!this.gameSection,
-            guessText: !!this.guessText,
-            guessTextReasoning: !!this.guessTextReasoning,
-            correctBtn: !!this.correctBtn,
-            incorrectBtn: !!this.incorrectBtn
-        });
     }
 
     attachEventListeners() {
-        console.log('Attaching event listeners...');
         
         if (this.submitBtn) {
             this.submitBtn.addEventListener('click', () => {
-                console.log('Submit button clicked!');
                 this.startNewGameFromButton();
             });
-        } else {
-            console.error('Submit button not found!');
         }
         
         if (this.correctBtn) {
@@ -71,13 +65,10 @@ class FamousPersonGame {
         if (this.userInput) {
             this.userInput.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter' && e.ctrlKey) {
-                    console.log('Ctrl+Enter pressed!');
                     this.startNewGameFromButton();
                 }
             });
         }
-        
-        console.log('Event listeners attached successfully');
     }
 
     async loadGoogleMapsScript() {
@@ -97,9 +88,8 @@ class FamousPersonGame {
             script.defer = true;
             document.head.appendChild(script);
             this.googleMapsScriptLoaded = true;
-            console.log('Google Maps script loaded successfully');
         } catch (error) {
-            console.error("Failed to load Google Maps script:", error);
+            // Failed to load Google Maps script
         }
     }
 
@@ -118,7 +108,6 @@ class FamousPersonGame {
         this.hideAllSections();
 
         try {
-            console.log('Starting new game with input:', inputText);
             const response = await fetch('/api/start-guess', {
                 method: 'POST',
                 headers: {
@@ -127,20 +116,30 @@ class FamousPersonGame {
                 body: JSON.stringify({ text: inputText })
             });
 
-            console.log('Response status:', response.status);
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.detail || 'Failed to start game');
             }
 
             const data = await response.json();
-            console.log('Response data:', data);
             this.currentSessionId = data.session_id;
-            this.displayGuess(data.guess);
+            
+            // Debug: Check what we're receiving
+            if (typeof data.guess === 'string') {
+                // If it's a string, try to parse it
+                try {
+                    const parsedGuess = JSON.parse(data.guess);
+                    this.displayGuess(parsedGuess);
+                } catch (e) {
+                    this.displayGuess(data.guess);
+                }
+            } else {
+                this.displayGuess(data.guess);
+            }
+            
             this.showGameSection();
 
         } catch (error) {
-            console.error('Error starting game:', error);
             this.showError(`Error starting game: ${error.message}`);
         } finally {
             // Re-enable button and hide loading
@@ -181,7 +180,18 @@ class FamousPersonGame {
             if (data.game_over) {
                 this.showVictory();
             } else {
-                this.displayGuess(data.guess);
+                // Debug: Check what we're receiving
+                if (typeof data.guess === 'string') {
+                    // If it's a string, try to parse it
+                    try {
+                        const parsedGuess = JSON.parse(data.guess);
+                        this.displayGuess(parsedGuess);
+                    } catch (e) {
+                        this.displayGuess(data.guess);
+                    }
+                } else {
+                    this.displayGuess(data.guess);
+                }
                 this.showButtons();
             }
 
@@ -194,136 +204,159 @@ class FamousPersonGame {
     }
 
     displayGuess(guess) {
-        // Format the guess response to display name, biographical info, and reasoning
-        if (guess.includes('NAME:') && guess.includes('REASONING:')) {
-            const lines = guess.split('\n');
-            let name = '';
-            let dateOfBirth = '';
-            let placeOfBirth = '';
-            let dateOfDeath = '';
-            let placeOfDeath = '';
-            let imageUrl = '';
-            let wikipediaUrl = '';
-            let coordinates = '';
-            let reasoning = '';
-            
-            for (const line of lines) {
-                if (line.startsWith('NAME:')) {
-                    name = line.replace('NAME:', '').trim();
-                } else if (line.startsWith('DATE OF BIRTH:')) {
-                    dateOfBirth = line.replace('DATE OF BIRTH:', '').trim();
-                } else if (line.startsWith('PLACE OF BIRTH:')) {
-                    placeOfBirth = line.replace('PLACE OF BIRTH:', '').trim();
-                } else if (line.startsWith('DATE OF DEATH:')) {
-                    dateOfDeath = line.replace('DATE OF DEATH:', '').trim();
-                } else if (line.startsWith('PLACE OF DEATH:')) {
-                    placeOfDeath = line.replace('PLACE OF DEATH:', '').trim();
-                } else if (line.startsWith('IMAGE_URL:')) {
-                    imageUrl = line.replace('IMAGE_URL:', '').trim();
-                } else if (line.startsWith('WIKIPEDIA_URL:')) {
-                    wikipediaUrl = line.replace('WIKIPEDIA_URL:', '').trim();
-                } else if (line.startsWith('COORDINATES:')) {
-                    coordinates = line.replace('COORDINATES:', '').trim();
-                } else if (line.startsWith('REASONING:')) {
-                    reasoning = line.replace('REASONING:', '').trim();
-                }
+        // Safety check
+        if (guess === null || guess === undefined) {
+            this.showError('No guess data received');
+            return;
+        }
+        
+        // Check if this is already a JSON object (like the good solution)
+        if (typeof guess === 'object' && guess !== null) {
+            this.displayJsonGuess(guess);
+            return;
+        }
+        
+        // Check if this looks like a JSON string
+        if (typeof guess === 'string' && guess.trim().startsWith('{') && guess.trim().endsWith('}')) {
+            try {
+                const data = JSON.parse(guess);
+                this.displayJsonGuess(data);
+                return;
+            } catch (e) {
+                // JSON parsing failed, fall back to old format
+                this.displayGuessOldFormat(guess);
+                return;
+            }
+        }
+        
+        // Not JSON format, use old format
+        this.displayGuessOldFormat(guess);
+    }
+
+    displayJsonGuess(data) {
+        // Extract data from JSON
+        const name = data.name || 'Unknown';
+        const dateOfBirth = data.date_of_birth;
+        const placeOfBirth = data.place_of_birth;
+        const dateOfDeath = data.date_of_death;
+        const placeOfDeath = data.place_of_death;
+        const parents = data.parents || [];
+        const siblings = data.siblings || [];
+        const spouse = data.spouse || '';
+        const children = data.children || [];
+        const imageUrl = data.image_url;
+        const wikipediaUrl = data.wikipedia_url;
+        const coordinates = data.coordinates;
+        const reasoning = data.reasoning || '';
+        
+        // Build biographical information
+        let bioInfo = '';
+        if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath || wikipediaUrl) {
+            bioInfo += '<div class="bio-section">';
+            bioInfo += '<h4>Biographical Information:</h4>';
+            if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
+            if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> ${placeOfBirth}</p>`;
+            // Only show death information if the person is actually deceased
+            if (dateOfDeath && dateOfDeath !== null && dateOfDeath.toLowerCase() !== 'n/a') {
+                bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
+            }
+            if (placeOfDeath && placeOfDeath !== null && placeOfDeath.toLowerCase() !== 'n/a') {
+                bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+            }
+            // Add Wikipedia link if available
+            if (wikipediaUrl && wikipediaUrl !== null) {
+                bioInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
+            }
+            bioInfo += '</div>';
+        }
+        
+        // Handle Family Info (using JSON arrays)
+        this.guessTextFamily.classList.remove('hidden');
+        this.parentsSection.classList.add('hidden');
+        this.spouseSection.classList.add('hidden');
+        this.childrenSection.classList.add('hidden');
+
+        if (parents && parents.length > 0) {
+            this.parentsList.textContent = parents.join(', ');
+            this.parentsSection.classList.remove('hidden');
+        }
+        if (spouse && spouse !== '') {
+            this.spouseList.textContent = spouse;
+            this.spouseSection.classList.remove('hidden');
+        }
+        if (children && children.length > 0) {
+            this.childrenList.textContent = children.join(', ');
+            this.childrenSection.classList.remove('hidden');
+        }
+        
+        // Build image HTML if available
+        let imageHtml = '';
+        if (imageUrl && imageUrl !== null) {
+            // Use a CORS proxy for Wikipedia images
+            let proxyUrl = '';
+            if (imageUrl && imageUrl.includes('upload.wikimedia.org')) {
+                // Use images.weserv.nl as a CORS proxy for Wikipedia images
+                proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&w=200&h=200&fit=cover`;
+            } else {
+                proxyUrl = imageUrl;
             }
             
-            // Build biographical information
-            let bioInfo = '';
-            if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath || wikipediaUrl) {
-                bioInfo += '<div class="bio-section">';
-                bioInfo += '<h4>Biographical Information:</h4>';
-                if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
-                if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> ${placeOfBirth}</p>`;
-                // Only show death information if the person is actually deceased
-                if (dateOfDeath && dateOfDeath.toLowerCase() !== 'n/a' && dateOfDeath.toLowerCase() !== 'alive' && dateOfDeath.toLowerCase() !== 'still alive') {
-                    bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
-                }
-                if (placeOfDeath && placeOfDeath.toLowerCase() !== 'n/a' && placeOfDeath.toLowerCase() !== 'alive' && placeOfDeath.toLowerCase() !== 'still alive') {
-                    bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
-                }
-                // Add Wikipedia link if available
-                if (wikipediaUrl && wikipediaUrl.toLowerCase() !== 'n/a') {
-                    bioInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
-                }
-                bioInfo += '</div>';
-            }
-            
-            // Build image HTML if available
-            let imageHtml = '';
-            if (imageUrl && imageUrl.toLowerCase() !== 'n/a') {
-                // Use a CORS proxy for Wikipedia images
-                let proxyUrl = '';
-                if (imageUrl.includes('upload.wikimedia.org')) {
-                    // Use images.weserv.nl as a CORS proxy for Wikipedia images
-                    proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&w=200&h=200&fit=cover`;
-                } else {
-                    proxyUrl = imageUrl;
+            imageHtml = `
+                <div class="person-image-container">
+                    <img src="${proxyUrl}" alt="Photo of ${name}" class="person-image" onerror="this.style.display='none'">
+                </div>
+            `;
+        }
+        
+        // Display image, name, and biographical info in the first element
+        this.guessText.innerHTML = `
+            ${imageHtml}
+            <div class="name-box">
+                <strong>${name}</strong>
+            </div>
+            ${bioInfo}
+        `;
+        
+        // Initialize map if coordinates are available
+        if (coordinates && coordinates !== null) {
+            try {
+                const birthCoords = coordinates.birthplace ? {
+                    lat: coordinates.birthplace.lat,
+                    lng: coordinates.birthplace.lng
+                } : null;
+                const deathCoords = coordinates.deathplace ? {
+                    lat: coordinates.deathplace.lat,
+                    lng: coordinates.deathplace.lng
+                } : null;
+                
+                // Show the map container
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'block';
+                    this.mapEl.style.height = '300px';
+                    this.mapEl.style.width = '100%';
+                    this.mapEl.style.marginTop = '15px';
+                    this.mapEl.style.borderRadius = '10px';
+                    this.mapEl.style.border = '1px solid #bae6fd';
                 }
                 
-                imageHtml = `
-                    <div class="person-image-container">
-                        <img src="${proxyUrl}" alt="Photo of ${name}" class="person-image" onerror="console.log('Image failed to load:', this.src); this.style.display='none'">
-                    </div>
-                `;
+                // Initialize the map
+                this.initMap(birthCoords, deathCoords);
+            } catch (e) {
+                // Error parsing coordinates
             }
-            
-            // Display image, name, and biographical info in the first element
-            this.guessText.innerHTML = `
-                ${imageHtml}
-                <div class="name-box">
-                    <strong>${name}</strong>
-                </div>
-                ${bioInfo}
-            `;
-            
-            // Initialize map if coordinates are available
-            if (coordinates && coordinates !== '') {
-                try {
-                    const coordsData = JSON.parse(coordinates);
-                    const birthCoords = coordsData.birthplace ? {
-                        lat: coordsData.birthplace.lat,
-                        lng: coordsData.birthplace.lng
-                    } : null;
-                    const deathCoords = coordsData.deathplace ? {
-                        lat: coordsData.deathplace.lat,
-                        lng: coordsData.deathplace.lng
-                    } : null;
-                    
-                    // Show the map container
-                    if (this.mapEl) {
-                        this.mapEl.style.display = 'block';
-                        this.mapEl.style.height = '300px';
-                        this.mapEl.style.width = '100%';
-                        this.mapEl.style.marginTop = '15px';
-                        this.mapEl.style.borderRadius = '10px';
-                        this.mapEl.style.border = '1px solid #bae6fd';
-                    }
-                    
-                    // Initialize the map
-                    this.initMap(birthCoords, deathCoords);
-                } catch (e) {
-                    console.error('Error parsing coordinates:', e);
-                }
-            } else {
-                // Hide the map container if no coordinates
-                if (this.mapEl) {
-                    this.mapEl.style.display = 'none';
-                }
-            }
-            
-            // Display reasoning in the second element
-            this.guessTextReasoning.innerHTML = `
-                <div class="reasoning-box">
-                    ${reasoning}
-                </div>
-            `;
         } else {
-            // Fallback for old format or error messages
-            this.guessText.textContent = guess;
-            this.guessTextReasoning.textContent = '';
+            // Hide the map container if no coordinates
+            if (this.mapEl) {
+                this.mapEl.style.display = 'none';
+            }
         }
+        
+        // Display reasoning in the second element
+        this.guessTextReasoning.innerHTML = `
+            <div class="reasoning-box">
+                ${reasoning}
+            </div>
+        `;
     }
 
     showGameSection() {
@@ -380,7 +413,6 @@ class FamousPersonGame {
 
     initMap(birthCoords, deathCoords) {
         if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
-            console.error("Google Maps script not loaded yet.");
             if (this.mapEl) {
                 this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
             }
@@ -388,7 +420,6 @@ class FamousPersonGame {
         }
 
         if (!this.mapEl) {
-            console.error("Map element not found");
             return;
         }
 
@@ -473,6 +504,173 @@ class FamousPersonGame {
         // Reset current session and start fresh
         this.currentSessionId = null;
         this.startNewGame();
+    }
+
+    displayGuessOldFormat(guess) {
+        // Safety check
+        if (guess === null || guess === undefined) {
+            this.showError('No guess data received');
+            return;
+        }
+        
+        // Fallback method for old text format parsing
+        if (typeof guess === 'string' && guess.includes('NAME:') && guess.includes('REASONING:')) {
+            const lines = guess.split('\n');
+            let name = '';
+            let dateOfBirth = '';
+            let placeOfBirth = '';
+            let dateOfDeath = '';
+            let placeOfDeath = '';
+            let parents = '';
+            let siblings = '';
+            let spouse = '';
+            let children = '';
+            let imageUrl = '';
+            let wikipediaUrl = '';
+            let coordinates = '';
+            let reasoning = '';
+            
+            for (const line of lines) {
+                if (line.startsWith('NAME:')) {
+                    name = line.replace('NAME:', '').trim();
+                } else if (line.startsWith('DATE OF BIRTH:')) {
+                    dateOfBirth = line.replace('DATE OF BIRTH:', '').trim();
+                } else if (line.startsWith('PLACE OF BIRTH:')) {
+                    placeOfBirth = line.replace('PLACE OF BIRTH:', '').trim();
+                } else if (line.startsWith('DATE OF DEATH:')) {
+                    dateOfDeath = line.replace('DATE OF DEATH:', '').trim();
+                } else if (line.startsWith('PLACE OF DEATH:')) {
+                    placeOfDeath = line.replace('PLACE OF DEATH:', '').trim();
+                } else if (line.startsWith('PARENTS:')) {
+                    parents = line.replace('PARENTS:', '').trim();
+                } else if (line.startsWith('SIBLINGS:')) {
+                    siblings = line.replace('SIBLINGS:', '').trim();
+                } else if (line.startsWith('SPOUSE:')) {
+                    spouse = line.replace('SPOUSE:', '').trim();
+                } else if (line.startsWith('CHILDREN:')) {
+                    children = line.replace('CHILDREN:', '').trim();
+                } else if (line.startsWith('IMAGE_URL:')) {
+                    imageUrl = line.replace('IMAGE_URL:', '').trim();
+                } else if (line.startsWith('WIKIPEDIA_URL:')) {
+                    wikipediaUrl = line.replace('WIKIPEDIA_URL:', '').trim();
+                } else if (line.startsWith('COORDINATES:')) {
+                    coordinates = line.replace('COORDINATES:', '').trim();
+                } else if (line.startsWith('REASONING:')) {
+                    reasoning = line.replace('REASONING:', '').trim();
+                }
+            }
+            
+            // Build biographical information
+            let bioInfo = '';
+            if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath || wikipediaUrl) {
+                bioInfo += '<div class="bio-section">';
+                bioInfo += '<h4>Biographical Information:</h4>';
+                if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
+                if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> ${placeOfBirth}</p>`;
+                if (dateOfDeath && dateOfDeath.toLowerCase() !== 'n/a' && dateOfDeath.toLowerCase() !== 'alive' && dateOfDeath.toLowerCase() !== 'still alive') {
+                    bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
+                }
+                if (placeOfDeath && placeOfDeath.toLowerCase() !== 'n/a' && placeOfDeath.toLowerCase() !== 'alive' && placeOfDeath.toLowerCase() !== 'still alive') {
+                    bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+                }
+                if (wikipediaUrl && wikipediaUrl.toLowerCase() !== 'n/a') {
+                    bioInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
+                }
+                bioInfo += '</div>';
+            }
+            
+            // Handle Family Info (old format - strings)
+            this.guessTextFamily.classList.remove('hidden');
+            this.parentsSection.classList.add('hidden');
+            this.spouseSection.classList.add('hidden');
+            this.childrenSection.classList.add('hidden');
+
+            if (parents && parents.toLowerCase() !== 'n/a' && parents !== '') {
+                this.parentsList.textContent = parents;
+                this.parentsSection.classList.remove('hidden');
+            }
+            if (spouse && spouse.toLowerCase() !== 'n/a' && spouse !== '') {
+                this.spouseList.textContent = spouse;
+                this.spouseSection.classList.remove('hidden');
+            }
+            if (children && children.toLowerCase() !== 'n/a' && children !== '') {
+                this.childrenList.textContent = children;
+                this.childrenSection.classList.remove('hidden');
+            }
+            
+            // Build image HTML if available
+            let imageHtml = '';
+            if (imageUrl && imageUrl.toLowerCase() !== 'n/a') {
+                let proxyUrl = '';
+                if (imageUrl && imageUrl.includes('upload.wikimedia.org')) {
+                    proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&w=200&h=200&fit=cover`;
+                } else {
+                    proxyUrl = imageUrl;
+                }
+                
+                imageHtml = `
+                    <div class="person-image-container">
+                        <img src="${proxyUrl}" alt="Photo of ${name}" class="person-image" onerror="this.style.display='none'">
+                    </div>
+                `;
+            }
+            
+            // Display image, name, and biographical info
+            this.guessText.innerHTML = `
+                ${imageHtml}
+                <div class="name-box">
+                    <strong>${name}</strong>
+                </div>
+                ${bioInfo}
+            `;
+            
+            // Initialize map if coordinates are available (old format)
+            if (coordinates && coordinates !== '') {
+                try {
+                    const coordsData = JSON.parse(coordinates);
+                    const birthCoords = coordsData.birthplace ? {
+                        lat: coordsData.birthplace.lat,
+                        lng: coordsData.birthplace.lng
+                    } : null;
+                    const deathCoords = coordsData.deathplace ? {
+                        lat: coordsData.deathplace.lat,
+                        lng: coordsData.deathplace.lng
+                    } : null;
+                    
+                    // Show the map container
+                    if (this.mapEl) {
+                        this.mapEl.style.display = 'block';
+                        this.mapEl.style.height = '300px';
+                        this.mapEl.style.width = '100%';
+                        this.mapEl.style.marginTop = '15px';
+                        this.mapEl.style.borderRadius = '10px';
+                        this.mapEl.style.border = '1px solid #bae6fd';
+                    }
+                    
+                    // Initialize the map
+                    this.initMap(birthCoords, deathCoords);
+                } catch (e) {
+                    // Error parsing coordinates
+                }
+            } else {
+                // Hide the map container if no coordinates
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'none';
+                }
+            }
+            
+            // Display reasoning
+            this.guessTextReasoning.innerHTML = `
+                <div class="reasoning-box">
+                    ${reasoning}
+                </div>
+            `;
+        } else {
+            // Fallback for old format or error messages
+            this.guessText.textContent = guess;
+            this.guessTextFamily.classList.add('hidden');
+            this.guessTextReasoning.textContent = '';
+        }
     }
 }
 

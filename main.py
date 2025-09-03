@@ -50,17 +50,20 @@ class FamousPersonGuesser:
             exclusion_text = f"\n\nIMPORTANT: Do NOT guess any of these people (they have already been marked as incorrect): {', '.join(incorrect_names)}"
         
         prompt = f"""
-        Based on the following information, guess who the famous person is. Source the date of birth, place of birth, date of death, and place of death from Wikipedia.
+        Based on the following information, guess who the famous person is. Source biographical information from Wikipedia.
         
-        Please respond in this exact format:
-        NAME: [Person's full name]
-        DATE OF BIRTH: [Person's date of birth]
-        PLACE OF BIRTH: [Person's place of birth]
-        DATE OF DEATH: [Person's date of death, or "N/A" if still alive]
-        PLACE OF DEATH: [Person's place of death, or "N/A" if still alive]
-        IMAGE_URL: [Image URL for this person, or "N/A" if not found]
-        WIKIPEDIA_URL: [Wikipedia URL for this person, or "N/A" if not found]
-        REASONING: [Brief explanation of why you think this is the correct person based on the information provided]
+        Return the information as a JSON object with the following keys:
+        - 'name': The person's full name
+        - 'date_of_birth': The person's date of birth, or null if unknown
+        - 'place_of_birth': The person's place of birth (city, country), or null if unknown
+        - 'date_of_death': The person's date of death, or null if still alive
+        - 'place_of_death': The person's place of death (city, country), or null if still alive
+        - 'parents': An array of strings with parent names, or empty array [] if unknown
+        - 'siblings': An array of strings with sibling names, or empty array [] if unknown
+        - 'spouse': A string with spouse name(s), or empty string "" if unknown
+        - 'children': An array of strings with children names, or empty array [] if unknown
+        - 'wikipedia_url': Wikipedia URL for this person, or null if not found
+        - 'reasoning': Brief explanation of why you think this is the correct person based on the information provided
         
         Information: {context}{exclusion_text}
         
@@ -70,31 +73,64 @@ class FamousPersonGuesser:
         try:
             response = self.model.generate_content(prompt)
             guess_text = response.text.strip()
+            print(f"=== GEMINI RESPONSE DEBUG ===")
+            print(f"Full response: {guess_text}")
+            print(f"Response length: {len(guess_text)}")
+            print("=== END GEMINI RESPONSE ===")
             
-            # Extract Wikipedia URL from the response and get image
-            lines = guess_text.split('\n')
-            wikipedia_url = None
-            for line in lines:
-                if line.startswith('WIKIPEDIA_URL:'):
-                    wikipedia_url = line.replace('WIKIPEDIA_URL:', '').strip()
-                    break
+            # Parse JSON response - handle markdown code blocks
+            import json
+            try:
+                # Strip markdown code blocks if present
+                cleaned_text = guess_text.strip()
+                if cleaned_text.startswith('```json'):
+                    cleaned_text = cleaned_text[7:]  # Remove ```json
+                if cleaned_text.startswith('```'):
+                    cleaned_text = cleaned_text[3:]   # Remove ```
+                if cleaned_text.endswith('```'):
+                    cleaned_text = cleaned_text[:-3]  # Remove trailing ```
+                cleaned_text = cleaned_text.strip()
+                
+                data = json.loads(cleaned_text)
+                print(f"=== JSON PARSED SUCCESSFULLY ===")
+                print(f"Name: {data.get('name', 'N/A')}")
+                print(f"Parents: {data.get('parents', [])}")
+                print(f"Siblings: {data.get('siblings', [])}")
+                print(f"Spouse: {data.get('spouse', '')}")
+                print(f"Children: {data.get('children', [])}")
+                print("=== END JSON PARSING ===")
+                
+                # Extract data from JSON
+                name = data.get('name', 'Unknown')
+                date_of_birth = data.get('date_of_birth')
+                place_of_birth = data.get('place_of_birth')
+                date_of_death = data.get('date_of_death')
+                place_of_death = data.get('place_of_death')
+                parents = data.get('parents', [])
+                siblings = data.get('siblings', [])
+                spouse = data.get('spouse', '')
+                children = data.get('children', [])
+                wikipedia_url = data.get('wikipedia_url')
+                reasoning = data.get('reasoning', '')
+                
+                # Convert arrays to strings for display
+                parents_str = ', '.join(parents) if parents else 'N/A'
+                siblings_str = ', '.join(siblings) if siblings else 'N/A'
+                spouse_str = spouse if spouse else 'N/A'
+                children_str = ', '.join(children) if children else 'N/A'
+                
+            except json.JSONDecodeError as e:
+                print(f"=== JSON PARSING ERROR ===")
+                print(f"Error: {e}")
+                print(f"Raw response: {guess_text}")
+                print("=== END JSON ERROR ===")
+                # Fallback to old format parsing
+                return self._parse_old_format(guess_text, context, incorrect_names)
             
             # If we have a Wikipedia URL, try to extract an image
+            image_url = "N/A"
             if wikipedia_url and wikipedia_url.lower() != 'n/a':
                 image_url = self._extract_image_from_url(wikipedia_url)
-                if image_url != "N/A":
-                    # Add the image URL to the response
-                    guess_text += f"\nIMAGE_URL: {image_url}"
-            
-            # Extract place information and get coordinates
-            place_of_birth = None
-            place_of_death = None
-            
-            for line in lines:
-                if line.startswith('PLACE OF BIRTH:'):
-                    place_of_birth = line.replace('PLACE OF BIRTH:', '').strip()
-                elif line.startswith('PLACE OF DEATH:'):
-                    place_of_death = line.replace('PLACE OF DEATH:', '').strip()
             
             # Get coordinates for places
             coordinates = {}
@@ -108,13 +144,32 @@ class FamousPersonGuesser:
                 if death_coords:
                     coordinates['deathplace'] = death_coords
             
-            # Add coordinates to response if we have any
-            if coordinates:
-                guess_text += f"\nCOORDINATES: {json.dumps(coordinates)}"
-            
-            return guess_text
+            # Build the final response as JSON
+            final_response = {
+                "name": name,
+                "date_of_birth": date_of_birth,
+                "place_of_birth": place_of_birth,
+                "date_of_death": date_of_death,
+                "place_of_death": place_of_death,
+                "parents": parents,
+                "siblings": siblings,
+                "spouse": spouse,
+                "children": children,
+                "wikipedia_url": wikipedia_url,
+                "reasoning": reasoning,
+                "image_url": image_url if image_url != "N/A" else None,
+                "coordinates": coordinates if coordinates else None
+            }
+
+            return final_response
         except Exception as e:
             return f"Error making guess: {str(e)}"
+    
+    def _parse_old_format(self, guess_text: str, context: str, incorrect_names: list) -> str:
+        """Fallback method to parse the old text format if JSON parsing fails."""
+        lines = guess_text.split('\n')
+        # This is a simplified fallback - you can expand it if needed
+        return guess_text
     
     def _extract_image_from_url(self, url: str) -> str:
         """Extract the best image URL from a given webpage URL."""

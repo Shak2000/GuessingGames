@@ -222,9 +222,38 @@ body {
     color: #0c4a6e;
 }
 
+.family-section {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+    color: #166534;
+}
+
+.family-section h4 {
+    margin: 0 0 10px 0;
+    color: #15803d;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.family-section p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
 .bio-section h4 {
     margin: 0 0 10px 0;
     color: #0369a1;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.family-section h4 {
+    margin: 0 0 10px 0;
+    color: #15803d;
     font-size: 1rem;
     font-weight: 600;
 }
@@ -235,8 +264,18 @@ body {
     line-height: 1.4;
 }
 
+.family-section p {
+    margin: 5px 0;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
 .bio-section strong {
     color: #075985;
+}
+
+.family-section strong {
+    color: #166534;
 }
 
 .wikipedia-link {
