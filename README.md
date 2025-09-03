@@ -10,11 +10,13 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 - 💭 **Detailed Explanations**: Each guess includes both the person's name and reasoning
 - 📸 **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - 📊 **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
+- 👨‍👩‍👧‍👦 **Family Information**: Displays parents, spouse, and children in styled information boxes
 - 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and separate display boxes
 - 📱 **Mobile Friendly**: Works perfectly on desktop and mobile devices
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
+- 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
 
 ## Setup Instructions
 
@@ -76,7 +78,8 @@ The application will be available at `http://localhost:8000`
 3. **Review Guess**: The AI will display its guess with:
    - **Person's Photo**: Automatically extracted from Wikipedia (if available)
    - **Name Box**: The person's name in a blue gradient box
-   - **Biographical Information**: Birth/death dates, places, and Wikipedia link
+   - **Biographical Information**: Birth/death dates, places, and Wikipedia link in a styled box
+   - **Family Information**: Parents, spouse, and children in a matching styled box
    - **Interactive Map**: Google Maps showing birth and death locations with custom markers
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
@@ -101,10 +104,10 @@ FirstAPI/
 ```
 
 ### Key Files:
-- **`main.py`** - Core game logic with Gemini API integration, image extraction, and session management
+- **`main.py`** - Core game logic with Gemini API integration, JSON response format, image extraction, and session management
 - **`app.py`** - FastAPI web server with proper static file serving
 - **`config.py`** - API key configuration (excluded from version control)
-- **`requirements.txt`** - Python dependencies including Beautiful Soup and requests
+- **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
 - **`static/`** - All frontend files organized in a dedicated directory
 
 ## API Endpoints
@@ -132,11 +135,13 @@ FirstAPI/
 
 ## Recent Updates
 
+- ✅ **JSON Response Format**: Backend now returns structured JSON objects for reliable data parsing
+- ✅ **Family Information Display**: Parents, spouse, and children shown in styled information boxes
 - ✅ **Interactive Google Maps**: JavaScript API integration with custom birth/death location markers
 - ✅ **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - ✅ **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
 - ✅ **Enhanced AI Responses**: Now includes both name and detailed reasoning
-- ✅ **Improved UI**: Separate display boxes for name, biographical info, map, and explanation
+- ✅ **Improved UI**: Separate display boxes for name, biographical info, family info, map, and explanation
 - ✅ **Better File Organization**: Static files moved to dedicated `/static` directory
 - ✅ **Updated Gemini Model**: Using `gemini-2.5-flash-lite` for better performance
 - ✅ **Configuration Management**: API keys stored in `config.py` with `.gitignore` protection
@@ -144,6 +149,8 @@ FirstAPI/
 - ✅ **Smart Image Display**: CORS proxy support for Wikipedia images with beautiful styling
 - ✅ **Geocoding Integration**: Automatic conversion of place names to map coordinates
 - ✅ **Map Features**: Interactive zoom, pan, custom markers, and smart bounds fitting
+- ✅ **Robust Error Handling**: Comprehensive safety checks and fallback mechanisms
+- ✅ **Cache-Busting**: Version parameters ensure latest JavaScript files are loaded
 
 ## Troubleshooting
 
@@ -163,16 +170,18 @@ FirstAPI/
 
 ### **Backend:**
 - **FastAPI**: Modern Python web framework for API endpoints
-- **Google Gemini 2.5 Flash Lite**: AI model for person identification and reasoning
+- **Google Gemini 2.5 Flash Lite**: AI model for person identification and reasoning with JSON response format
 - **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
 - **Requests**: HTTP library for web scraping
 - **Google Maps Python Client**: Geocoding API integration for address-to-coordinates conversion
+- **JSON Processing**: Structured data handling with markdown code block parsing
 
 ### **Frontend:**
-- **Vanilla JavaScript**: Interactive game logic and API communication
+- **Vanilla JavaScript**: Interactive game logic and API communication with JSON object handling
 - **Google Maps JavaScript API**: Interactive maps with custom markers and bounds
 - **CSS3**: Modern styling with gradients, animations, and responsive design
 - **HTML5**: Semantic markup with accessibility features
+- **JSON Parsing**: Robust handling of both JSON objects and JSON strings with fallback mechanisms
 
 ### **Image Processing:**
 - **Wikipedia Integration**: Automatic extraction of person photos from Wikipedia pages
@@ -193,5 +202,7 @@ FirstAPI/
 - **Web Scraping**: Respectful scraping with proper headers and rate limiting
 - **Secure API Key Serving**: Google Maps API key is served through backend endpoint to prevent exposure
 - **CORS Handling**: Proper cross-origin resource sharing configuration for external APIs
+- **Input Validation**: Comprehensive type checking and null safety in frontend JavaScript
+- **Error Handling**: Graceful fallback mechanisms for API failures and parsing errors
 
 Enjoy guessing famous people! 🎉
