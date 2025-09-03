@@ -270,24 +270,25 @@ class FamousPersonGame {
             bioInfo += '</div>';
         }
         
-        // Handle Family Info (using JSON arrays)
-        this.guessTextFamily.classList.remove('hidden');
-        this.parentsSection.classList.add('hidden');
-        this.spouseSection.classList.add('hidden');
-        this.childrenSection.classList.add('hidden');
-
-        if (parents && parents.length > 0) {
-            this.parentsList.textContent = parents.join(', ');
-            this.parentsSection.classList.remove('hidden');
+        // Build family information
+        let familyInfo = '';
+        if ((parents && parents.length > 0) || (spouse && spouse !== '') || (children && children.length > 0)) {
+            familyInfo += '<div class="bio-section">';
+            familyInfo += '<h4>Family Information:</h4>';
+            if (parents && parents.length > 0) {
+                familyInfo += `<p><strong>Parents:</strong> ${parents.join(', ')}</p>`;
+            }
+            if (spouse && spouse !== '') {
+                familyInfo += `<p><strong>Spouse:</strong> ${spouse}</p>`;
+            }
+            if (children && children.length > 0) {
+                familyInfo += `<p><strong>Children:</strong> ${children.join(', ')}</p>`;
+            }
+            familyInfo += '</div>';
         }
-        if (spouse && spouse !== '') {
-            this.spouseList.textContent = spouse;
-            this.spouseSection.classList.remove('hidden');
-        }
-        if (children && children.length > 0) {
-            this.childrenList.textContent = children.join(', ');
-            this.childrenSection.classList.remove('hidden');
-        }
+        
+        // Hide the old family sections since we're using the new approach
+        this.guessTextFamily.classList.add('hidden');
         
         // Build image HTML if available
         let imageHtml = '';
@@ -308,13 +309,14 @@ class FamousPersonGame {
             `;
         }
         
-        // Display image, name, and biographical info in the first element
+        // Display image, name, biographical info, and family info in the first element
         this.guessText.innerHTML = `
             ${imageHtml}
             <div class="name-box">
                 <strong>${name}</strong>
             </div>
             ${bioInfo}
+            ${familyInfo}
         `;
         
         // Initialize map if coordinates are available
