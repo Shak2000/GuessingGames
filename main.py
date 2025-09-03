@@ -4,7 +4,8 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-from config import GEMINI_API_KEY
+import googlemaps
+from config import GEMINI_API_KEY, GOOGLE_MAPS_API_KEY
 
 class FamousPersonGuesser:
     def __init__(self):
@@ -15,6 +16,7 @@ class FamousPersonGuesser:
         
         genai.configure(api_key=GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash-lite')
+        self.gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
         self.current_session = None
     
     def start_new_session(self, user_input: str) -> Dict[str, Any]:
@@ -83,6 +85,32 @@ class FamousPersonGuesser:
                 if image_url != "N/A":
                     # Add the image URL to the response
                     guess_text += f"\nIMAGE_URL: {image_url}"
+            
+            # Extract place information and get coordinates
+            place_of_birth = None
+            place_of_death = None
+            
+            for line in lines:
+                if line.startswith('PLACE OF BIRTH:'):
+                    place_of_birth = line.replace('PLACE OF BIRTH:', '').strip()
+                elif line.startswith('PLACE OF DEATH:'):
+                    place_of_death = line.replace('PLACE OF DEATH:', '').strip()
+            
+            # Get coordinates for places
+            coordinates = {}
+            if place_of_birth and place_of_birth.lower() != 'n/a':
+                birth_coords = self._get_place_coordinates(place_of_birth)
+                if birth_coords:
+                    coordinates['birthplace'] = birth_coords
+            
+            if place_of_death and place_of_death.lower() not in ['n/a', 'alive', 'still alive']:
+                death_coords = self._get_place_coordinates(place_of_death)
+                if death_coords:
+                    coordinates['deathplace'] = death_coords
+            
+            # Add coordinates to response if we have any
+            if coordinates:
+                guess_text += f"\nCOORDINATES: {json.dumps(coordinates)}"
             
             return guess_text
         except Exception as e:
@@ -155,6 +183,27 @@ class FamousPersonGuesser:
         except Exception as e:
             print(f"Error extracting image from {url}: {str(e)}")
             return "N/A"
+    
+    def _get_place_coordinates(self, place_name: str) -> Optional[Dict[str, float]]:
+        """Get coordinates for a place using Google Maps Geocoding API."""
+        try:
+            if not place_name or place_name.lower() in ['n/a', 'unknown', '']:
+                return None
+            
+            # Use Google Maps Geocoding API
+            geocode_result = self.gmaps.geocode(place_name)
+            
+            if geocode_result:
+                location = geocode_result[0]['geometry']['location']
+                return {
+                    'lat': location['lat'],
+                    'lng': location['lng']
+                }
+            return None
+            
+        except Exception as e:
+            print(f"Error getting coordinates for {place_name}: {str(e)}")
+            return None
     
     def submit_feedback(self, session_id: int, is_correct: bool) -> Dict[str, Any]:
         """Submit feedback for the current guess and make next guess if incorrect."""

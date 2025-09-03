@@ -71,5 +71,65 @@ async def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "message": "Guess the Famous Person API is running"}
 
+@app.get("/api/maps-key")
+async def get_maps_key():
+    """Get Google Maps API key for frontend use."""
+    from config import GOOGLE_MAPS_API_KEY
+    return {"maps_key": GOOGLE_MAPS_API_KEY}
+
+@app.get("/api/test-maps")
+async def test_maps():
+    """Test Google Maps API key by making a simple request."""
+    try:
+        import googlemaps
+        from config import GOOGLE_MAPS_API_KEY
+        
+        gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
+        # Test with a simple geocoding request
+        result = gmaps.geocode("New York, NY")
+        
+        if result:
+            return {
+                "status": "success", 
+                "message": "Google Maps API key is working",
+                "test_result": "Geocoding successful"
+            }
+        else:
+            return {
+                "status": "error", 
+                "message": "Google Maps API key test failed - no results"
+            }
+    except Exception as e:
+        return {
+            "status": "error", 
+            "message": f"Google Maps API key test failed: {str(e)}"
+        }
+
+@app.get("/api/test-static-map")
+async def test_static_map():
+    """Test Google Maps Static API by making a direct request."""
+    try:
+        import requests
+        from config import GOOGLE_MAPS_API_KEY
+        
+        test_url = f"https://maps.googleapis.com/maps/api/staticmap?center=40.7128,-74.0060&zoom=10&size=100x100&maptype=roadmap&key={GOOGLE_MAPS_API_KEY}"
+        response = requests.get(test_url)
+        
+        if response.status_code == 200:
+            return {
+                "status": "success", 
+                "message": "Google Maps Static API is working",
+                "content_type": response.headers.get('content-type'),
+                "content_length": len(response.content)
+            }
+        else:
+            return {
+                "status": "error", 
+                "message": f"Google Maps Static API failed with status {response.status_code}",
+                "response_text": response.text[:500]  # First 500 chars
+            }
+    except Exception as e:
+        return {"status": "error", "message": f"Google Maps Static API test failed: {str(e)}"}
+
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)

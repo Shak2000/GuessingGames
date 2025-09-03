@@ -4,7 +4,7 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 
 ## Features
 
-- 🤖 **AI-Powered Guessing**: Uses Google Gemini 1.5 Flash API for intelligent person identification
+- 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent person identification (cutoff: January 2024)
 - 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
 - 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
 - 💭 **Detailed Explanations**: Each guess includes both the person's name and reasoning

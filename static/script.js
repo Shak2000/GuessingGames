@@ -1,8 +1,12 @@
 class FamousPersonGame {
     constructor() {
         this.currentSessionId = null;
+        this.mapsApiKey = null;
+        this.map = null;
+        this.googleMapsScriptLoaded = false;
         this.initializeElements();
         this.attachEventListeners();
+        this.loadGoogleMapsScript();
     }
 
     initializeElements() {
@@ -14,6 +18,7 @@ class FamousPersonGame {
         this.gameSection = document.getElementById('gameSection');
         this.guessText = document.getElementById('guessText');
         this.guessTextReasoning = document.getElementById('guessTextReasoning');
+        this.mapEl = document.getElementById('map');
         this.correctBtn = document.getElementById('correctBtn');
         this.incorrectBtn = document.getElementById('incorrectBtn');
         
@@ -73,6 +78,29 @@ class FamousPersonGame {
         }
         
         console.log('Event listeners attached successfully');
+    }
+
+    async loadGoogleMapsScript() {
+        if (this.googleMapsScriptLoaded) return;
+        
+        try {
+            const response = await fetch('/api/maps-key');
+            if (!response.ok) {
+                throw new Error('Could not fetch Google Maps API key.');
+            }
+            const data = await response.json();
+            this.mapsApiKey = data.maps_key;
+
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.mapsApiKey}`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+            this.googleMapsScriptLoaded = true;
+            console.log('Google Maps script loaded successfully');
+        } catch (error) {
+            console.error("Failed to load Google Maps script:", error);
+        }
     }
 
     async startNewGame() {
@@ -176,6 +204,7 @@ class FamousPersonGame {
             let placeOfDeath = '';
             let imageUrl = '';
             let wikipediaUrl = '';
+            let coordinates = '';
             let reasoning = '';
             
             for (const line of lines) {
@@ -193,6 +222,8 @@ class FamousPersonGame {
                     imageUrl = line.replace('IMAGE_URL:', '').trim();
                 } else if (line.startsWith('WIKIPEDIA_URL:')) {
                     wikipediaUrl = line.replace('WIKIPEDIA_URL:', '').trim();
+                } else if (line.startsWith('COORDINATES:')) {
+                    coordinates = line.replace('COORDINATES:', '').trim();
                 } else if (line.startsWith('REASONING:')) {
                     reasoning = line.replace('REASONING:', '').trim();
                 }
@@ -246,6 +277,41 @@ class FamousPersonGame {
                 </div>
                 ${bioInfo}
             `;
+            
+            // Initialize map if coordinates are available
+            if (coordinates && coordinates !== '') {
+                try {
+                    const coordsData = JSON.parse(coordinates);
+                    const birthCoords = coordsData.birthplace ? {
+                        lat: coordsData.birthplace.lat,
+                        lng: coordsData.birthplace.lng
+                    } : null;
+                    const deathCoords = coordsData.deathplace ? {
+                        lat: coordsData.deathplace.lat,
+                        lng: coordsData.deathplace.lng
+                    } : null;
+                    
+                    // Show the map container
+                    if (this.mapEl) {
+                        this.mapEl.style.display = 'block';
+                        this.mapEl.style.height = '300px';
+                        this.mapEl.style.width = '100%';
+                        this.mapEl.style.marginTop = '15px';
+                        this.mapEl.style.borderRadius = '10px';
+                        this.mapEl.style.border = '1px solid #bae6fd';
+                    }
+                    
+                    // Initialize the map
+                    this.initMap(birthCoords, deathCoords);
+                } catch (e) {
+                    console.error('Error parsing coordinates:', e);
+                }
+            } else {
+                // Hide the map container if no coordinates
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'none';
+                }
+            }
             
             // Display reasoning in the second element
             this.guessTextReasoning.innerHTML = `
@@ -310,6 +376,96 @@ class FamousPersonGame {
         this.hideAllSections();
         this.hideLoading();
         this.userInput.focus();
+    }
+
+    initMap(birthCoords, deathCoords) {
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.error("Google Maps script not loaded yet.");
+            if (this.mapEl) {
+                this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
+            }
+            return;
+        }
+
+        if (!this.mapEl) {
+            console.error("Map element not found");
+            return;
+        }
+
+        const mapOptions = {
+            zoom: 2,
+            center: { lat: 20, lng: 0 },
+            mapTypeId: 'terrain'
+        };
+        this.map = new google.maps.Map(this.mapEl, mapOptions);
+
+        const bounds = new google.maps.LatLngBounds();
+        let markerCount = 0;
+        let coordsAreIdentical = false;
+
+        if (birthCoords) {
+            const birthMarker = new google.maps.Marker({
+                position: birthCoords,
+                map: this.map,
+                title: `Birth Place`,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#10B981" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">B</text>
+                        </svg>
+                    `)
+                }
+            });
+            bounds.extend(birthMarker.getPosition());
+            markerCount++;
+        }
+
+        if (deathCoords) {
+            const deathMarker = new google.maps.Marker({
+                position: deathCoords,
+                map: this.map,
+                title: `Death Place`,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#EF4444" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">D</text>
+                        </svg>
+                    `)
+                }
+            });
+            bounds.extend(deathMarker.getPosition());
+            markerCount++;
+        }
+
+        // Check for the edge case of two identical coordinates
+        if (birthCoords && deathCoords && 
+            birthCoords.lat === deathCoords.lat && 
+            birthCoords.lng === deathCoords.lng) {
+            coordsAreIdentical = true;
+        }
+
+        if (markerCount > 1 && !coordsAreIdentical) {
+            // If there are two distinct markers, fit them all
+            this.map.fitBounds(bounds);
+        } else if (markerCount > 0) {
+            // If there is only one marker, or two identical markers
+            this.map.setCenter(bounds.getCenter());
+            this.map.setZoom(5);
+        }
+        // If markerCount is 0, do nothing.
+    }
+    
+    calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // Radius of the Earth in kilometers
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        return R * c;
     }
 
     // Allow starting a new game even during an active session
