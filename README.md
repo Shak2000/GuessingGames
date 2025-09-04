@@ -10,7 +10,7 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 - 💭 **Detailed Explanations**: Each guess includes both the person's name and reasoning
 - 📸 **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - 📊 **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
-- 👨‍👩‍👧‍👦 **Family Information**: Displays parents, spouse, and children in styled information boxes
+- 👨‍👩‍👧‍👦 **Family Information**: Displays parents, siblings, spouse, and children in styled information boxes
 - 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and separate display boxes
 - 📱 **Mobile Friendly**: Works perfectly on desktop and mobile devices
@@ -79,7 +79,7 @@ The application will be available at `http://localhost:8000`
    - **Person's Photo**: Automatically extracted from Wikipedia (if available)
    - **Name Box**: The person's name in a blue gradient box
    - **Biographical Information**: Birth/death dates, places, and Wikipedia link in a styled box
-   - **Family Information**: Parents, spouse, and children in a matching styled box
+   - **Family Information**: Parents, siblings, spouse, and children in a matching styled box
    - **Interactive Map**: Google Maps showing birth and death locations with custom markers
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
@@ -136,7 +136,7 @@ FirstAPI/
 ## Recent Updates
 
 - ✅ **JSON Response Format**: Backend now returns structured JSON objects for reliable data parsing
-- ✅ **Family Information Display**: Parents, spouse, and children shown in styled information boxes
+- ✅ **Family Information Display**: Parents, siblings, spouse, and children shown in styled information boxes
 - ✅ **Interactive Google Maps**: JavaScript API integration with custom birth/death location markers
 - ✅ **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - ✅ **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
