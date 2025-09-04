@@ -60,7 +60,7 @@ class FamousPersonGuesser:
         - 'place_of_death': The person's place of death (city, country), or null if still alive
         - 'parents': An array of strings with parent names, or empty array [] if unknown
         - 'siblings': An array of strings with sibling names, or empty array [] if unknown
-        - 'spouse': A string with spouse name(s), or empty string "" if unknown
+        - 'spouse': An array of strings with spouse names, or empty array [] if unknown
         - 'children': An array of strings with children names, or empty array [] if unknown
         - 'wikipedia_url': Wikipedia URL for this person, or null if not found
         - 'reasoning': Brief explanation of why you think this is the correct person based on the information provided
@@ -108,7 +108,7 @@ class FamousPersonGuesser:
                 place_of_death = data.get('place_of_death')
                 parents = data.get('parents', [])
                 siblings = data.get('siblings', [])
-                spouse = data.get('spouse', '')
+                spouse = data.get('spouse', [])
                 children = data.get('children', [])
                 wikipedia_url = data.get('wikipedia_url')
                 reasoning = data.get('reasoning', '')
@@ -116,7 +116,7 @@ class FamousPersonGuesser:
                 # Convert arrays to strings for display
                 parents_str = ', '.join(parents) if parents else 'N/A'
                 siblings_str = ', '.join(siblings) if siblings else 'N/A'
-                spouse_str = spouse if spouse else 'N/A'
+                spouse_str = ', '.join(spouse) if spouse else 'N/A'
                 children_str = ', '.join(children) if children else 'N/A'
                 
             except json.JSONDecodeError as e:

@@ -244,7 +244,7 @@ class FamousPersonGame {
         const placeOfDeath = data.place_of_death;
         const parents = data.parents || [];
         const siblings = data.siblings || [];
-        const spouse = data.spouse || '';
+        const spouse = data.spouse || [];
         const children = data.children || [];
         const imageUrl = data.image_url;
         const wikipediaUrl = data.wikipedia_url;
@@ -274,7 +274,7 @@ class FamousPersonGame {
         
         // Build family information
         let familyInfo = '';
-        if ((parents && parents.length > 0) || (siblings && siblings.length > 0) || (spouse && spouse !== '') || (children && children.length > 0)) {
+        if ((parents && parents.length > 0) || (siblings && siblings.length > 0) || (spouse && (Array.isArray(spouse) ? spouse.length > 0 : spouse !== '')) || (children && children.length > 0)) {
             familyInfo += '<div class="bio-section">';
             familyInfo += '<h4>Family Information:</h4>';
             if (parents && parents.length > 0) {
@@ -284,13 +284,30 @@ class FamousPersonGame {
                 familyInfo += `<p><strong>Parents:</strong> ${clickableParents}</p>`;
             }
             if (siblings && siblings.length > 0) {
-                familyInfo += `<p><strong>Siblings:</strong> ${siblings.join(', ')}</p>`;
+                const clickableSiblings = siblings.map(sibling => 
+                    `<span class="clickable-name" data-name="${sibling.trim()}">${sibling.trim()}</span>`
+                ).join(', ');
+                familyInfo += `<p><strong>Siblings:</strong> ${clickableSiblings}</p>`;
             }
-            if (spouse && spouse !== '') {
-                familyInfo += `<p><strong>Spouse:</strong> ${spouse}</p>`;
+            if (spouse && (Array.isArray(spouse) ? spouse.length > 0 : spouse !== '')) {
+                // Handle both array format (new) and string format (old)
+                let spouses;
+                if (Array.isArray(spouse)) {
+                    spouses = spouse;
+                } else {
+                    // Handle multiple spouses in string format (split by comma if multiple)
+                    spouses = spouse.includes(',') ? spouse.split(',').map(s => s.trim()) : [spouse.trim()];
+                }
+                const clickableSpouses = spouses.map(spouseItem => 
+                    `<span class="clickable-name" data-name="${spouseItem.trim()}">${spouseItem.trim()}</span>`
+                ).join(', ');
+                familyInfo += `<p><strong>Spouse:</strong> ${clickableSpouses}</p>`;
             }
             if (children && children.length > 0) {
-                familyInfo += `<p><strong>Children:</strong> ${children.join(', ')}</p>`;
+                const clickableChildren = children.map(child => 
+                    `<span class="clickable-name" data-name="${child.trim()}">${child.trim()}</span>`
+                ).join(', ');
+                familyInfo += `<p><strong>Children:</strong> ${clickableChildren}</p>`;
             }
             familyInfo += '</div>';
         }
