@@ -262,67 +262,109 @@ class FamousPersonGuesser:
     
     def submit_feedback(self, session_id: int, is_correct: bool) -> Dict[str, Any]:
         """Submit feedback for the current guess and make next guess if incorrect."""
-        if not self.current_session or self.current_session['session_id'] != session_id:
-            return {'error': 'Invalid session'}
-        
-        # Update the last guess with feedback
-        if self.current_session['guesses']:
-            # Convert the last guess to a dictionary if it's a string
-            last_guess = self.current_session['guesses'][-1]
-            if isinstance(last_guess, str):
-                self.current_session['guesses'][-1] = {
-                    'guess': last_guess,
-                    'is_correct': is_correct
+        try:
+            if not self.current_session or self.current_session['session_id'] != session_id:
+                return {'error': 'Invalid session'}
+            
+            # Update the last guess with feedback
+            if self.current_session['guesses']:
+                # Get the last guess and handle feedback
+                last_guess = self.current_session['guesses'][-1]
+                
+                # Handle different guess formats
+                if isinstance(last_guess, str):
+                    # Old text format - wrap in dictionary
+                    self.current_session['guesses'][-1] = {
+                        'guess': last_guess,
+                        'is_correct': is_correct
+                    }
+                    guess_data = last_guess
+                elif isinstance(last_guess, dict):
+                    # Check if it's already wrapped (has 'guess' key) or direct JSON object
+                    if 'guess' in last_guess:
+                        # Already wrapped format
+                        last_guess['is_correct'] = is_correct
+                        guess_data = last_guess['guess']
+                    else:
+                        # Direct JSON object - wrap it
+                        self.current_session['guesses'][-1] = {
+                            'guess': last_guess,
+                            'is_correct': is_correct
+                        }
+                        guess_data = last_guess
+                
+                # If incorrect, add the name to the incorrect list
+                if not is_correct:
+                    incorrect_name = None
+                    
+                    # Handle JSON object format
+                    if isinstance(guess_data, dict):
+                        incorrect_name = guess_data.get('name')
+                    # Handle text format with NAME: prefix
+                    elif isinstance(guess_data, str) and 'NAME:' in guess_data:
+                        lines = guess_data.split('\n')
+                        for line in lines:
+                            if line.startswith('NAME:'):
+                                incorrect_name = line.replace('NAME:', '').strip()
+                                break
+                    
+                    # Add to incorrect names list if we found a name
+                    if incorrect_name and incorrect_name not in self.current_session['incorrect_names']:
+                        self.current_session['incorrect_names'].append(incorrect_name)
+            
+            if is_correct:
+                # Game won!
+                return {
+                    'session_id': session_id,
+                    'guess': None,
+                    'is_correct': True,
+                    'game_over': True,
+                    'message': 'Congratulations! I guessed correctly!'
                 }
             else:
-                self.current_session['guesses'][-1]['is_correct'] = is_correct
-            
-            # If incorrect, add the name to the incorrect list
-            if not is_correct:
-                # Extract the name from the guess
-                guess_text = last_guess if isinstance(last_guess, str) else last_guess['guess']
-                if 'NAME:' in guess_text:
-                    lines = guess_text.split('\n')
-                    for line in lines:
-                        if line.startswith('NAME:'):
-                            incorrect_name = line.replace('NAME:', '').strip()
-                            if incorrect_name and incorrect_name not in self.current_session['incorrect_names']:
-                                self.current_session['incorrect_names'].append(incorrect_name)
-                            break
-        
-        if is_correct:
-            # Game won!
-            return {
-                'session_id': session_id,
-                'guess': None,
-                'is_correct': True,
-                'game_over': True,
-                'message': 'Congratulations! I guessed correctly!'
-            }
-        else:
-            # Make another guess
-            # Build context from original input and previous incorrect guesses
-            context = self.current_session['user_input']
-            incorrect_guesses = []
-            for g in self.current_session['guesses']:
-                if isinstance(g, dict) and g.get('is_correct') == False:
-                    incorrect_guesses.append(g['guess'])
-                elif isinstance(g, str):
-                    # Handle old format where guesses were just strings
-                    incorrect_guesses.append(g)
-            
-            if incorrect_guesses:
-                context += f" (Previous incorrect guesses: {', '.join(incorrect_guesses)})"
-            
-            new_guess = self._make_guess(context, self.current_session['incorrect_names'])
-            self.current_session['guesses'].append(new_guess)
-            
-            return {
-                'session_id': session_id,
-                'guess': new_guess,
-                'is_correct': None,
-                'game_over': False
-            }
+                # Make another guess
+                # Build context from original input and previous incorrect guesses
+                context = self.current_session['user_input']
+                incorrect_guess_names = []
+                for g in self.current_session['guesses']:
+                    if isinstance(g, dict) and g.get('is_correct') == False:
+                        guess_data = g['guess']
+                        # Extract name from guess data
+                        if isinstance(guess_data, dict):
+                            name = guess_data.get('name', 'Unknown')
+                            incorrect_guess_names.append(name)
+                        elif isinstance(guess_data, str):
+                            # Handle old text format
+                            if 'NAME:' in guess_data:
+                                lines = guess_data.split('\n')
+                                for line in lines:
+                                    if line.startswith('NAME:'):
+                                        name = line.replace('NAME:', '').strip()
+                                        incorrect_guess_names.append(name)
+                                        break
+                            else:
+                                incorrect_guess_names.append(guess_data)
+                    elif isinstance(g, str):
+                        # Handle old format where guesses were just strings
+                        incorrect_guess_names.append(g)
+                
+                if incorrect_guess_names:
+                    context += f" (Previous incorrect guesses: {', '.join(incorrect_guess_names)})"
+                
+                new_guess = self._make_guess(context, self.current_session['incorrect_names'])
+                self.current_session['guesses'].append(new_guess)
+                
+                return {
+                    'session_id': session_id,
+                    'guess': new_guess,
+                    'is_correct': None,
+                    'game_over': False
+                }
+        except Exception as e:
+            print(f"Error in submit_feedback: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return {'error': f'Error processing feedback: {str(e)}'}
     
     def get_session_status(self, session_id: int) -> Dict[str, Any]:
         """Get the current status of a session."""
