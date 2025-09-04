@@ -26,6 +26,8 @@ class FamousPersonGame {
         // Family elements
         this.parentsSection = document.getElementById('parentsSection');
         this.parentsList = document.getElementById('parentsList');
+        this.siblingsSection = document.getElementById('siblingsSection');
+        this.siblingsList = document.getElementById('siblingsList');
         this.spouseSection = document.getElementById('spouseSection');
         this.spouseList = document.getElementById('spouseList');
         this.childrenSection = document.getElementById('childrenSection');
@@ -272,11 +274,14 @@ class FamousPersonGame {
         
         // Build family information
         let familyInfo = '';
-        if ((parents && parents.length > 0) || (spouse && spouse !== '') || (children && children.length > 0)) {
+        if ((parents && parents.length > 0) || (siblings && siblings.length > 0) || (spouse && spouse !== '') || (children && children.length > 0)) {
             familyInfo += '<div class="bio-section">';
             familyInfo += '<h4>Family Information:</h4>';
             if (parents && parents.length > 0) {
                 familyInfo += `<p><strong>Parents:</strong> ${parents.join(', ')}</p>`;
+            }
+            if (siblings && siblings.length > 0) {
+                familyInfo += `<p><strong>Siblings:</strong> ${siblings.join(', ')}</p>`;
             }
             if (spouse && spouse !== '') {
                 familyInfo += `<p><strong>Spouse:</strong> ${spouse}</p>`;
@@ -584,12 +589,17 @@ class FamousPersonGame {
             // Handle Family Info (old format - strings)
             this.guessTextFamily.classList.remove('hidden');
             this.parentsSection.classList.add('hidden');
+            this.siblingsSection.classList.add('hidden');
             this.spouseSection.classList.add('hidden');
             this.childrenSection.classList.add('hidden');
 
             if (parents && parents.toLowerCase() !== 'n/a' && parents !== '') {
                 this.parentsList.textContent = parents;
                 this.parentsSection.classList.remove('hidden');
+            }
+            if (siblings && siblings.toLowerCase() !== 'n/a' && siblings !== '') {
+                this.siblingsList.textContent = siblings;
+                this.siblingsSection.classList.remove('hidden');
             }
             if (spouse && spouse.toLowerCase() !== 'n/a' && spouse !== '') {
                 this.spouseList.textContent = spouse;
