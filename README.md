@@ -14,6 +14,7 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 - 🔗 **Multiple Spouse Support**: Properly handles and displays people with multiple marriages individually
 - 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and separate display boxes
+- 🖼️ **Custom Favicon**: Displays a custom favicon in browser tabs with multiple format support
 - 📱 **Mobile Friendly**: Works perfectly on desktop and mobile devices
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
@@ -102,7 +103,9 @@ FirstAPI/
 └── static/             # Frontend files
     ├── index.html      # Main web interface
     ├── styles.css      # Modern styling and responsive design
-    └── script.js       # Frontend JavaScript logic
+    ├── script.js       # Frontend JavaScript logic
+    ├── favicon.ico     # App favicon (ICO format)
+    └── favicon.png     # App favicon (PNG format)
 ```
 
 ### Key Files:
@@ -122,8 +125,9 @@ FirstAPI/
 - `GET /api/maps-key` - Securely serves Google Maps API key to frontend
 - `GET /api/test-maps` - Tests Google Maps API key functionality
 - `GET /api/test-static-map` - Tests Google Maps Static API (for debugging)
-- `GET /static/*` - Serves static files (CSS, JS, images)
-- `GET /favicon.ico` - Serves favicon
+- `GET /static/*` - Serves static files (CSS, JS, images, favicons)
+- `GET /favicon.ico` - Serves app favicon (ICO format)
+- `GET /favicon.png` - Serves app favicon (PNG format)
 - `GET /.well-known/appspecific/com.chrome.devtools.json` - Chrome DevTools config
 
 ## Tips for Better Results
@@ -138,6 +142,7 @@ FirstAPI/
 
 ## Recent Updates
 
+- ✅ **Custom Favicon Support**: App now displays a custom favicon in browser tabs with both ICO and PNG format support
 - ✅ **Interactive Family Tree Navigation**: All family members (parents, siblings, spouses, children) are clickable for seamless exploration
 - ✅ **Multiple Spouse Support**: Properly handles people with multiple marriages as individual clickable items
 - ✅ **JSON Response Format**: Backend now returns structured JSON objects for reliable data parsing
