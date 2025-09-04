@@ -10,7 +10,8 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 - 💭 **Detailed Explanations**: Each guess includes both the person's name and reasoning
 - 📸 **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - 📊 **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
-- 👨‍👩‍👧‍👦 **Family Information**: Displays parents, siblings, spouse, and children in styled information boxes
+- 👨‍👩‍👧‍👦 **Interactive Family Tree**: Displays parents, siblings, spouses, and children with clickable names for navigation
+- 🔗 **Multiple Spouse Support**: Properly handles and displays people with multiple marriages individually
 - 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and separate display boxes
 - 📱 **Mobile Friendly**: Works perfectly on desktop and mobile devices
@@ -79,13 +80,14 @@ The application will be available at `http://localhost:8000`
    - **Person's Photo**: Automatically extracted from Wikipedia (if available)
    - **Name Box**: The person's name in a blue gradient box
    - **Biographical Information**: Birth/death dates, places, and Wikipedia link in a styled box
-   - **Family Information**: Parents, siblings, spouse, and children in a matching styled box
+   - **Interactive Family Tree**: Parents, siblings, spouses, and children with clickable names for exploration
    - **Interactive Map**: Google Maps showing birth and death locations with custom markers
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
-6. **Victory**: When the AI guesses correctly, you'll see a victory message!
-7. **New Game**: Start fresh anytime by entering new information
+6. **Explore Family Tree**: Click any family member's name to start a new search for that person
+7. **Victory**: When the AI guesses correctly, you'll see a victory message!
+8. **New Game**: Start fresh anytime by entering new information
 
 ## File Structure
 
@@ -131,12 +133,15 @@ FirstAPI/
 - **Add Context**: Include time periods, locations, or fields of work
 - **Be Distinctive**: The more unique the information, the better the AI can guess
 - **Try Different Angles**: If the first guess is wrong, the AI learns and improves
+- **Explore Family Trees**: Click on family member names to discover related famous people
 - **Start Fresh**: You can begin a new game anytime with different information
 
 ## Recent Updates
 
+- ✅ **Interactive Family Tree Navigation**: All family members (parents, siblings, spouses, children) are clickable for seamless exploration
+- ✅ **Multiple Spouse Support**: Properly handles people with multiple marriages as individual clickable items
 - ✅ **JSON Response Format**: Backend now returns structured JSON objects for reliable data parsing
-- ✅ **Family Information Display**: Parents, siblings, spouse, and children shown in styled information boxes
+- ✅ **Enhanced Family Information**: Parents, siblings, spouses, and children shown in styled information boxes
 - ✅ **Interactive Google Maps**: JavaScript API integration with custom birth/death location markers
 - ✅ **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - ✅ **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
@@ -177,7 +182,7 @@ FirstAPI/
 - **JSON Processing**: Structured data handling with markdown code block parsing
 
 ### **Frontend:**
-- **Vanilla JavaScript**: Interactive game logic and API communication with JSON object handling
+- **Vanilla JavaScript**: Interactive game logic, family tree navigation, and API communication with JSON object handling
 - **Google Maps JavaScript API**: Interactive maps with custom markers and bounds
 - **CSS3**: Modern styling with gradients, animations, and responsive design
 - **HTML5**: Semantic markup with accessibility features
