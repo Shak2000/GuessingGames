@@ -278,7 +278,10 @@ class FamousPersonGame {
             familyInfo += '<div class="bio-section">';
             familyInfo += '<h4>Family Information:</h4>';
             if (parents && parents.length > 0) {
-                familyInfo += `<p><strong>Parents:</strong> ${parents.join(', ')}</p>`;
+                const clickableParents = parents.map(parent => 
+                    `<span class="clickable-name" data-name="${parent.trim()}">${parent.trim()}</span>`
+                ).join(', ');
+                familyInfo += `<p><strong>Parents:</strong> ${clickableParents}</p>`;
             }
             if (siblings && siblings.length > 0) {
                 familyInfo += `<p><strong>Siblings:</strong> ${siblings.join(', ')}</p>`;
@@ -323,6 +326,9 @@ class FamousPersonGame {
             ${bioInfo}
             ${familyInfo}
         `;
+        
+        // Add event listeners for clickable parent names
+        this.setupClickableNames();
         
         // Initialize map if coordinates are available
         if (coordinates && coordinates !== null) {
@@ -513,6 +519,22 @@ class FamousPersonGame {
         this.startNewGame();
     }
 
+    setupClickableNames() {
+        // Add event listeners to all clickable names
+        const clickableNames = document.querySelectorAll('.clickable-name');
+        clickableNames.forEach(nameElement => {
+            nameElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const personName = nameElement.getAttribute('data-name');
+                if (personName) {
+                    // Clear the input and start a new search for this person
+                    this.userInput.value = personName;
+                    this.startNewGame();
+                }
+            });
+        });
+    }
+
     displayGuessOldFormat(guess) {
         // Safety check
         if (guess === null || guess === undefined) {
@@ -677,6 +699,9 @@ class FamousPersonGame {
                     ${reasoning}
                 </div>
             `;
+            
+            // Add event listeners for clickable names (in case any were added)
+            this.setupClickableNames();
         } else {
             // Fallback for old format or error messages
             this.guessText.textContent = guess;

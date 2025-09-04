@@ -529,3 +529,16 @@ body {
         padding: 20px;
     }
 }
+
+/* Clickable Names Styling */
+.clickable-name {
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.clickable-name:hover {
+    color: #1d4ed8;
+    text-decoration: none;
+}
