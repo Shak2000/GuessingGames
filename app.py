@@ -15,6 +15,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 async def get_favicon():
     return FileResponse("static/favicon.ico", media_type="image/x-icon")
 
+@app.get("/favicon.png")
+async def get_favicon_png():
+    return FileResponse("static/favicon.png", media_type="image/png")
+
 @app.get("/.well-known/appspecific/com.chrome.devtools.json")
 async def get_chrome_devtools_config():
     """Handle Chrome DevTools configuration request to prevent 404 logs."""
