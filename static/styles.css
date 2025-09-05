@@ -564,13 +564,15 @@ body {
     text-decoration: none;
 }
 
+/* --- MODIFIED STYLES START HERE --- */
+
 /* Navigation Toolbar Styles */
 .toolbar {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    padding: 0;
-    margin-bottom: 20px;
+    background: linear-gradient(135deg, #3730a3 0%, #5b21b6 100%); /* Darker background */
+    padding: 5px; /* Added padding to prevent content clipping */
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+    /* margin-bottom has been removed */
 }
 
 .toolbar-content {
@@ -584,17 +586,17 @@ body {
     display: flex;
     align-items: center;
     padding: 15px 25px;
-    color: rgba(255, 255, 255, 0.8);
+    color: white; /* Changed to solid white */
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.3s ease;
     border-radius: 12px;
-    margin: 2px;
+    /* margin has been removed */
 }
 
 .toolbar-item:hover {
-    color: white;
+    color: rgba(255, 255, 255, 0.85); /* Slightly dimmer white on hover */
     background: rgba(255, 255, 255, 0.1);
     text-decoration: none;
 }
@@ -604,6 +606,9 @@ body {
     background: rgba(255, 255, 255, 0.15);
     font-weight: 600;
 }
+
+/* --- MODIFIED STYLES END HERE --- */
+
 
 /* Home Page Game Grid Styles */
 .game-grid {
