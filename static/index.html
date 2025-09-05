@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Famous Person</title>
+    <title>Multi-Game App - Home</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" href="/favicon.ico">
@@ -12,85 +12,66 @@
 </head>
 <body>
     <div class="container">
+        <!-- Navigation Toolbar -->
+        <nav class="toolbar">
+            <div class="toolbar-content">
+                <a href="/" class="toolbar-item active">🏠 Home</a>
+                <a href="/person" class="toolbar-item">🎭 Guess the Famous Person</a>
+                <a href="/game2" class="toolbar-item">🎮 Game 2</a>
+            </div>
+        </nav>
+
         <header class="header">
-            <h1 class="title">🎭 Guess the Famous Person</h1>
-            <p class="subtitle">Enter information about a famous person and I'll try to guess who it is!</p>
+            <h1 class="title">🎮 Multi-Game App</h1>
+            <p class="subtitle">Choose a game to play from the options below!</p>
         </header>
 
         <main class="main-content">
-            <div class="input-section">
-                <div class="input-group">
-                    <label for="userInput" class="input-label">Tell me about the famous person:</label>
-                    <textarea 
-                        id="userInput" 
-                        class="input-textarea" 
-                        placeholder="e.g., 'This person was a famous scientist who developed the theory of relativity and won a Nobel Prize in Physics in 1921...'"
-                        rows="4"
-                    ></textarea>
+            <div class="game-grid">
+                <div class="game-card">
+                    <div class="game-card-header">
+                        <h2 class="game-title">🎭 Guess the Famous Person</h2>
+                    </div>
+                    <div class="game-card-content">
+                        <p class="game-description">
+                            Enter information about a famous person and let our AI try to guess who it is! 
+                            Features include biographical information, family trees, interactive maps, and detailed explanations.
+                        </p>
+                        <div class="game-features">
+                            <span class="feature-tag">🤖 AI-Powered</span>
+                            <span class="feature-tag">👨‍👩‍👧‍👦 Family Trees</span>
+                            <span class="feature-tag">🗺️ Interactive Maps</span>
+                            <span class="feature-tag">📸 Auto Images</span>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="/person" class="btn btn-primary">Play Now</a>
+                    </div>
                 </div>
-                <button id="submitBtn" class="btn btn-primary">Submit Information</button>
-            </div>
 
-            <div id="gameSection" class="game-section hidden">
-                <div class="guess-display">
-                    <h3 class="guess-title">My Guess:</h3>
-                                    <div id="guessText" class="guess-text"></div>
-                                    <div id="guessTextOverview" class="guess-text overview-section"></div>
-                                    <div id="guessTextFamily" class="guess-text">
-                                        <div id="parentsSection" class="family-section hidden">
-                                            <h4>Parents</h4>
-                                            <p id="parentsList"></p>
-                                        </div>
-                                        <div id="siblingsSection" class="family-section hidden">
-                                            <h4>Siblings</h4>
-                                            <p id="siblingsList"></p>
-                                        </div>
-                                        <div id="spouseSection" class="family-section hidden">
-                                            <h4>Spouse</h4>
-                                            <p id="spouseList"></p>
-                                        </div>
-                                        <div id="childrenSection" class="family-section hidden">
-                                            <h4>Children</h4>
-                                            <p id="childrenList"></p>
-                                        </div>
-                                    </div>
-                <div id="guessTextReasoning" class="guess-text"></div>
-                <div id="map" class="map-container" style="display: none;"></div>
-                </div>
-                
-                <div class="feedback-buttons">
-                    <button id="correctBtn" class="btn btn-success">✅ Correct!</button>
-                    <button id="incorrectBtn" class="btn btn-danger">❌ Incorrect</button>
-                </div>
-            </div>
-
-            <div id="victorySection" class="victory-section hidden">
-                <div class="victory-content">
-                    <h2 class="victory-title">🎉 Victory!</h2>
-                    <p class="victory-message">I guessed correctly! Thanks for playing!</p>
-                    <button id="newGameBtn" class="btn btn-primary">Start New Game</button>
-                </div>
-            </div>
-
-            <div id="loadingSection" class="loading-section hidden">
-                <div class="loading-spinner"></div>
-                <p class="loading-text">Thinking...</p>
-            </div>
-
-            <div id="errorSection" class="error-section hidden">
-                <div class="error-content">
-                    <h3 class="error-title">⚠️ Error</h3>
-                    <p id="errorMessage" class="error-message"></p>
-                    <button id="dismissErrorBtn" class="btn btn-secondary">Dismiss</button>
+                <div class="game-card">
+                    <div class="game-card-header">
+                        <h2 class="game-title">🎮 Game 2</h2>
+                    </div>
+                    <div class="game-card-content">
+                        <p class="game-description">
+                            Coming soon! Another exciting game will be available here. 
+                            Stay tuned for more interactive experiences.
+                        </p>
+                        <div class="game-features">
+                            <span class="feature-tag coming-soon">🚧 Coming Soon</span>
+                        </div>
+                    </div>
+                    <div class="game-card-footer">
+                        <a href="/game2" class="btn btn-secondary">Preview</a>
+                    </div>
                 </div>
             </div>
         </main>
 
         <footer class="footer">
-            <p>Powered by Google Gemini AI</p>
+            <p>Multi-Game Platform - Powered by AI</p>
         </footer>
     </div>
-
-    <script src="/static/script.js?v=6"></script>
 </body>
 </html>

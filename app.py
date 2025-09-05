@@ -4,9 +4,10 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from typing import Optional
 import uvicorn
-from main import guesser
+from person import guesser
+from game2 import game2_logic
 
-app = FastAPI(title="Guess the Famous Person", version="1.0.0")
+app = FastAPI(title="Multi-Game App", version="1.0.0")
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -31,10 +32,27 @@ class Feedback(BaseModel):
     session_id: int
     is_correct: bool
 
+class Game2Input(BaseModel):
+    text: str
+
+class Game2Action(BaseModel):
+    session_id: int
+    action: str
+
 @app.get("/")
 async def read_index():
-    """Serve the main HTML page."""
+    """Serve the home page."""
     return FileResponse("static/index.html")
+
+@app.get("/person")
+async def read_person_game():
+    """Serve the Guess the Famous Person game page."""
+    return FileResponse("static/person.html")
+
+@app.get("/game2")
+async def read_game2():
+    """Serve the Game 2 page."""
+    return FileResponse("static/game2.html")
 
 @app.post("/api/start-guess")
 async def start_guess(user_input: UserInput):
@@ -69,6 +87,41 @@ async def get_session_status(session_id: int):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting session status: {str(e)}")
+
+# Game 2 API Routes
+@app.post("/api/game2/start")
+async def start_game2(user_input: Game2Input):
+    """Start a new Game 2 session."""
+    try:
+        if not user_input.text.strip():
+            raise HTTPException(status_code=400, detail="Input text cannot be empty")
+        
+        result = game2_logic.start_new_session(user_input.text.strip())
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error starting Game 2: {str(e)}")
+
+@app.post("/api/game2/action")
+async def process_game2_action(action_data: Game2Action):
+    """Process an action in Game 2."""
+    try:
+        result = game2_logic.process_action(action_data.session_id, action_data.action)
+        if 'error' in result:
+            raise HTTPException(status_code=400, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error processing Game 2 action: {str(e)}")
+
+@app.get("/api/game2/session/{session_id}")
+async def get_game2_session(session_id: int):
+    """Get Game 2 session information."""
+    try:
+        result = game2_logic.get_session(session_id)
+        if 'error' in result:
+            raise HTTPException(status_code=404, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting Game 2 session: {str(e)}")
 
 @app.get("/api/health")
 async def health_check():
