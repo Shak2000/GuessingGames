@@ -1,9 +1,17 @@
-# Guess the Famous Person 🎭
+# Multi-Game App 🎮
 
-A fun web application that uses Google's Gemini AI to guess famous people based on user-provided information. The AI makes intelligent guesses with detailed explanations and learns from feedback to improve its accuracy.
+A modern web platform featuring multiple interactive games powered by AI. Choose from our collection of engaging games including the famous person guessing game with Google Gemini AI integration. The platform offers intelligent gameplay with detailed explanations, learning systems, and rich multimedia experiences.
 
 ## Features
 
+### Platform Features
+- 🎮 **Multi-Game Platform**: Choose from multiple interactive games in one unified platform
+- 🧭 **Easy Navigation**: Seamless navigation between games with persistent toolbar
+- 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and consistent styling
+- 🖼️ **Custom Branding**: Custom favicon support with multiple format compatibility
+- 📱 **Mobile Friendly**: Fully responsive design that works perfectly on all devices
+
+### Guess the Famous Person Game
 - 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent person identification (cutoff: January 2024)
 - 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
 - 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
@@ -14,12 +22,15 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 - 👨‍👩‍👧‍👦 **Interactive Family Tree**: Displays parents, siblings, spouses, and children with clickable names for navigation
 - 🔗 **Multiple Spouse Support**: Properly handles and displays people with multiple marriages individually
 - 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
-- 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and separate display boxes
-- 🖼️ **Custom Favicon**: Displays a custom favicon in browser tabs with multiple format support
-- 📱 **Mobile Friendly**: Works perfectly on desktop and mobile devices
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
 - 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
+
+### Game 2 (Coming Soon)
+- 🎮 **Placeholder Implementation**: Framework ready for second game development
+- 🚧 **Under Construction**: Preview interface with planned interactive features
+- 📊 **Progress Tracking**: Session management system ready for implementation
+- 🎨 **Consistent Design**: Matches platform UI standards when completed
 
 ## Setup Instructions
 
@@ -76,6 +87,12 @@ The application will be available at `http://localhost:8000`
 
 ## How to Use
 
+### Getting Started
+1. **Choose a Game**: Visit the home page and select from available games using the game selection cards
+2. **Navigate**: Use the navigation toolbar at the top to switch between games anytime
+3. **Play**: Each game has its own unique interface and rules
+
+### Guess the Famous Person Game
 1. **Enter Information**: Type information about a famous person in the text area
 2. **Submit**: Click "Submit Information" or press Ctrl+Enter
 3. **Review Guess**: The AI will display its guess with:
@@ -92,18 +109,26 @@ The application will be available at `http://localhost:8000`
 7. **Victory**: When the AI guesses correctly, you'll see a victory message!
 8. **New Game**: Start fresh anytime by entering new information
 
+### Game 2 (Coming Soon)
+- **Preview**: Visit the Game 2 page to see the placeholder interface
+- **Features**: Check out planned features and current development status
+- **Stay Tuned**: Return later for the full game implementation
+
 ## File Structure
 
 ```
 FirstAPI/
-├── main.py              # Core logic with Gemini API integration
-├── app.py               # FastAPI web server and endpoints
+├── app.py               # Main FastAPI application with multi-game routing
+├── person.py            # Guess the Famous Person game logic with Gemini AI integration
+├── game2.py             # Game 2 placeholder implementation
 ├── config.py            # API key configuration
 ├── requirements.txt     # Python dependencies
 ├── README.md           # This file
 ├── .gitignore          # Git ignore rules
 └── static/             # Frontend files
-    ├── index.html      # Main web interface
+    ├── index.html      # Home page with game selection
+    ├── person.html     # Guess the Famous Person game interface
+    ├── game2.html      # Game 2 placeholder interface
     ├── styles.css      # Modern styling and responsive design
     ├── script.js       # Frontend JavaScript logic
     ├── favicon.ico     # App favicon (ICO format)
@@ -111,26 +136,40 @@ FirstAPI/
 ```
 
 ### Key Files:
-- **`main.py`** - Core game logic with Gemini API integration, JSON response format, overview generation, image extraction, and session management
-- **`app.py`** - FastAPI web server with proper static file serving
+- **`app.py`** - Main FastAPI application with multi-game routing and API endpoints
+- **`person.py`** - Guess the Famous Person game logic with Gemini AI integration, JSON response format, overview generation, image extraction, and session management
+- **`game2.py`** - Game 2 placeholder implementation with session management framework
 - **`config.py`** - API key configuration (excluded from version control)
 - **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
+- **`static/index.html`** - Home page with game selection grid
+- **`static/person.html`** - Guess the Famous Person game interface
+- **`static/game2.html`** - Game 2 placeholder interface with preview features
 - **`static/`** - All frontend files organized in a dedicated directory
 
 ## API Endpoints
 
-- `GET /` - Serves the main HTML page
-- `POST /api/start-guess` - Starts a new guessing session
-- `POST /api/submit-feedback` - Submits feedback for a guess
-- `GET /api/session/{session_id}` - Gets session status
+### Core Platform Endpoints
+- `GET /` - Serves the home page with game selection
+- `GET /person` - Serves the Guess the Famous Person game page
+- `GET /game2` - Serves the Game 2 page
 - `GET /api/health` - Health check endpoint
-- `GET /api/maps-key` - Securely serves Google Maps API key to frontend
-- `GET /api/test-maps` - Tests Google Maps API key functionality
-- `GET /api/test-static-map` - Tests Google Maps Static API (for debugging)
 - `GET /static/*` - Serves static files (CSS, JS, images, favicons)
 - `GET /favicon.ico` - Serves app favicon (ICO format)
 - `GET /favicon.png` - Serves app favicon (PNG format)
 - `GET /.well-known/appspecific/com.chrome.devtools.json` - Chrome DevTools config
+
+### Guess the Famous Person Game
+- `POST /api/start-guess` - Starts a new guessing session
+- `POST /api/submit-feedback` - Submits feedback for a guess
+- `GET /api/session/{session_id}` - Gets session status
+- `GET /api/maps-key` - Securely serves Google Maps API key to frontend
+- `GET /api/test-maps` - Tests Google Maps API key functionality
+- `GET /api/test-static-map` - Tests Google Maps Static API (for debugging)
+
+### Game 2 (Placeholder)
+- `POST /api/game2/start` - Starts a new Game 2 session
+- `POST /api/game2/action` - Processes an action in Game 2
+- `GET /api/game2/session/{session_id}` - Gets Game 2 session information
 
 ## Tips for Better Results
 
@@ -144,6 +183,16 @@ FirstAPI/
 
 ## Recent Updates
 
+### Platform Transformation (Latest)
+- 🎮 **Multi-Game Platform**: Transformed from single game to multi-game platform with unified navigation
+- 🏠 **Home Page**: New game selection interface with feature cards and descriptions
+- 🧭 **Navigation Toolbar**: Persistent navigation across all games with active state indicators
+- 🎯 **Game 2 Framework**: Complete placeholder implementation ready for future game development
+- 📁 **File Restructuring**: Reorganized files to support multiple games (person.py, game2.py, etc.)
+- 🔗 **Routing System**: Enhanced FastAPI routing for multiple game pages
+- 🎨 **Consistent UI**: Unified design system across all games and pages
+
+### Game Enhancements
 - ✅ **Concise Person Overview**: 50-75 word life summary displayed in a styled yellow box between name and biographical info
 - ✅ **Custom Favicon Support**: App now displays a custom favicon in browser tabs with both ICO and PNG format support
 - ✅ **Interactive Family Tree Navigation**: All family members (parents, siblings, spouses, children) are clickable for seamless exploration
@@ -182,19 +231,28 @@ FirstAPI/
 ## Technology Stack
 
 ### **Backend:**
-- **FastAPI**: Modern Python web framework for API endpoints
+- **FastAPI**: Modern Python web framework with multi-game routing and API endpoints
+- **Modular Architecture**: Separate game logic modules (person.py, game2.py) for scalability
 - **Google Gemini 2.5 Flash Lite**: AI model for person identification, overview generation, and reasoning with JSON response format
 - **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
 - **Requests**: HTTP library for web scraping
 - **Google Maps Python Client**: Geocoding API integration for address-to-coordinates conversion
 - **JSON Processing**: Structured data handling with markdown code block parsing
+- **Session Management**: Individual session tracking for each game
 
 ### **Frontend:**
 - **Vanilla JavaScript**: Interactive game logic, family tree navigation, and API communication with JSON object handling
+- **Multi-Page Architecture**: Separate HTML pages for each game with shared navigation
 - **Google Maps JavaScript API**: Interactive maps with custom markers and bounds
 - **CSS3**: Modern styling with gradients, animations, and responsive design
 - **HTML5**: Semantic markup with accessibility features
 - **JSON Parsing**: Robust handling of both JSON objects and JSON strings with fallback mechanisms
+
+### **Platform Features:**
+- **Navigation System**: Persistent toolbar with active state indicators across all pages
+- **Game Selection**: Home page with feature cards and game descriptions
+- **Unified Design**: Consistent UI/UX across all games and platform pages
+- **Extensible Framework**: Ready for additional games with minimal configuration
 
 ### **Image Processing:**
 - **Wikipedia Integration**: Automatic extraction of person photos from Wikipedia pages
