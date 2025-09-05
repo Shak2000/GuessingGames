@@ -8,6 +8,7 @@ A fun web application that uses Google's Gemini AI to guess famous people based 
 - 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
 - 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
 - 💭 **Detailed Explanations**: Each guess includes both the person's name and reasoning
+- 📝 **Concise Overview**: 50-75 word summary of each person's life and achievements displayed in a styled yellow box
 - 📸 **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
 - 📊 **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
 - 👨‍👩‍👧‍👦 **Interactive Family Tree**: Displays parents, siblings, spouses, and children with clickable names for navigation
@@ -80,6 +81,7 @@ The application will be available at `http://localhost:8000`
 3. **Review Guess**: The AI will display its guess with:
    - **Person's Photo**: Automatically extracted from Wikipedia (if available)
    - **Name Box**: The person's name in a blue gradient box
+   - **Overview Box**: A concise 50-75 word summary of the person's life in a yellow styled box
    - **Biographical Information**: Birth/death dates, places, and Wikipedia link in a styled box
    - **Interactive Family Tree**: Parents, siblings, spouses, and children with clickable names for exploration
    - **Interactive Map**: Google Maps showing birth and death locations with custom markers
@@ -109,7 +111,7 @@ FirstAPI/
 ```
 
 ### Key Files:
-- **`main.py`** - Core game logic with Gemini API integration, JSON response format, image extraction, and session management
+- **`main.py`** - Core game logic with Gemini API integration, JSON response format, overview generation, image extraction, and session management
 - **`app.py`** - FastAPI web server with proper static file serving
 - **`config.py`** - API key configuration (excluded from version control)
 - **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
@@ -142,6 +144,7 @@ FirstAPI/
 
 ## Recent Updates
 
+- ✅ **Concise Person Overview**: 50-75 word life summary displayed in a styled yellow box between name and biographical info
 - ✅ **Custom Favicon Support**: App now displays a custom favicon in browser tabs with both ICO and PNG format support
 - ✅ **Interactive Family Tree Navigation**: All family members (parents, siblings, spouses, children) are clickable for seamless exploration
 - ✅ **Multiple Spouse Support**: Properly handles people with multiple marriages as individual clickable items
@@ -180,7 +183,7 @@ FirstAPI/
 
 ### **Backend:**
 - **FastAPI**: Modern Python web framework for API endpoints
-- **Google Gemini 2.5 Flash Lite**: AI model for person identification and reasoning with JSON response format
+- **Google Gemini 2.5 Flash Lite**: AI model for person identification, overview generation, and reasoning with JSON response format
 - **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
 - **Requests**: HTTP library for web scraping
 - **Google Maps Python Client**: Geocoding API integration for address-to-coordinates conversion
