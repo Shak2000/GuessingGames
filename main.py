@@ -64,6 +64,7 @@ class FamousPersonGuesser:
         - 'children': An array of strings with children names, or empty array [] if unknown
         - 'wikipedia_url': Wikipedia URL for this person, or null if not found
         - 'reasoning': Brief explanation of why you think this is the correct person based on the information provided
+        - 'overview': A brief overview of the person's life in 50 to 75 words.
         
         Information: {context}{exclusion_text}
         
@@ -112,6 +113,7 @@ class FamousPersonGuesser:
                 children = data.get('children', [])
                 wikipedia_url = data.get('wikipedia_url')
                 reasoning = data.get('reasoning', '')
+                overview = data.get('overview', '')
                 
                 # Convert arrays to strings for display
                 parents_str = ', '.join(parents) if parents else 'N/A'
@@ -147,6 +149,7 @@ class FamousPersonGuesser:
             # Build the final response as JSON
             final_response = {
                 "name": name,
+                "overview": overview,
                 "date_of_birth": date_of_birth,
                 "place_of_birth": place_of_birth,
                 "date_of_death": date_of_death,

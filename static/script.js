@@ -250,6 +250,7 @@ class FamousPersonGame {
         const wikipediaUrl = data.wikipedia_url;
         const coordinates = data.coordinates;
         const reasoning = data.reasoning || '';
+        const overview = data.overview || '';
         
         // Build biographical information
         let bioInfo = '';
@@ -334,15 +335,31 @@ class FamousPersonGame {
             `;
         }
         
-        // Display image, name, biographical info, and family info in the first element
+        // Build overview section
+        let overviewInfo = '';
+        if (overview && overview.trim() !== '') {
+            overviewInfo = `
+                <div class="bio-section overview-section">
+                    <h4>Overview:</h4>
+                    <p>${overview}</p>
+                </div>
+            `;
+        }
+        
+        // Display image, name, overview, biographical info, and family info in the first element
         this.guessText.innerHTML = `
             ${imageHtml}
             <div class="name-box">
                 <strong>${name}</strong>
             </div>
+            ${overviewInfo}
             ${bioInfo}
             ${familyInfo}
         `;
+        
+        // Hide the separate overview section since we're including it in the main content
+        const guessTextOverview = document.getElementById('guessTextOverview');
+        guessTextOverview.style.display = 'none';
         
         // Add event listeners for clickable parent names
         this.setupClickableNames();
@@ -674,6 +691,10 @@ class FamousPersonGame {
                 </div>
                 ${bioInfo}
             `;
+            
+            // Hide overview section for old format (no overview data available)
+            const guessTextOverview = document.getElementById('guessTextOverview');
+            guessTextOverview.style.display = 'none';
             
             // Initialize map if coordinates are available (old format)
             if (coordinates && coordinates !== '') {
