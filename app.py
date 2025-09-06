@@ -6,6 +6,7 @@ from typing import Optional
 import uvicorn
 from person import guesser
 from city import city_guesser
+from odd import odd_game
 
 app = FastAPI(title="Multi-Game App", version="1.0.0")
 
@@ -39,6 +40,13 @@ class CityFeedback(BaseModel):
     session_id: int
     is_correct: bool
 
+class OddGuess(BaseModel):
+    session_id: int
+    guess: str
+
+class OddReveal(BaseModel):
+    session_id: int
+
 @app.get("/")
 async def read_index():
     """Serve the home page."""
@@ -53,6 +61,11 @@ async def read_person_game():
 async def read_city():
     """Serve the Guess the City game page."""
     return FileResponse("static/city.html")
+
+@app.get("/odd")
+async def read_odd():
+    """Serve the Odd Situation Game page."""
+    return FileResponse("static/odd.html")
 
 @app.post("/api/start-guess")
 async def start_guess(user_input: UserInput):
@@ -122,6 +135,49 @@ async def get_city_session(session_id: int):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting city session: {str(e)}")
+
+# Odd Situation Game API Routes
+@app.post("/api/start-odd-game")
+async def start_odd_game():
+    """Start a new odd situation game."""
+    try:
+        result = odd_game.start_new_game()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error starting odd game: {str(e)}")
+
+@app.post("/api/submit-odd-guess")
+async def submit_odd_guess(guess: OddGuess):
+    """Submit a guess for the odd situation game."""
+    try:
+        result = odd_game.submit_guess(guess.session_id, guess.guess)
+        if 'error' in result:
+            raise HTTPException(status_code=400, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error submitting odd guess: {str(e)}")
+
+@app.post("/api/reveal-odd-answer")
+async def reveal_odd_answer(reveal: OddReveal):
+    """Reveal the answer for the odd situation game."""
+    try:
+        result = odd_game.reveal_answer(reveal.session_id)
+        if 'error' in result:
+            raise HTTPException(status_code=400, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error revealing odd answer: {str(e)}")
+
+@app.get("/api/odd-session/{session_id}")
+async def get_odd_session(session_id: int):
+    """Get odd situation game session information."""
+    try:
+        result = odd_game.get_session_status(session_id)
+        if 'error' in result:
+            raise HTTPException(status_code=404, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting odd session: {str(e)}")
 
 @app.get("/api/health")
 async def health_check():

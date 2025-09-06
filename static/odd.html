@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odd Situation Game - Multi-Game App</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Toolbar -->
+        <nav class="toolbar">
+            <div class="toolbar-content">
+                <a href="/" class="toolbar-item">🏠 Home</a>
+                <a href="/person" class="toolbar-item">🎭 Guess the Famous Person</a>
+                <a href="/city" class="toolbar-item">🏙️ Guess the City</a>
+                <a href="/odd" class="toolbar-item active">🎪 Odd Situation Game</a>
+            </div>
+        </nav>
+
+        <header class="header">
+            <h1 class="title">🎪 Odd Situation Game</h1>
+            <p class="subtitle">Guess who the famous person is in this strange situation!</p>
+        </header>
+
+        <main class="main-content">
+            <div id="startSection" class="start-section">
+                <div class="start-content">
+                    <h2 class="start-title">Ready to Play?</h2>
+                    <p class="start-description">
+                        We'll show you a famous person in an unusual outfit and setting. 
+                        Can you guess who it is?
+                    </p>
+                    <button id="startGameBtn" class="btn btn-primary">Start New Game</button>
+                </div>
+            </div>
+
+            <div id="gameSection" class="game-section hidden">
+                <div class="image-display">
+                    <h3 class="image-title">Who is this person?</h3>
+                    <div id="situationImage" class="situation-image-container">
+                        <img id="situationImg" class="situation-image" src="" alt="Odd situation image">
+                    </div>
+                </div>
+                
+                <div class="guess-section">
+                    <div class="input-group">
+                        <label for="guessInput" class="input-label">Your guess:</label>
+                        <input 
+                            type="text" 
+                            id="guessInput" 
+                            class="input-text" 
+                            placeholder="Enter the person's name..."
+                        >
+                    </div>
+                    <button id="submitGuessBtn" class="btn btn-primary">Submit Guess</button>
+                </div>
+
+                <div id="feedbackSection" class="feedback-section hidden">
+                    <div id="feedbackText" class="feedback-text"></div>
+                    <div class="feedback-buttons">
+                        <button id="revealBtn" class="btn btn-secondary">Reveal Answer</button>
+                        <button id="newGameBtn" class="btn btn-primary">New Game</button>
+                    </div>
+                </div>
+
+                <div id="answerSection" class="answer-section hidden">
+                    <div class="answer-content">
+                        <h3 class="answer-title">The Answer</h3>
+                        <div id="answerText" class="answer-text"></div>
+                        <button id="playAgainBtn" class="btn btn-primary">Play Again</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loadingSection" class="loading-section hidden">
+                <div class="loading-spinner"></div>
+                <p class="loading-text">Generating your odd situation...</p>
+            </div>
+
+            <div id="errorSection" class="error-section hidden">
+                <div class="error-content">
+                    <h3 class="error-title">Oops! Something went wrong</h3>
+                    <p id="errorText" class="error-text"></p>
+                    <button id="retryBtn" class="btn btn-primary">Try Again</button>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Multi-Game Platform - Powered by AI</p>
+        </footer>
+    </div>
+
+    <script src="/static/odd.js"></script>
+</body>
+</html>

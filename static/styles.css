@@ -838,3 +838,169 @@ body {
         font-size: 1.5rem;
     }
 }
+
+/* Odd Situation Game Styles */
+.start-section {
+    text-align: center;
+    padding: 40px 30px;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 16px;
+    margin-bottom: 20px;
+}
+
+.start-content {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.start-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #0369a1;
+    margin-bottom: 15px;
+}
+
+.start-description {
+    font-size: 1.1rem;
+    color: #0c4a6e;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.image-display {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.image-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 20px;
+}
+
+.situation-image-container {
+    background: #f9fafb;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.situation-image {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 8px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 3px solid #e5e7eb;
+    object-fit: cover;
+}
+
+.situation-text {
+    font-size: 1.1rem;
+    color: #374151;
+    font-style: italic;
+    background: #f0f9ff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #bae6fd;
+}
+
+.guess-section {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.feedback-section {
+    background: #f0f9ff;
+    border: 1px solid #bae6fd;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.feedback-correct {
+    text-align: center;
+    color: #059669;
+}
+
+.feedback-correct h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.feedback-incorrect {
+    text-align: center;
+    color: #dc2626;
+}
+
+.feedback-incorrect h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.answer-section {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border: 1px solid #f59e0b;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+}
+
+.answer-content {
+    text-align: center;
+}
+
+.answer-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 20px;
+}
+
+.answer-details h4 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #92400e;
+    margin-bottom: 15px;
+}
+
+.answer-details p {
+    font-size: 1.1rem;
+    color: #78350f;
+    margin-bottom: 10px;
+}
+
+.full-situation {
+    font-weight: 600;
+    font-style: italic;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+/* Mobile styles for odd game */
+@media (max-width: 768px) {
+    .start-section {
+        padding: 30px 20px;
+    }
+    
+    .start-title {
+        font-size: 1.5rem;
+    }
+    
+    .situation-image {
+        max-height: 300px;
+    }
+    
+    .guess-section,
+    .feedback-section,
+    .answer-section {
+        padding: 20px;
+    }
+}
