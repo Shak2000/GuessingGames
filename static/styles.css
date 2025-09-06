@@ -890,11 +890,15 @@ body {
 
 .situation-image {
     max-width: 100%;
-    max-height: 400px;
+    max-height: 600px;
+    width: auto;
+    height: auto;
     border-radius: 8px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     border: 3px solid #e5e7eb;
     object-fit: cover;
+    display: block;
+    margin: 0 auto;
 }
 
 .situation-text {
@@ -913,6 +917,23 @@ body {
     border-radius: 12px;
     padding: 25px;
     margin-bottom: 20px;
+}
+
+.guess-section .input-text {
+    width: 100%;
+    max-width: 500px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    border: 2px solid #d1d5db;
+    border-radius: 8px;
+    background: white;
+    transition: border-color 0.2s ease;
+}
+
+.guess-section .input-text:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .feedback-section {
@@ -995,7 +1016,8 @@ body {
     }
     
     .situation-image {
-        max-height: 300px;
+        max-height: 250px;
+        max-width: 100%;
     }
     
     .guess-section,
