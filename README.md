@@ -35,7 +35,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🏛️ **Administrative Information**: County, parish, borough, state, prefecture, province, department, region, territory, canton, voivodeship, autonomous community, and other administrative divisions
 - 📅 **Founding Information**: Year founded when available
 - 👥 **Population Data**: City population when available
-- 📸 **Automatic Image Extraction**: Beautiful Soup extracts city photos from Wikipedia pages
+- 📸 **Automatic Image Extraction**: Beautiful Soup automatically extracts city photos from Wikipedia pages using the same proven method as the famous person game
 - 🔗 **Wikipedia Integration**: Direct links to city Wikipedia pages
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
@@ -122,7 +122,7 @@ The application will be available at `http://localhost:8000`
 1. **Enter Information**: Type information about a city in the text area
 2. **Submit**: Click "Submit Information" or press Ctrl+Enter
 3. **Review Guess**: The AI will display its guess with:
-   - **City's Photo**: Automatically extracted from Wikipedia (if available)
+   - **City's Photo**: Automatically extracted from Wikipedia using Beautiful Soup (if available)
    - **Name Box**: The city's name in a blue gradient box
    - **Overview Box**: A concise 50-75 word summary of the city's history and significance
    - **Administrative Information**: County, parish, borough, state, prefecture, province, department, region, territory, canton, voivodeship, autonomous community, and other administrative divisions
