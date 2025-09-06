@@ -207,6 +207,11 @@ class CityGame {
         this.displayTextCityGuess(guess);
     }
 
+    formatNumberWithCommas(number) {
+        if (!number || isNaN(number)) return number;
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
     displayJsonCityGuess(data) {
         // Extract data from JSON
         const fullName = data.name || 'Unknown';
@@ -259,7 +264,7 @@ class CityGame {
                 adminInfo += adminDivisions.map(div => `<p>${div}</p>`).join('');
             }
             if (country) adminInfo += `<p><strong>Country:</strong> ${country}</p>`;
-            if (population) adminInfo += `<p><strong>Population:</strong> ${population}</p>`;
+            if (population) adminInfo += `<p><strong>Population:</strong> ${this.formatNumberWithCommas(population)}</p>`;
             if (yearFounded) adminInfo += `<p><strong>Year Founded:</strong> ${yearFounded}</p>`;
             if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
             adminInfo += '</div>';
