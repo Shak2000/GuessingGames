@@ -177,7 +177,9 @@ class CityGame {
 
     displayJsonCityGuess(data) {
         // Extract data from JSON
-        const name = data.name || 'Unknown';
+        const fullName = data.name || 'Unknown';
+        // Extract only the city name (before the first comma) for display
+        const name = fullName.includes(',') ? fullName.split(',')[0].trim() : fullName;
         const county = data.county || '';
         const parish = data.parish || '';
         const borough = data.borough || '';

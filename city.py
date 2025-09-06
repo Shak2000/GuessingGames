@@ -59,7 +59,7 @@ class CityGuesser:
 {context}{exclusion_text}
 
 Please respond with a JSON object containing the following fields:
-- name: The city name
+- name: The city name, including administrative divisions and country, separated by commas (e.g., "Dallas, Texas, United States")
 - county: County (if applicable, otherwise null)
 - parish: Parish (if applicable, otherwise null)
 - borough: Borough (if applicable, otherwise null)
@@ -118,11 +118,10 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 # Get coordinates for the city
                 coordinates = None
                 city_name = city_data.get('name')
-                country = city_data.get('country')
-                if city_name and country:
-                    # Create a search string with city name and country for better accuracy
-                    search_string = f"{city_name}, {country}"
-                    city_coords = self._get_place_coordinates(search_string)
+                if city_name:
+                    # The name field now includes geographical context (e.g., "Portland, Oregon, United States")
+                    # Use it directly for coordinate search
+                    city_coords = self._get_place_coordinates(city_name)
                     if city_coords:
                         coordinates = city_coords
                 
