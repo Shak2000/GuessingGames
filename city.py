@@ -9,7 +9,8 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-from config import GEMINI_API_KEY
+import googlemaps
+from config import GEMINI_API_KEY, GOOGLE_MAPS_API_KEY
 
 class CityGuesser:
     def __init__(self):
@@ -20,6 +21,7 @@ class CityGuesser:
         
         genai.configure(api_key=GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash-lite')
+        self.gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
         self.current_session = None
     
     def start_new_session(self, user_input: str) -> Dict[str, Any]:
@@ -113,6 +115,17 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 if wikipedia_url and wikipedia_url.lower() != 'n/a':
                     image_url = self._extract_image_from_url(wikipedia_url)
                 
+                # Get coordinates for the city
+                coordinates = None
+                city_name = city_data.get('name')
+                country = city_data.get('country')
+                if city_name and country:
+                    # Create a search string with city name and country for better accuracy
+                    search_string = f"{city_name}, {country}"
+                    city_coords = self._get_place_coordinates(search_string)
+                    if city_coords:
+                        coordinates = city_coords
+                
                 # Build the final response as JSON (matching person game structure)
                 final_response = {
                     "name": city_data.get('name'),
@@ -135,7 +148,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "wikipedia_url": city_data.get('wikipedia_url'),
                     "reasoning": city_data.get('reasoning'),
                     "overview": city_data.get('overview'),
-                    "image_url": image_url if image_url != "N/A" else None
+                    "image_url": image_url if image_url != "N/A" else None,
+                    "coordinates": coordinates
                 }
                 
                 return final_response
@@ -302,6 +316,27 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
         except Exception as e:
             print(f"Error extracting image from {url}: {str(e)}")
             return "N/A"
+    
+    def _get_place_coordinates(self, place_name: str) -> Optional[Dict[str, float]]:
+        """Get coordinates for a place using Google Maps Geocoding API."""
+        try:
+            if not place_name or place_name.lower() in ['n/a', 'unknown', '']:
+                return None
+            
+            # Use Google Maps Geocoding API
+            geocode_result = self.gmaps.geocode(place_name)
+            
+            if geocode_result:
+                location = geocode_result[0]['geometry']['location']
+                return {
+                    'lat': location['lat'],
+                    'lng': location['lng']
+                }
+            return None
+            
+        except Exception as e:
+            print(f"Error getting coordinates for {place_name}: {str(e)}")
+            return None
 
 # Create a global instance for the API to use
 city_guesser = CityGuesser()

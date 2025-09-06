@@ -14,6 +14,7 @@ class CityGame {
         this.gameSection = document.getElementById('gameSection');
         this.guessText = document.getElementById('guessText');
         this.guessTextReasoning = document.getElementById('guessTextReasoning');
+        this.mapEl = document.getElementById('map');
         this.correctBtn = document.getElementById('correctBtn');
         this.incorrectBtn = document.getElementById('incorrectBtn');
         
@@ -276,6 +277,38 @@ class CityGame {
                 ${reasoning}
             </div>
         `;
+        
+        // Initialize map if coordinates are available
+        const coordinates = data.coordinates;
+        if (coordinates && coordinates !== null) {
+            try {
+                const cityCoords = {
+                    lat: coordinates.lat,
+                    lng: coordinates.lng
+                };
+                
+                // Show the map container
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'block';
+                    this.mapEl.style.height = '300px';
+                    this.mapEl.style.width = '100%';
+                    this.mapEl.style.marginTop = '15px';
+                    this.mapEl.style.borderRadius = '10px';
+                    this.mapEl.style.border = '1px solid #bae6fd';
+                }
+                
+                // Initialize the map
+                this.initMap(cityCoords);
+            } catch (e) {
+                // Error parsing coordinates
+                console.error('Error initializing map:', e);
+            }
+        } else {
+            // Hide the map container if no coordinates
+            if (this.mapEl) {
+                this.mapEl.style.display = 'none';
+            }
+        }
     }
 
     displayTextCityGuess(guess) {
@@ -345,6 +378,53 @@ class CityGame {
         // Reset current session and start fresh
         this.currentSessionId = null;
         this.startNewGame();
+    }
+    
+    initMap(cityCoords) {
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            if (this.mapEl) {
+                this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
+            }
+            return;
+        }
+
+        if (!this.mapEl) {
+            return;
+        }
+
+        const mapOptions = {
+            zoom: 2,
+            center: { lat: 20, lng: 0 },
+            mapTypeId: 'terrain'
+        };
+        this.map = new google.maps.Map(this.mapEl, mapOptions);
+
+        const bounds = new google.maps.LatLngBounds();
+        let markerCount = 0;
+
+        if (cityCoords) {
+            const cityMarker = new google.maps.Marker({
+                position: cityCoords,
+                map: this.map,
+                title: `City Location`,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#3B82F6" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">C</text>
+                        </svg>
+                    `)
+                }
+            });
+            bounds.extend(cityMarker.getPosition());
+            markerCount++;
+        }
+
+        if (markerCount > 0) {
+            // If there is only one marker, center on it and zoom out
+            this.map.setCenter(bounds.getCenter());
+            this.map.setZoom(5);
+        }
     }
 }
 
