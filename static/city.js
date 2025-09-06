@@ -232,6 +232,8 @@ class CityGame {
         const otherAdminDivision = data.other_administrative_division || '';
         const country = data.country || '';
         const population = data.population || '';
+        const areaMi = data.area_mi || '';
+        const areaKm = data.area_km || '';
         const yearFounded = data.year_founded || '';
         const wikipediaUrl = data.wikipedia_url || '';
         const imageUrl = data.image_url || '';
@@ -257,7 +259,7 @@ class CityGame {
         if (autonomousCommunity) adminDivisions.push(`<strong>Autonomous Community:</strong> ${autonomousCommunity}`);
         if (otherAdminDivision) adminDivisions.push(`<strong>Other:</strong> ${otherAdminDivision}`);
         
-        if (adminDivisions.length > 0 || country || population || yearFounded || wikipediaUrl) {
+        if (adminDivisions.length > 0 || country || population || areaMi || areaKm || yearFounded || wikipediaUrl) {
             adminInfo += '<div class="bio-section">';
             adminInfo += '<h4>City Information:</h4>';
             if (adminDivisions.length > 0) {
@@ -265,6 +267,20 @@ class CityGame {
             }
             if (country) adminInfo += `<p><strong>Country:</strong> ${country}</p>`;
             if (population) adminInfo += `<p><strong>Population:</strong> ${this.formatNumberWithCommas(population)}</p>`;
+            
+            // Display area information
+            if (areaMi || areaKm) {
+                let areaText = '';
+                if (areaMi && areaKm) {
+                    areaText = `${areaMi} mi² (${areaKm} km²)`;
+                } else if (areaMi) {
+                    areaText = `${areaMi} mi²`;
+                } else if (areaKm) {
+                    areaText = `${areaKm} km²`;
+                }
+                adminInfo += `<p><strong>Area:</strong> ${areaText}</p>`;
+            }
+            
             if (yearFounded) adminInfo += `<p><strong>Year Founded:</strong> ${yearFounded}</p>`;
             if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
             adminInfo += '</div>';

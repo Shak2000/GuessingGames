@@ -75,6 +75,8 @@ Please respond with a JSON object containing the following fields:
 - other_administrative_division: Other administrative division (if applicable, otherwise null)
 - country: The country where the city is located
 - population: The population of the city (if known, otherwise null)
+- area_mi: The total area of the city (land and water) in square miles (if known, otherwise null)
+- area_km: The total area of the city (land and water) in square kilometers (if known, otherwise null)
 - year_founded: Year the city was founded (if known, otherwise null)
 - wikipedia_url: Wikipedia URL for the city (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct city
@@ -156,6 +158,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "other_administrative_division": city_data.get('other_administrative_division'),
                     "country": city_data.get('country'),
                     "population": city_data.get('population'),
+                    "area_mi": city_data.get('area_mi'),
+                    "area_km": city_data.get('area_km'),
                     "year_founded": city_data.get('year_founded'),
                     "wikipedia_url": city_data.get('wikipedia_url'),
                     "reasoning": city_data.get('reasoning'),
@@ -185,6 +189,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "other_administrative_division": None,
                     "country": "Unknown",
                     "population": None,
+                    "area_mi": None,
+                    "area_km": None,
                     "year_founded": None,
                     "wikipedia_url": None,
                     "image_url": None,
@@ -210,6 +216,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 "other_administrative_division": None,
                 "country": "Unknown",
                 "population": None,
+                "area_mi": None,
+                "area_km": None,
                 "year_founded": None,
                 "wikipedia_url": None,
                 "image": None,
