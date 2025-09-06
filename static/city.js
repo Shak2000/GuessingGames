@@ -1,8 +1,12 @@
 class CityGame {
     constructor() {
         this.currentSessionId = null;
+        this.mapsApiKey = null;
+        this.map = null;
+        this.googleMapsScriptLoaded = false;
         this.initializeElements();
         this.attachEventListeners();
+        this.loadGoogleMapsScript();
     }
 
     initializeElements() {
@@ -54,6 +58,34 @@ class CityGame {
                     this.startNewGameFromButton();
                 }
             });
+        }
+    }
+
+    async loadGoogleMapsScript() {
+        if (this.googleMapsScriptLoaded) {
+            console.log('Google Maps script already loaded');
+            return;
+        }
+        
+        console.log('Loading Google Maps script...');
+        try {
+            const response = await fetch('/api/maps-key');
+            if (!response.ok) {
+                throw new Error('Could not fetch Google Maps API key.');
+            }
+            const data = await response.json();
+            this.mapsApiKey = data.maps_key;
+            console.log('Got API key, loading script...');
+
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.mapsApiKey}`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+            this.googleMapsScriptLoaded = true;
+            console.log('Google Maps script added to DOM');
+        } catch (error) {
+            console.error('Failed to load Google Maps script:', error);
         }
     }
 
@@ -282,15 +314,19 @@ class CityGame {
         
         // Initialize map if coordinates are available
         const coordinates = data.coordinates;
+        console.log('Coordinates data:', coordinates);
+        
         if (coordinates && coordinates !== null) {
             try {
                 const cityCoords = {
                     lat: coordinates.lat,
                     lng: coordinates.lng
                 };
+                console.log('City coords:', cityCoords);
                 
                 // Show the map container
                 if (this.mapEl) {
+                    console.log('Showing map container');
                     this.mapEl.style.display = 'block';
                     this.mapEl.style.height = '300px';
                     this.mapEl.style.width = '100%';
@@ -306,6 +342,7 @@ class CityGame {
                 console.error('Error initializing map:', e);
             }
         } else {
+            console.log('No coordinates available, hiding map');
             // Hide the map container if no coordinates
             if (this.mapEl) {
                 this.mapEl.style.display = 'none';
@@ -383,7 +420,11 @@ class CityGame {
     }
     
     initMap(cityCoords) {
+        console.log('initMap called with coords:', cityCoords);
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
         if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
             if (this.mapEl) {
                 this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
             }

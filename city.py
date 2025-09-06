@@ -85,6 +85,10 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
         try:
             response = self.model.generate_content(prompt)
             response_text = response.text.strip()
+            print(f"=== GEMINI RESPONSE DEBUG ===")
+            print(f"Full response: {response_text}")
+            print(f"Response length: {len(response_text)}")
+            print("=== END GEMINI RESPONSE ===")
             
             # Try to parse the JSON response
             try:
@@ -96,6 +100,15 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 response_text = response_text.strip()
                 
                 city_data = json.loads(response_text)
+                print(f"=== JSON PARSED SUCCESSFULLY ===")
+                print(f"Name: {city_data.get('name', 'N/A')}")
+                print(f"Country: {city_data.get('country', 'N/A')}")
+                print(f"State/Province: {city_data.get('state', city_data.get('province', 'N/A'))}")
+                print(f"Population: {city_data.get('population', 'N/A')}")
+                print(f"Year Founded: {city_data.get('year_founded', 'N/A')}")
+                print(f"Wikipedia URL: {city_data.get('wikipedia_url', 'N/A')}")
+                print(f"Reasoning: {city_data.get('reasoning', 'N/A')[:100]}...")
+                print("=== END JSON PARSING ===")
                 
                 # Validate required fields
                 if not city_data.get('name'):
