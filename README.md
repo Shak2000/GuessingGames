@@ -32,8 +32,9 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
 - 💭 **Detailed Explanations**: Each guess includes both the city's name and reasoning
 - 📝 **Concise Overview**: 50-75 word summary of each city's history and significance
-- 🏛️ **Administrative Information**: County, state, region, province, territory, prefecture, canton, voivodeship, autonomous community, and other administrative divisions
+- 🏛️ **Administrative Information**: County, parish, borough, state, prefecture, province, department, region, territory, canton, voivodeship, autonomous community, and other administrative divisions
 - 📅 **Founding Information**: Year founded when available
+- 👥 **Population Data**: City population when available
 - 📸 **Automatic Image Extraction**: Beautiful Soup extracts city photos from Wikipedia pages
 - 🔗 **Wikipedia Integration**: Direct links to city Wikipedia pages
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
@@ -124,7 +125,8 @@ The application will be available at `http://localhost:8000`
    - **City's Photo**: Automatically extracted from Wikipedia (if available)
    - **Name Box**: The city's name in a blue gradient box
    - **Overview Box**: A concise 50-75 word summary of the city's history and significance
-   - **Administrative Information**: County, state, region, province, territory, prefecture, canton, voivodeship, autonomous community, and other administrative divisions
+   - **Administrative Information**: County, parish, borough, state, prefecture, province, department, region, territory, canton, voivodeship, autonomous community, and other administrative divisions
+   - **Population Information**: City population when available
    - **Founding Information**: Year founded when available
    - **Wikipedia Link**: Direct link to the city's Wikipedia page
    - **Explanation Box**: The AI's reasoning in a gray box below

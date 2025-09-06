@@ -178,16 +178,20 @@ class CityGame {
         // Extract data from JSON
         const name = data.name || 'Unknown';
         const county = data.county || '';
+        const parish = data.parish || '';
+        const borough = data.borough || '';
         const state = data.state || '';
-        const region = data.region || '';
-        const province = data.province || '';
-        const territory = data.territory || '';
         const prefecture = data.prefecture || '';
+        const province = data.province || '';
+        const department = data.department || '';
+        const region = data.region || '';
+        const territory = data.territory || '';
         const canton = data.canton || '';
         const voivodeship = data.voivodeship || '';
         const autonomousCommunity = data.autonomous_community || '';
         const otherAdminDivision = data.other_administrative_division || '';
         const country = data.country || '';
+        const population = data.population || '';
         const yearFounded = data.year_founded || '';
         const wikipediaUrl = data.wikipedia_url || '';
         const imageUrl = data.image || '';
@@ -198,24 +202,29 @@ class CityGame {
         let adminInfo = '';
         const adminDivisions = [];
         
+        // Add administrative divisions in the new order from the prompt
         if (county) adminDivisions.push(`<strong>County:</strong> ${county}`);
+        if (parish) adminDivisions.push(`<strong>Parish:</strong> ${parish}`);
+        if (borough) adminDivisions.push(`<strong>Borough:</strong> ${borough}`);
         if (state) adminDivisions.push(`<strong>State:</strong> ${state}`);
-        if (region) adminDivisions.push(`<strong>Region:</strong> ${region}`);
-        if (province) adminDivisions.push(`<strong>Province:</strong> ${province}`);
-        if (territory) adminDivisions.push(`<strong>Territory:</strong> ${territory}`);
         if (prefecture) adminDivisions.push(`<strong>Prefecture:</strong> ${prefecture}`);
+        if (province) adminDivisions.push(`<strong>Province:</strong> ${province}`);
+        if (department) adminDivisions.push(`<strong>Department:</strong> ${department}`);
+        if (region) adminDivisions.push(`<strong>Region:</strong> ${region}`);
+        if (territory) adminDivisions.push(`<strong>Territory:</strong> ${territory}`);
         if (canton) adminDivisions.push(`<strong>Canton:</strong> ${canton}`);
         if (voivodeship) adminDivisions.push(`<strong>Voivodeship:</strong> ${voivodeship}`);
         if (autonomousCommunity) adminDivisions.push(`<strong>Autonomous Community:</strong> ${autonomousCommunity}`);
         if (otherAdminDivision) adminDivisions.push(`<strong>Other:</strong> ${otherAdminDivision}`);
         
-        if (adminDivisions.length > 0 || country || yearFounded || wikipediaUrl) {
+        if (adminDivisions.length > 0 || country || population || yearFounded || wikipediaUrl) {
             adminInfo += '<div class="bio-section">';
             adminInfo += '<h4>City Information:</h4>';
             if (adminDivisions.length > 0) {
                 adminInfo += adminDivisions.map(div => `<p>${div}</p>`).join('');
             }
             if (country) adminInfo += `<p><strong>Country:</strong> ${country}</p>`;
+            if (population) adminInfo += `<p><strong>Population:</strong> ${population}</p>`;
             if (yearFounded) adminInfo += `<p><strong>Year Founded:</strong> ${yearFounded}</p>`;
             if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
             adminInfo += '</div>';

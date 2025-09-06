@@ -59,16 +59,20 @@ class CityGuesser:
 Please respond with a JSON object containing the following fields:
 - name: The city name
 - county: County (if applicable, otherwise null)
-- state: State (if applicable, otherwise null) 
-- region: Region (if applicable, otherwise null)
-- province: Province (if applicable, otherwise null)
-- territory: Territory (if applicable, otherwise null)
+- parish: Parish (if applicable, otherwise null)
+- borough: Borough (if applicable, otherwise null)
+- state: State (if applicable, otherwise null)
 - prefecture: Prefecture (if applicable, otherwise null)
+- province: Province (if applicable, otherwise null)
+- department: Department (if applicable, otherwise null)
+- region: Region (if applicable, otherwise null)
+- territory: Territory (if applicable, otherwise null)
 - canton: Canton (if applicable, otherwise null)
 - voivodeship: Voivodeship (if applicable, otherwise null)
 - autonomous_community: Autonomous community (if applicable, otherwise null)
 - other_administrative_division: Other administrative division (if applicable, otherwise null)
 - country: The country where the city is located
+- population: The population of the city (if known, otherwise null)
 - year_founded: Year the city was founded (if known, otherwise null)
 - wikipedia_url: Wikipedia URL for the city (if available, otherwise null)
 - image: URL to an image of the city (if available, otherwise null)
@@ -111,16 +115,20 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 return {
                     "name": "Unable to parse response",
                     "county": None,
+                    "parish": None,
+                    "borough": None,
                     "state": None,
-                    "region": None,
-                    "province": None,
-                    "territory": None,
                     "prefecture": None,
+                    "province": None,
+                    "department": None,
+                    "region": None,
+                    "territory": None,
                     "canton": None,
                     "voivodeship": None,
                     "autonomous_community": None,
                     "other_administrative_division": None,
                     "country": "Unknown",
+                    "population": None,
                     "year_founded": None,
                     "wikipedia_url": None,
                     "image": None,
@@ -132,16 +140,20 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             return {
                 "name": "Error occurred",
                 "county": None,
+                "parish": None,
+                "borough": None,
                 "state": None,
-                "region": None,
-                "province": None,
-                "territory": None,
                 "prefecture": None,
+                "province": None,
+                "department": None,
+                "region": None,
+                "territory": None,
                 "canton": None,
                 "voivodeship": None,
                 "autonomous_community": None,
                 "other_administrative_division": None,
                 "country": "Unknown",
+                "population": None,
                 "year_founded": None,
                 "wikipedia_url": None,
                 "image": None,
