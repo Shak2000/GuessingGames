@@ -130,7 +130,8 @@ FirstAPI/
     ├── person.html     # Guess the Famous Person game interface
     ├── game2.html      # Game 2 placeholder interface
     ├── styles.css      # Modern styling and responsive design
-    ├── script.js       # Frontend JavaScript logic
+    ├── script.js       # General app utilities and shared functionality
+    ├── person.js       # Famous Person game specific JavaScript logic
     ├── favicon.ico     # App favicon (ICO format)
     └── favicon.png     # App favicon (PNG format)
 ```
@@ -144,6 +145,8 @@ FirstAPI/
 - **`static/index.html`** - Home page with game selection grid
 - **`static/person.html`** - Guess the Famous Person game interface
 - **`static/game2.html`** - Game 2 placeholder interface with preview features
+- **`static/script.js`** - General app utilities and shared functionality for all games
+- **`static/person.js`** - Famous Person game specific JavaScript logic and UI interactions
 - **`static/`** - All frontend files organized in a dedicated directory
 
 ## API Endpoints
@@ -183,7 +186,16 @@ FirstAPI/
 
 ## Recent Updates
 
-### Platform Transformation (Latest)
+### JavaScript Architecture Reorganization (Latest)
+- 📁 **Modular JavaScript Structure**: Separated game-specific code from general app utilities
+- 🎭 **person.js**: Contains the complete FamousPersonGame class with all game-specific logic
+- 🛠️ **script.js**: New general utilities file with shared functionality for all games
+- 🔧 **AppUtils Object**: Common functions for loading states, error handling, and API requests
+- ⌨️ **Shared Keyboard Shortcuts**: Universal keyboard shortcuts (Escape to dismiss errors)
+- 🎯 **Game-Specific Organization**: Each game can now have its own JavaScript file while sharing common utilities
+- 🚀 **Ready for Expansion**: Clean foundation for adding new games with their own JavaScript modules
+
+### Platform Transformation
 - 🎮 **Multi-Game Platform**: Transformed from single game to multi-game platform with unified navigation
 - 🏠 **Home Page**: New game selection interface with feature cards and descriptions
 - 🧭 **Navigation Toolbar**: Persistent navigation across all games with active state indicators
@@ -241,7 +253,9 @@ FirstAPI/
 - **Session Management**: Individual session tracking for each game
 
 ### **Frontend:**
-- **Vanilla JavaScript**: Interactive game logic, family tree navigation, and API communication with JSON object handling
+- **Modular JavaScript Architecture**: 
+  - `script.js` - General app utilities and shared functionality
+  - `person.js` - Famous Person game specific logic and UI interactions
 - **Multi-Page Architecture**: Separate HTML pages for each game with shared navigation
 - **Google Maps JavaScript API**: Interactive maps with custom markers and bounds
 - **CSS3**: Modern styling with gradients, animations, and responsive design
