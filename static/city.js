@@ -214,6 +214,22 @@ class CityGame {
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
+    // Conversion functions for measurements
+    convertSquareMilesToSquareKilometers(sqMi) {
+        if (!sqMi || isNaN(sqMi)) return null;
+        return (parseFloat(sqMi) * 2.58999).toFixed(2);
+    }
+
+    convertPopulationDensityToMetric(densityPerSqMi) {
+        if (!densityPerSqMi || isNaN(densityPerSqMi)) return null;
+        return (parseFloat(densityPerSqMi) / 2.58999).toFixed(2);
+    }
+
+    convertFeetToMeters(feet) {
+        if (!feet || isNaN(feet)) return null;
+        return (parseFloat(feet) * 0.3048).toFixed(2);
+    }
+
     displayJsonCityGuess(data) {
         // Extract data from JSON
         const fullName = data.name || 'Unknown';
@@ -234,8 +250,12 @@ class CityGame {
         const otherAdminDivision = data.other_administrative_division || '';
         const country = data.country || '';
         const population = data.population || '';
+        const latitude = data.latitude || '';
+        const longitude = data.longitude || '';
         const areaMi = data.area_mi || '';
         const areaKm = data.area_km || '';
+        const populationDensity = data.population_density || '';
+        const elevation = data.elevation || '';
         const yearFounded = data.year_founded || '';
         const wikipediaUrl = data.wikipedia_url || '';
         const imageUrl = data.image_url || '';
@@ -261,7 +281,7 @@ class CityGame {
         if (autonomousCommunity) adminDivisions.push(`<strong>Autonomous Community:</strong> ${autonomousCommunity}`);
         if (otherAdminDivision) adminDivisions.push(`<strong>Other:</strong> ${otherAdminDivision}`);
         
-        if (adminDivisions.length > 0 || country || population || areaMi || areaKm || yearFounded || wikipediaUrl) {
+        if (adminDivisions.length > 0 || country || population || latitude || longitude || areaMi || areaKm || populationDensity || elevation || yearFounded || wikipediaUrl) {
             adminInfo += '<div class="bio-section">';
             adminInfo += '<h4>City Information:</h4>';
             if (adminDivisions.length > 0) {
@@ -270,17 +290,35 @@ class CityGame {
             if (country) adminInfo += `<p><strong>Country:</strong> ${country}</p>`;
             if (population) adminInfo += `<p><strong>Population:</strong> ${this.formatNumberWithCommas(population)}</p>`;
             
-            // Display area information
+            // Display coordinates
+            if (latitude && longitude) {
+                adminInfo += `<p><strong>Coordinates:</strong> ${latitude}°N, ${longitude}°W</p>`;
+            }
+            
+            // Display area information with conversion
             if (areaMi || areaKm) {
                 let areaText = '';
                 if (areaMi && areaKm) {
                     areaText = `${areaMi} mi² (${areaKm} km²)`;
                 } else if (areaMi) {
-                    areaText = `${areaMi} mi²`;
+                    const convertedKm = this.convertSquareMilesToSquareKilometers(areaMi);
+                    areaText = `${areaMi} mi² (${convertedKm} km²)`;
                 } else if (areaKm) {
                     areaText = `${areaKm} km²`;
                 }
                 adminInfo += `<p><strong>Area:</strong> ${areaText}</p>`;
+            }
+            
+            // Display population density with conversion
+            if (populationDensity) {
+                const convertedDensity = this.convertPopulationDensityToMetric(populationDensity);
+                adminInfo += `<p><strong>Population Density:</strong> ${this.formatNumberWithCommas(populationDensity)} people/mi² (${this.formatNumberWithCommas(convertedDensity)} people/km²)</p>`;
+            }
+            
+            // Display elevation with conversion
+            if (elevation) {
+                const convertedElevation = this.convertFeetToMeters(elevation);
+                adminInfo += `<p><strong>Elevation:</strong> ${this.formatNumberWithCommas(elevation)} ft (${convertedElevation} m)</p>`;
             }
             
             if (yearFounded) adminInfo += `<p><strong>Year Founded:</strong> ${yearFounded}</p>`;
@@ -351,7 +389,7 @@ class CityGame {
                 if (this.mapEl) {
                     console.log('Showing map container');
                     this.mapEl.style.display = 'block';
-                    this.mapEl.style.height = '300px';
+                    this.mapEl.style.height = '400px';
                     this.mapEl.style.width = '100%';
                     this.mapEl.style.marginTop = '15px';
                     this.mapEl.style.borderRadius = '10px';
@@ -359,7 +397,7 @@ class CityGame {
                 }
                 
                 // Initialize the map
-                this.initMap(cityCoords);
+                this.initMap(cityCoords, areaMi);
             } catch (e) {
                 // Error parsing coordinates
                 console.error('Error initializing map:', e);
@@ -441,8 +479,35 @@ class CityGame {
         this.currentSessionId = null;
         this.startNewGame();
     }
+
+    calculateZoomFromArea(areaInSquareMiles) {
+        if (!areaInSquareMiles || isNaN(areaInSquareMiles) || areaInSquareMiles <= 0) {
+            return 3; // Default zoom if no area data
+        }
+        
+        // Calculate side length of square: 3 * sqrt(area in square miles)
+        const sideLengthMiles = 3 * Math.sqrt(parseFloat(areaInSquareMiles));
+        
+        // Convert miles to degrees (approximate)
+        // 1 degree latitude ≈ 69 miles
+        // 1 degree longitude ≈ 69 * cos(latitude) miles
+        const sideLengthDegrees = sideLengthMiles / 69;
+        
+        // Calculate zoom level based on the side length
+        // Google Maps zoom levels: each level doubles/halves the scale
+        // Level 0 shows the whole world (360 degrees)
+        // We want our side length to fit nicely in the viewport
+        const worldWidth = 360; // degrees
+        const targetViewportWidth = sideLengthDegrees;
+        
+        // Calculate zoom level: log2(worldWidth / targetViewportWidth)
+        const zoomLevel = Math.log2(worldWidth / targetViewportWidth);
+        
+        // Clamp zoom level between reasonable bounds
+        return Math.max(1, Math.min(15, Math.round(zoomLevel)));
+    }
     
-    initMap(cityCoords) {
+    initMap(cityCoords, areaInSquareMiles = null) {
         console.log('initMap called with coords:', cityCoords);
         console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
         
@@ -459,7 +524,7 @@ class CityGame {
         }
 
         const mapOptions = {
-            zoom: 2,
+            zoom: 10,
             center: { lat: 20, lng: 0 },
             mapTypeId: 'terrain'
         };
@@ -489,7 +554,8 @@ class CityGame {
         if (markerCount > 0) {
             // If there is only one marker, center on it and zoom out
             this.map.setCenter(bounds.getCenter());
-            this.map.setZoom(5);
+            const zoomLevel = this.calculateZoomFromArea(areaInSquareMiles);
+            this.map.setZoom(zoomLevel);
         }
     }
 }

@@ -251,6 +251,9 @@ class FamousPersonGame {
         const imageUrl = data.image_url;
         const wikipediaUrl = data.wikipedia_url;
         const coordinates = data.coordinates;
+        const birthplaceAreaMi = data.birthplace_area_mi;
+        const deathplaceAreaMi = data.deathplace_area_mi;
+        console.log('Person game area data:', { birthplaceAreaMi, deathplaceAreaMi });
         const reasoning = data.reasoning || '';
         const overview = data.overview || '';
         
@@ -381,7 +384,7 @@ class FamousPersonGame {
                 // Show the map container
                 if (this.mapEl) {
                     this.mapEl.style.display = 'block';
-                    this.mapEl.style.height = '300px';
+                    this.mapEl.style.height = '400px';
                     this.mapEl.style.width = '100%';
                     this.mapEl.style.marginTop = '15px';
                     this.mapEl.style.borderRadius = '10px';
@@ -461,7 +464,11 @@ class FamousPersonGame {
     }
 
     initMap(birthCoords, deathCoords) {
+        console.log('initMap called with coords:', { birthCoords, deathCoords });
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
         if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
             if (this.mapEl) {
                 this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
             }
@@ -530,9 +537,9 @@ class FamousPersonGame {
             // If there are two distinct markers, fit them all
             this.map.fitBounds(bounds);
         } else if (markerCount > 0) {
-            // If there is only one marker, or two identical markers
+            // If there is only one marker, or two identical markers, center on it and use fixed zoom
             this.map.setCenter(bounds.getCenter());
-            this.map.setZoom(5);
+            this.map.setZoom(10);
         }
         // If markerCount is 0, do nothing.
     }
@@ -546,6 +553,37 @@ class FamousPersonGame {
                 Math.sin(dLon/2) * Math.sin(dLon/2);
         const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         return R * c;
+    }
+
+    calculateZoomFromArea(areaInSquareMiles) {
+        console.log('calculateZoomFromArea called with:', areaInSquareMiles);
+        if (!areaInSquareMiles || isNaN(areaInSquareMiles) || areaInSquareMiles <= 0) {
+            console.log('Using default zoom 3');
+            return 3; // Default zoom if no area data
+        }
+        
+        // Calculate side length of square: 3 * sqrt(area in square miles)
+        const sideLengthMiles = 3 * Math.sqrt(parseFloat(areaInSquareMiles));
+        
+        // Convert miles to degrees (approximate)
+        // 1 degree latitude ≈ 69 miles
+        // 1 degree longitude ≈ 69 * cos(latitude) miles
+        const sideLengthDegrees = sideLengthMiles / 69;
+        
+        // Calculate zoom level based on the side length
+        // Google Maps zoom levels: each level doubles/halves the scale
+        // Level 0 shows the whole world (360 degrees)
+        // We want our side length to fit nicely in the viewport
+        const worldWidth = 360; // degrees
+        const targetViewportWidth = sideLengthDegrees;
+        
+        // Calculate zoom level: log2(worldWidth / targetViewportWidth)
+        const zoomLevel = Math.log2(worldWidth / targetViewportWidth);
+        
+        // Clamp zoom level between reasonable bounds
+        const finalZoom = Math.max(1, Math.min(15, Math.round(zoomLevel)));
+        console.log('Calculated zoom level:', finalZoom, 'from area:', areaInSquareMiles);
+        return finalZoom;
     }
 
     // Allow starting a new game even during an active session
@@ -714,7 +752,7 @@ class FamousPersonGame {
                     // Show the map container
                     if (this.mapEl) {
                         this.mapEl.style.display = 'block';
-                        this.mapEl.style.height = '300px';
+                        this.mapEl.style.height = '400px';
                         this.mapEl.style.width = '100%';
                         this.mapEl.style.marginTop = '15px';
                         this.mapEl.style.borderRadius = '10px';
