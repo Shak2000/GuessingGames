@@ -75,7 +75,6 @@ Please respond with a JSON object containing the following fields:
 - population: The population of the city (if known, otherwise null)
 - year_founded: Year the city was founded (if known, otherwise null)
 - wikipedia_url: Wikipedia URL for the city (if available, otherwise null)
-- image: URL to an image of the city (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct city
 - overview: A concise 50-75 word overview of the city's history, significance, and notable features
 
@@ -108,7 +107,38 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 if not city_data.get('overview'):
                     city_data['overview'] = f"{city_data['name']} is a city in {city_data['country']}."
                 
-                return city_data
+                # If we have a Wikipedia URL, try to extract an image
+                image_url = "N/A"
+                wikipedia_url = city_data.get('wikipedia_url')
+                if wikipedia_url and wikipedia_url.lower() != 'n/a':
+                    image_url = self._extract_image_from_url(wikipedia_url)
+                
+                # Build the final response as JSON (matching person game structure)
+                final_response = {
+                    "name": city_data.get('name'),
+                    "county": city_data.get('county'),
+                    "parish": city_data.get('parish'),
+                    "borough": city_data.get('borough'),
+                    "state": city_data.get('state'),
+                    "prefecture": city_data.get('prefecture'),
+                    "province": city_data.get('province'),
+                    "department": city_data.get('department'),
+                    "region": city_data.get('region'),
+                    "territory": city_data.get('territory'),
+                    "canton": city_data.get('canton'),
+                    "voivodeship": city_data.get('voivodeship'),
+                    "autonomous_community": city_data.get('autonomous_community'),
+                    "other_administrative_division": city_data.get('other_administrative_division'),
+                    "country": city_data.get('country'),
+                    "population": city_data.get('population'),
+                    "year_founded": city_data.get('year_founded'),
+                    "wikipedia_url": city_data.get('wikipedia_url'),
+                    "reasoning": city_data.get('reasoning'),
+                    "overview": city_data.get('overview'),
+                    "image_url": image_url if image_url != "N/A" else None
+                }
+                
+                return final_response
                 
             except json.JSONDecodeError as e:
                 # If JSON parsing fails, return a fallback response
@@ -131,7 +161,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "population": None,
                     "year_founded": None,
                     "wikipedia_url": None,
-                    "image": None,
+                    "image_url": None,
                     "reasoning": f"Error parsing AI response: {str(e)}",
                     "overview": "There was an error processing the AI response."
                 }
@@ -204,6 +234,74 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             'guesses': self.current_session['guesses'],
             'incorrect_cities': self.current_session['incorrect_cities']
         }
+    
+    def _extract_image_from_url(self, url: str) -> str:
+        """Extract the best image URL from a given webpage URL."""
+        try:
+            # Add headers to mimic a real browser
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Try to find the main image (usually the first large image or infobox image)
+            image_url = None
+            
+            # For Wikipedia pages, look for infobox images first
+            if 'wikipedia.org' in url:
+                infobox = soup.find('table', class_='infobox')
+                if infobox:
+                    img = infobox.find('img')
+                    if img and img.get('src'):
+                        image_url = img.get('src')
+                        # Convert to full URL if it's a relative path
+                        if image_url.startswith('//'):
+                            image_url = 'https:' + image_url
+                        elif image_url.startswith('/'):
+                            image_url = urljoin(url, image_url)
+                        return image_url
+            
+            # Look for the first large image in the content
+            images = soup.find_all('img')
+            for img in images:
+                src = img.get('src')
+                if src:
+                    # Skip small images, icons, and decorative elements
+                    width = img.get('width')
+                    height = img.get('height')
+                    
+                    # Check if it's a reasonable size for a city photo
+                    if width and height:
+                        try:
+                            w, h = int(width), int(height)
+                            if w >= 100 and h >= 100:  # Minimum size threshold
+                                image_url = src
+                                break
+                        except ValueError:
+                            continue
+                    
+                    # If no size attributes, check the src for common patterns
+                    if not image_url and any(keyword in src.lower() for keyword in ['photo', 'image', 'skyline', 'view', 'city', 'downtown', 'center', 'jpg', 'jpeg', 'png']):
+                        image_url = src
+                        break
+            
+            if image_url:
+                # Convert to full URL if it's a relative path
+                if image_url.startswith('//'):
+                    image_url = 'https:' + image_url
+                elif image_url.startswith('/'):
+                    image_url = urljoin(url, image_url)
+                return image_url
+            
+            return "N/A"
+            
+        except Exception as e:
+            print(f"Error extracting image from {url}: {str(e)}")
+            return "N/A"
 
 # Create a global instance for the API to use
 city_guesser = CityGuesser()

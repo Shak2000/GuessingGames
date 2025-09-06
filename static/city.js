@@ -194,7 +194,7 @@ class CityGame {
         const population = data.population || '';
         const yearFounded = data.year_founded || '';
         const wikipediaUrl = data.wikipedia_url || '';
-        const imageUrl = data.image || '';
+        const imageUrl = data.image_url || '';
         const reasoning = data.reasoning || '';
         const overview = data.overview || '';
         
