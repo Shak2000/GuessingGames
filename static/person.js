@@ -63,12 +63,14 @@ class FamousPersonGame {
             this.newGameBtn.addEventListener('click', () => this.resetGame());
         }
         
-        // Allow Enter key to submit
+        // Allow Enter key to submit, Shift+Enter for new line
         if (this.userInput) {
             this.userInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && e.ctrlKey) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); // Prevent default new line behavior
                     this.startNewGameFromButton();
                 }
+                // Shift+Enter allows default behavior (new line)
             });
         }
     }
@@ -756,13 +758,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Add some helpful keyboard shortcuts
 document.addEventListener('keydown', (e) => {
-    // Ctrl/Cmd + Enter to submit
-    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        const submitBtn = document.getElementById('submitBtn');
-        if (submitBtn && !submitBtn.disabled) {
-            submitBtn.click();
-        }
-    }
+    // Enter key submission is now handled within the game class
     
     // Escape to dismiss errors
     if (e.key === 'Escape') {
