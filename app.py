@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 from person import guesser
-from game2 import game2_logic
+from city import city_guesser
 
 app = FastAPI(title="Multi-Game App", version="1.0.0")
 
@@ -32,12 +32,12 @@ class Feedback(BaseModel):
     session_id: int
     is_correct: bool
 
-class Game2Input(BaseModel):
+class CityInput(BaseModel):
     text: str
 
-class Game2Action(BaseModel):
+class CityFeedback(BaseModel):
     session_id: int
-    action: str
+    is_correct: bool
 
 @app.get("/")
 async def read_index():
@@ -49,10 +49,10 @@ async def read_person_game():
     """Serve the Guess the Famous Person game page."""
     return FileResponse("static/person.html")
 
-@app.get("/game2")
-async def read_game2():
-    """Serve the Game 2 page."""
-    return FileResponse("static/game2.html")
+@app.get("/city")
+async def read_city():
+    """Serve the Guess the City game page."""
+    return FileResponse("static/city.html")
 
 @app.post("/api/start-guess")
 async def start_guess(user_input: UserInput):
@@ -88,40 +88,40 @@ async def get_session_status(session_id: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting session status: {str(e)}")
 
-# Game 2 API Routes
-@app.post("/api/game2/start")
-async def start_game2(user_input: Game2Input):
-    """Start a new Game 2 session."""
+# City Guessing Game API Routes
+@app.post("/api/start-city-guess")
+async def start_city_guess(user_input: CityInput):
+    """Start a new city guessing session."""
     try:
         if not user_input.text.strip():
             raise HTTPException(status_code=400, detail="Input text cannot be empty")
         
-        result = game2_logic.start_new_session(user_input.text.strip())
+        result = city_guesser.start_new_session(user_input.text.strip())
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error starting Game 2: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error starting city guess: {str(e)}")
 
-@app.post("/api/game2/action")
-async def process_game2_action(action_data: Game2Action):
-    """Process an action in Game 2."""
+@app.post("/api/submit-city-feedback")
+async def submit_city_feedback(feedback: CityFeedback):
+    """Submit feedback for the current city guess."""
     try:
-        result = game2_logic.process_action(action_data.session_id, action_data.action)
+        result = city_guesser.submit_feedback(feedback.session_id, feedback.is_correct)
         if 'error' in result:
             raise HTTPException(status_code=400, detail=result['error'])
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error processing Game 2 action: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error submitting city feedback: {str(e)}")
 
-@app.get("/api/game2/session/{session_id}")
-async def get_game2_session(session_id: int):
-    """Get Game 2 session information."""
+@app.get("/api/city-session/{session_id}")
+async def get_city_session(session_id: int):
+    """Get city guessing session information."""
     try:
-        result = game2_logic.get_session(session_id)
+        result = city_guesser.get_session(session_id)
         if 'error' in result:
             raise HTTPException(status_code=404, detail=result['error'])
         return result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error getting Game 2 session: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting city session: {str(e)}")
 
 @app.get("/api/health")
 async def health_check():

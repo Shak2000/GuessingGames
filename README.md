@@ -26,11 +26,19 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
 - 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
 
-### Game 2 (Coming Soon)
-- 🎮 **Placeholder Implementation**: Framework ready for second game development
-- 🚧 **Under Construction**: Preview interface with planned interactive features
-- 📊 **Progress Tracking**: Session management system ready for implementation
-- 🎨 **Consistent Design**: Matches platform UI standards when completed
+### Guess the City Game
+- 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent city identification
+- 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
+- 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
+- 💭 **Detailed Explanations**: Each guess includes both the city's name and reasoning
+- 📝 **Concise Overview**: 50-75 word summary of each city's history and significance
+- 🏛️ **Administrative Information**: County, state, region, province, territory, prefecture, canton, voivodeship, autonomous community, and other administrative divisions
+- 📅 **Founding Information**: Year founded when available
+- 📸 **Automatic Image Extraction**: Beautiful Soup extracts city photos from Wikipedia pages
+- 🔗 **Wikipedia Integration**: Direct links to city Wikipedia pages
+- ⚡ **Real-time**: Fast API responses with loading indicators and button states
+- 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
+- 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
 
 ## Setup Instructions
 
@@ -109,10 +117,21 @@ The application will be available at `http://localhost:8000`
 7. **Victory**: When the AI guesses correctly, you'll see a victory message!
 8. **New Game**: Start fresh anytime by entering new information
 
-### Game 2 (Coming Soon)
-- **Preview**: Visit the Game 2 page to see the placeholder interface
-- **Features**: Check out planned features and current development status
-- **Stay Tuned**: Return later for the full game implementation
+### Guess the City Game
+1. **Enter Information**: Type information about a city in the text area
+2. **Submit**: Click "Submit Information" or press Ctrl+Enter
+3. **Review Guess**: The AI will display its guess with:
+   - **City's Photo**: Automatically extracted from Wikipedia (if available)
+   - **Name Box**: The city's name in a blue gradient box
+   - **Overview Box**: A concise 50-75 word summary of the city's history and significance
+   - **Administrative Information**: County, state, region, province, territory, prefecture, canton, voivodeship, autonomous community, and other administrative divisions
+   - **Founding Information**: Year founded when available
+   - **Wikipedia Link**: Direct link to the city's Wikipedia page
+   - **Explanation Box**: The AI's reasoning in a gray box below
+4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
+5. **Continue**: If incorrect, the AI will make another guess with improved context
+6. **Victory**: When the AI guesses correctly, you'll see a victory message!
+7. **New Game**: Start fresh anytime by entering new information
 
 ## File Structure
 
@@ -120,7 +139,7 @@ The application will be available at `http://localhost:8000`
 FirstAPI/
 ├── app.py               # Main FastAPI application with multi-game routing
 ├── person.py            # Guess the Famous Person game logic with Gemini AI integration
-├── game2.py             # Game 2 placeholder implementation
+├── city.py              # Guess the City game logic with Gemini AI integration
 ├── config.py            # API key configuration
 ├── requirements.txt     # Python dependencies
 ├── README.md           # This file
@@ -128,7 +147,7 @@ FirstAPI/
 └── static/             # Frontend files
     ├── index.html      # Home page with game selection
     ├── person.html     # Guess the Famous Person game interface
-    ├── game2.html      # Game 2 placeholder interface
+    ├── city.html       # Guess the City game interface
     ├── styles.css      # Modern styling and responsive design
     ├── script.js       # General app utilities and shared functionality
     ├── person.js       # Famous Person game specific JavaScript logic
@@ -139,12 +158,13 @@ FirstAPI/
 ### Key Files:
 - **`app.py`** - Main FastAPI application with multi-game routing and API endpoints
 - **`person.py`** - Guess the Famous Person game logic with Gemini AI integration, JSON response format, overview generation, image extraction, and session management
-- **`game2.py`** - Game 2 placeholder implementation with session management framework
+- **`city.py`** - Guess the City game logic with Gemini AI integration, JSON response format, and session management
 - **`config.py`** - API key configuration (excluded from version control)
 - **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
 - **`static/index.html`** - Home page with game selection grid
 - **`static/person.html`** - Guess the Famous Person game interface
-- **`static/game2.html`** - Game 2 placeholder interface with preview features
+- **`static/city.html`** - Guess the City game interface
+- **`static/city.js`** - City guessing game specific JavaScript logic and UI interactions
 - **`static/script.js`** - General app utilities and shared functionality for all games
 - **`static/person.js`** - Famous Person game specific JavaScript logic and UI interactions
 - **`static/`** - All frontend files organized in a dedicated directory
@@ -154,7 +174,7 @@ FirstAPI/
 ### Core Platform Endpoints
 - `GET /` - Serves the home page with game selection
 - `GET /person` - Serves the Guess the Famous Person game page
-- `GET /game2` - Serves the Game 2 page
+- `GET /city` - Serves the Guess the City game page
 - `GET /api/health` - Health check endpoint
 - `GET /static/*` - Serves static files (CSS, JS, images, favicons)
 - `GET /favicon.ico` - Serves app favicon (ICO format)
@@ -169,10 +189,10 @@ FirstAPI/
 - `GET /api/test-maps` - Tests Google Maps API key functionality
 - `GET /api/test-static-map` - Tests Google Maps Static API (for debugging)
 
-### Game 2 (Placeholder)
-- `POST /api/game2/start` - Starts a new Game 2 session
-- `POST /api/game2/action` - Processes an action in Game 2
-- `GET /api/game2/session/{session_id}` - Gets Game 2 session information
+### Guess the City Game
+- `POST /api/start-city-guess` - Starts a new city guessing session
+- `POST /api/submit-city-feedback` - Submits feedback for a city guess
+- `GET /api/city-session/{session_id}` - Gets city guessing session information
 
 ## Tips for Better Results
 
@@ -199,8 +219,8 @@ FirstAPI/
 - 🎮 **Multi-Game Platform**: Transformed from single game to multi-game platform with unified navigation
 - 🏠 **Home Page**: New game selection interface with feature cards and descriptions
 - 🧭 **Navigation Toolbar**: Persistent navigation across all games with active state indicators
-- 🎯 **Game 2 Framework**: Complete placeholder implementation ready for future game development
-- 📁 **File Restructuring**: Reorganized files to support multiple games (person.py, game2.py, etc.)
+- 🏙️ **City Guessing Game**: Complete implementation of city identification game with AI
+- 📁 **File Restructuring**: Reorganized files to support multiple games (person.py, city.py, etc.)
 - 🔗 **Routing System**: Enhanced FastAPI routing for multiple game pages
 - 🎨 **Consistent UI**: Unified design system across all games and pages
 
@@ -244,7 +264,7 @@ FirstAPI/
 
 ### **Backend:**
 - **FastAPI**: Modern Python web framework with multi-game routing and API endpoints
-- **Modular Architecture**: Separate game logic modules (person.py, game2.py) for scalability
+- **Modular Architecture**: Separate game logic modules (person.py, city.py) for scalability
 - **Google Gemini 2.5 Flash Lite**: AI model for person identification, overview generation, and reasoning with JSON response format
 - **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
 - **Requests**: HTTP library for web scraping

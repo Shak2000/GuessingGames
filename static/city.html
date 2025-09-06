@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Famous Person - Multi-Game App</title>
+    <title>Guess the City - Multi-Game App</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" href="/favicon.ico">
@@ -16,24 +16,24 @@
         <nav class="toolbar">
             <div class="toolbar-content">
                 <a href="/" class="toolbar-item">🏠 Home</a>
-                <a href="/person" class="toolbar-item active">🎭 Guess the Famous Person</a>
-                <a href="/city" class="toolbar-item">🏙️ Guess the City</a>
+                <a href="/person" class="toolbar-item">🎭 Guess the Famous Person</a>
+                <a href="/city" class="toolbar-item active">🏙️ Guess the City</a>
             </div>
         </nav>
 
         <header class="header">
-            <h1 class="title">🎭 Guess the Famous Person</h1>
-            <p class="subtitle">Enter information about a famous person and I'll try to guess who it is!</p>
+            <h1 class="title">🏙️ Guess the City</h1>
+            <p class="subtitle">Enter information about a city and I'll try to guess which city it is!</p>
         </header>
 
         <main class="main-content">
             <div class="input-section">
                 <div class="input-group">
-                    <label for="userInput" class="input-label">Tell me about the famous person:</label>
+                    <label for="userInput" class="input-label">Tell me about the city:</label>
                     <textarea 
                         id="userInput" 
                         class="input-textarea" 
-                        placeholder="e.g., 'This person was a famous scientist who developed the theory of relativity and won a Nobel Prize in Physics in 1921...'"
+                        placeholder="e.g., 'This city is the capital of France, known for the Eiffel Tower, and is located on the Seine River...'"
                         rows="4"
                     ></textarea>
                 </div>
@@ -43,28 +43,8 @@
             <div id="gameSection" class="game-section hidden">
                 <div class="guess-display">
                     <h3 class="guess-title">My Guess:</h3>
-                                    <div id="guessText" class="guess-text"></div>
-                                    <div id="guessTextOverview" class="guess-text overview-section"></div>
-                                    <div id="guessTextFamily" class="guess-text">
-                                        <div id="parentsSection" class="family-section hidden">
-                                            <h4>Parents</h4>
-                                            <p id="parentsList"></p>
-                                        </div>
-                                        <div id="siblingsSection" class="family-section hidden">
-                                            <h4>Siblings</h4>
-                                            <p id="siblingsList"></p>
-                                        </div>
-                                        <div id="spouseSection" class="family-section hidden">
-                                            <h4>Spouse</h4>
-                                            <p id="spouseList"></p>
-                                        </div>
-                                        <div id="childrenSection" class="family-section hidden">
-                                            <h4>Children</h4>
-                                            <p id="childrenList"></p>
-                                        </div>
-                                    </div>
-                <div id="guessTextReasoning" class="guess-text"></div>
-                <div id="map" class="map-container" style="display: none;"></div>
+                    <div id="guessText" class="guess-text"></div>
+                    <div id="guessTextReasoning" class="guess-text"></div>
                 </div>
                 
                 <div class="feedback-buttons">
@@ -100,6 +80,6 @@
         </footer>
     </div>
 
-    <script src="/static/person.js?v=6"></script>
+    <script src="/static/city.js?v=1"></script>
 </body>
 </html>
