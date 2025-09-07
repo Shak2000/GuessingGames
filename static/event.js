@@ -1,6 +1,9 @@
 class EventGame {
     constructor() {
         this.currentSessionId = null;
+        this.mapsApiKey = null;
+        this.map = null;
+        this.googleMapsScriptLoaded = false;
         
         // Get DOM elements
         this.userInput = document.getElementById('userInput');
@@ -21,11 +24,11 @@ class EventGame {
         this.eventImageContainer = document.getElementById('eventImageContainer');
         this.eventImage = document.getElementById('eventImage');
         
-        // Initialize map
-        this.map = null;
-        
         // Event listeners
         this.setupEventListeners();
+        
+        // Load Google Maps script
+        this.loadGoogleMapsScript();
     }
     
     setupEventListeners() {
@@ -41,6 +44,34 @@ class EventGame {
                 this.startNewSession();
             }
         });
+    }
+    
+    async loadGoogleMapsScript() {
+        if (this.googleMapsScriptLoaded) {
+            console.log('Google Maps script already loaded');
+            return;
+        }
+        
+        console.log('Loading Google Maps script...');
+        try {
+            const response = await fetch('/api/maps-key');
+            if (!response.ok) {
+                throw new Error('Could not fetch Google Maps API key.');
+            }
+            const data = await response.json();
+            this.mapsApiKey = data.maps_key;
+            console.log('Got API key, loading script...');
+
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.mapsApiKey}`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+            this.googleMapsScriptLoaded = true;
+            console.log('Google Maps script added to DOM');
+        } catch (error) {
+            console.error('Failed to load Google Maps script:', error);
+        }
     }
     
     async startNewSession() {
@@ -127,6 +158,7 @@ class EventGame {
         const start = data.start;
         const end = data.end;
         const location = data.location;
+        const city = data.city;
         const keyFigures = data.key_figures || [];
         const causes = data.causes;
         const keyDevelopments = data.key_developments;
@@ -213,8 +245,8 @@ class EventGame {
                     this.mapEl.style.border = '1px solid #bae6fd';
                 }
                 
-                // Initialize the map with location context
-                this.initMap(eventCoords, location);
+                // Initialize the map with city context (preferred) or location fallback
+                this.initMap(eventCoords, city || location);
             } catch (e) {
                 // Error parsing coordinates
                 console.error('Error initializing map:', e);
@@ -252,7 +284,11 @@ class EventGame {
     }
     
     initMap(eventCoords, location = null) {
+        console.log('initMap called with coords:', eventCoords);
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
         if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
             if (this.mapEl) {
                 this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
             }
@@ -314,10 +350,11 @@ class EventGame {
         this.map = new google.maps.Map(this.mapEl, mapOptions);
 
         // Add marker for the event location
+        const markerTitle = location ? `Event Location: ${location}` : 'Event Location';
         const eventMarker = new google.maps.Marker({
             position: eventCoords,
             map: this.map,
-            title: 'Event Location',
+            title: markerTitle,
             icon: {
                 url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

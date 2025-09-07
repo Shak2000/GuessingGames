@@ -62,7 +62,7 @@ Please respond with a JSON object containing the following fields:
 - wikipedia_url: Wikipedia URL for the event (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct event
 - overview: A concise 50-75 word overview of the event's significance and key details
-- city: A modern-day city that is located near the geographic center of the event (if known, otherwise null)
+- city: A modern-day city that is located near the geographic center of the event (if known, otherwise null), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
 
 Make sure to return ONLY valid JSON. Do not include any text before or after the JSON object."""
 
