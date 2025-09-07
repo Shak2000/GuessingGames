@@ -70,6 +70,7 @@ class OddSituationGame {
             
             this.hideLoading();
             this.showGameSection();
+            this.guessInput.value = '';
             this.guessInput.focus();
             
         } catch (error) {
@@ -208,6 +209,7 @@ class OddSituationGame {
         this.feedbackSection.classList.add('hidden');
         this.answerSection.classList.add('hidden');
         this.guessInput.disabled = false;
+        this.guessInput.value = '';
         this.submitGuessBtn.disabled = false;
         this.revealBtn.style.display = 'none';
     }
