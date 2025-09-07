@@ -12,6 +12,7 @@ class EventGuesser:
         """Initialize the Gemini API client."""
         genai.configure(api_key=GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash-lite')
+        self.image_model = genai.GenerativeModel('gemini-2.5-flash-image-preview')
         self.gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
         self.current_session = None
     
@@ -61,6 +62,7 @@ Please respond with a JSON object containing the following fields:
 - wikipedia_url: Wikipedia URL for the event (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct event
 - overview: A concise 50-75 word overview of the event's significance and key details
+- city: A modern-day city that is located near the geographic center of the event (if known, otherwise null)
 
 Make sure to return ONLY valid JSON. Do not include any text before or after the JSON object."""
 
@@ -96,18 +98,25 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 print(f"Reasoning: {event_data.get('reasoning', 'N/A')[:100]}...")
                 print("=== END JSON PARSING ===")
                 
-                # Get Wikipedia image if URL is available
-                image_url = "N/A"
-                if event_data.get('wikipedia_url') and event_data['wikipedia_url'].lower() != 'n/a':
-                    image_url = self._extract_image_from_url(event_data['wikipedia_url'])
+                # Generate image using Gemini 2.5 Flash Image Preview
+                generated_image_url = self._generate_event_image(event_data.get('name', ''))
                 
-                # Get coordinates for the location if available
+                # Get Wikipedia image if URL is available (as fallback)
+                wikipedia_image_url = "N/A"
+                if event_data.get('wikipedia_url') and event_data['wikipedia_url'].lower() != 'n/a':
+                    wikipedia_image_url = self._extract_image_from_url(event_data['wikipedia_url'])
+                
+                # Get coordinates for the city if available (preferred for map centering)
                 coordinates = None
-                if event_data.get('location'):
+                if event_data.get('city'):
+                    coordinates = self._get_location_coordinates(event_data['city'])
+                elif event_data.get('location'):
+                    # Fallback to location if city is not available
                     coordinates = self._get_location_coordinates(event_data['location'])
                 
-                # Add image and coordinates to the response
-                event_data['image_url'] = image_url
+                # Add images and coordinates to the response
+                event_data['image_url'] = generated_image_url
+                event_data['wikipedia_image_url'] = wikipedia_image_url
                 event_data['coordinates'] = coordinates
                 
                 return event_data
@@ -130,7 +139,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     'wikipedia_url': None,
                     'reasoning': f'Failed to parse AI response as valid JSON. Error: {str(e)}',
                     'overview': 'The AI response could not be properly parsed.',
-                    'image_url': None,
+                    'image_url': "https://via.placeholder.com/400x400/EF4444/FFFFFF?text=Parse+Error",
+                    'wikipedia_image_url': None,
                     'coordinates': None
                 }
                 
@@ -247,6 +257,40 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             'incorrect_events': self.current_session['incorrect_events'],
             'game_over': self.current_session.get('game_over', False)
         }
+    
+    def _generate_event_image(self, event_name: str) -> str:
+        """Generate an image for the event using Gemini 2.5 Flash Image Preview."""
+        if not event_name or event_name.strip() == '':
+            return "https://via.placeholder.com/400x400/4F46E5/FFFFFF?text=No+Event+Name"
+        
+        try:
+            # Create a descriptive prompt for the event
+            image_prompt = f"Create a historical illustration or artistic representation of the event: {event_name}. The image should be historically accurate, visually compelling, and capture the essence of this significant historical event. Make it suitable for educational purposes."
+            
+            # Generate image using Gemini 2.5 Flash Image Preview
+            response = self.image_model.generate_content([
+                image_prompt,
+                "Generate a high-quality, historically accurate image that represents this event. The image should be clear, detailed, and appropriate for educational use."
+            ])
+            
+            # Extract image URL from response
+            if hasattr(response, 'parts') and response.parts:
+                for part in response.parts:
+                    if hasattr(part, 'inline_data') and part.inline_data:
+                        # Convert base64 image data to data URL
+                        import base64
+                        image_data = base64.b64encode(part.inline_data.data).decode('utf-8')
+                        image_url = f"data:image/png;base64,{image_data}"
+                        return image_url
+                else:
+                    # Fallback if no image data found
+                    return "https://via.placeholder.com/400x400/4F46E5/FFFFFF?text=No+Image+Generated"
+            else:
+                return "https://via.placeholder.com/400x400/4F46E5/FFFFFF?text=No+Image+Generated"
+            
+        except Exception as e:
+            print(f"Error generating image for event '{event_name}': {e}")
+            return "https://via.placeholder.com/400x400/EF4444/FFFFFF?text=Image+Generation+Failed"
     
     def _extract_image_from_url(self, url: str) -> str:
         """Extract the best image URL from a given webpage URL."""

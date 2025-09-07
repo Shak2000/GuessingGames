@@ -18,6 +18,8 @@ class EventGame {
         this.retryBtn = document.getElementById('retryBtn');
         this.mapEl = document.getElementById('map');
         this.errorText = document.getElementById('errorText');
+        this.eventImageContainer = document.getElementById('eventImageContainer');
+        this.eventImage = document.getElementById('eventImage');
         
         // Initialize map
         this.map = null;
@@ -130,10 +132,14 @@ class EventGame {
         const keyDevelopments = data.key_developments;
         const results = data.results;
         const wikipediaUrl = data.wikipedia_url;
-        const imageUrl = data.image_url;
+        const generatedImageUrl = data.image_url;
+        const wikipediaImageUrl = data.wikipedia_image_url;
         const coordinates = data.coordinates;
         const reasoning = data.reasoning || '';
         const overview = data.overview || '';
+        
+        // Display the generated image
+        this.displayEventImage(generatedImageUrl, name);
         
         // Build event information
         let eventInfo = '';
@@ -158,24 +164,6 @@ class EventGame {
             eventInfo += '</div>';
         }
         
-        // Build image HTML if available
-        let imageHtml = '';
-        if (imageUrl && imageUrl !== null && imageUrl.toLowerCase() !== 'n/a') {
-            // Use a CORS proxy for Wikipedia images
-            let proxyUrl = '';
-            if (imageUrl && imageUrl.includes('upload.wikimedia.org')) {
-                // Use images.weserv.nl as a CORS proxy for Wikipedia images
-                proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&w=200&h=200&fit=cover`;
-            } else {
-                proxyUrl = imageUrl;
-            }
-            
-            imageHtml = `
-                <div class="person-image-container">
-                    <img src="${proxyUrl}" alt="Photo of ${name}" class="person-image" onerror="this.style.display='none'">
-                </div>
-            `;
-        }
         
         // Build overview section
         let overviewInfo = '';
@@ -188,9 +176,8 @@ class EventGame {
             `;
         }
         
-        // Display image, name, overview, and event info
+        // Display name, overview, and event info
         this.guessText.innerHTML = `
-            ${imageHtml}
             <div class="name-box">
                 <strong>${name}</strong>
             </div>
@@ -237,6 +224,30 @@ class EventGame {
             if (this.mapEl) {
                 this.mapEl.style.display = 'none';
             }
+        }
+    }
+    
+    displayEventImage(imageUrl, eventName) {
+        if (imageUrl && imageUrl !== null && imageUrl.toLowerCase() !== 'n/a' && 
+            !imageUrl.includes('placeholder.com') && !imageUrl.includes('Parse+Error')) {
+            // Show the image container and set the image source
+            this.eventImageContainer.style.display = 'block';
+            this.eventImage.src = imageUrl;
+            this.eventImage.alt = `Illustration of ${eventName}`;
+            
+            // Handle image load success
+            this.eventImage.onload = () => {
+                console.log('Event image loaded successfully');
+            };
+            
+            // Handle image load error
+            this.eventImage.onerror = () => {
+                console.log('Event image failed to load, hiding container');
+                this.eventImageContainer.style.display = 'none';
+            };
+        } else {
+            // Hide the image container if no valid image URL
+            this.eventImageContainer.style.display = 'none';
         }
     }
     
@@ -354,6 +365,10 @@ class EventGame {
         this.userInput.focus();
         this.userInput.value = '';
         this.currentSessionId = null;
+        // Hide the event image container
+        if (this.eventImageContainer) {
+            this.eventImageContainer.style.display = 'none';
+        }
     }
 }
 
