@@ -38,11 +38,13 @@ class EventGame {
         this.newGameBtn.addEventListener('click', () => this.startNewGame());
         this.retryBtn.addEventListener('click', () => this.startNewGame());
         
-        // Allow Enter key to submit
-        this.userInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && e.ctrlKey) {
+        // Allow Enter key to submit, Shift+Enter for new line
+        this.userInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // Prevent default new line behavior
                 this.startNewSession();
             }
+            // Shift+Enter allows default behavior (new line)
         });
     }
     
