@@ -41,6 +41,20 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
 - 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
 
+### Guess the Historical Event Game
+- 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent historical event identification
+- 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
+- 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
+- 💭 **Detailed Explanations**: Each guess includes both the event name and reasoning
+- 📝 **Comprehensive Event Data**: Complete JSON information including dates, locations, key figures, causes, developments, and results
+- 📸 **Enhanced AI Image Generation**: Uses Gemini 2.5 Flash Image Preview with complete event context for historically accurate visual representations
+- 🗺️ **Interactive Maps**: Google Maps integration showing event locations with custom markers
+- 🏛️ **Rich Context**: Event overview, key figures, causes, developments, and outcomes
+- 🔗 **Wikipedia Integration**: Direct links to event Wikipedia pages with automatic image extraction
+- ⚡ **Real-time**: Fast API responses with loading indicators and button states
+- 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
+- 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
+
 ## Setup Instructions
 
 ### 1. Install Dependencies
@@ -135,6 +149,22 @@ The application will be available at `http://localhost:8000`
 6. **Victory**: When the AI guesses correctly, you'll see a victory message!
 7. **New Game**: Start fresh anytime by entering new information
 
+### Guess the Historical Event Game
+1. **Enter Information**: Type information about a historical event in the text area
+2. **Submit**: Click "Submit Information" or press Ctrl+Enter
+3. **Review Guess**: The AI will display its guess with:
+   - **AI-Generated Image**: Historically accurate visual representation created by Gemini 2.5 Flash Image Preview using complete event context
+   - **Name Box**: The event's name in a blue gradient box
+   - **Overview Box**: A concise 50-75 word summary of the event's significance and key details
+   - **Comprehensive Event Data**: Complete information including start/end dates, location, key figures, causes, developments, and results
+   - **Interactive Map**: Google Maps showing the event location with custom markers
+   - **Wikipedia Link**: Direct link to the event's Wikipedia page with automatic image extraction
+   - **Explanation Box**: The AI's reasoning in a gray box below
+4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
+5. **Continue**: If incorrect, the AI will make another guess with improved context
+6. **Victory**: When the AI guesses correctly, you'll see a victory message!
+7. **New Game**: Start fresh anytime by entering new information
+
 ## File Structure
 
 ```
@@ -142,6 +172,7 @@ FirstAPI/
 ├── app.py               # Main FastAPI application with multi-game routing
 ├── person.py            # Guess the Famous Person game logic with Gemini AI integration
 ├── city.py              # Guess the City game logic with Gemini AI integration
+├── event.py             # Guess the Historical Event game logic with enhanced AI image generation
 ├── config.py            # API key configuration
 ├── requirements.txt     # Python dependencies
 ├── README.md           # This file
@@ -150,9 +181,12 @@ FirstAPI/
     ├── index.html      # Home page with game selection
     ├── person.html     # Guess the Famous Person game interface
     ├── city.html       # Guess the City game interface
+    ├── event.html      # Guess the Historical Event game interface
     ├── styles.css      # Modern styling and responsive design
     ├── script.js       # General app utilities and shared functionality
     ├── person.js       # Famous Person game specific JavaScript logic
+    ├── city.js         # City guessing game specific JavaScript logic
+    ├── event.js        # Historical Event game specific JavaScript logic
     ├── favicon.ico     # App favicon (ICO format)
     └── favicon.png     # App favicon (PNG format)
 ```
@@ -161,6 +195,7 @@ FirstAPI/
 - **`app.py`** - Main FastAPI application with multi-game routing and API endpoints
 - **`person.py`** - Guess the Famous Person game logic with Gemini AI integration, JSON response format, overview generation, image extraction, and session management
 - **`city.py`** - Guess the City game logic with Gemini AI integration, JSON response format, and session management
+- **`event.py`** - Guess the Historical Event game logic with enhanced AI image generation using complete event context
 - **`config.py`** - API key configuration (excluded from version control)
 - **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
 - **`static/index.html`** - Home page with game selection grid
@@ -177,6 +212,7 @@ FirstAPI/
 - `GET /` - Serves the home page with game selection
 - `GET /person` - Serves the Guess the Famous Person game page
 - `GET /city` - Serves the Guess the City game page
+- `GET /event` - Serves the Guess the Historical Event game page
 - `GET /api/health` - Health check endpoint
 - `GET /static/*` - Serves static files (CSS, JS, images, favicons)
 - `GET /favicon.ico` - Serves app favicon (ICO format)
@@ -196,6 +232,11 @@ FirstAPI/
 - `POST /api/submit-city-feedback` - Submits feedback for a city guess
 - `GET /api/city-session/{session_id}` - Gets city guessing session information
 
+### Guess the Historical Event Game
+- `POST /api/start-event-guess` - Starts a new event guessing session
+- `POST /api/submit-event-feedback` - Submits feedback for an event guess
+- `GET /api/event-session/{session_id}` - Gets event guessing session information
+
 ## Tips for Better Results
 
 - **Be Specific**: Provide unique details about the person
@@ -208,7 +249,14 @@ FirstAPI/
 
 ## Recent Updates
 
-### JavaScript Architecture Reorganization (Latest)
+### Enhanced Event Game Image Generation (Latest)
+- 🖼️ **Complete Context Image Generation**: Event guessing game now provides complete JSON event data to Gemini 2.5 Flash Image Preview for historically accurate visual representations
+- 📊 **Rich Event Context**: Image generation now includes event name, location, time period, key figures, and comprehensive overview for better visual accuracy
+- 🎨 **Enhanced Visual Quality**: AI-generated images are more historically accurate and contextually relevant due to the comprehensive event information provided
+- 🔧 **Improved Architecture**: Modified `_generate_event_image` method to accept complete event data instead of just event names
+- 📝 **Better Prompts**: Enhanced image generation prompts with detailed historical context for superior educational value
+
+### JavaScript Architecture Reorganization
 - 📁 **Modular JavaScript Structure**: Separated game-specific code from general app utilities
 - 🎭 **person.js**: Contains the complete FamousPersonGame class with all game-specific logic
 - 🛠️ **script.js**: New general utilities file with shared functionality for all games
@@ -266,8 +314,9 @@ FirstAPI/
 
 ### **Backend:**
 - **FastAPI**: Modern Python web framework with multi-game routing and API endpoints
-- **Modular Architecture**: Separate game logic modules (person.py, city.py) for scalability
-- **Google Gemini 2.5 Flash Lite**: AI model for person identification, overview generation, and reasoning with JSON response format
+- **Modular Architecture**: Separate game logic modules (person.py, city.py, event.py) for scalability
+- **Google Gemini 2.5 Flash Lite**: AI model for person/city/event identification, overview generation, and reasoning with JSON response format
+- **Google Gemini 2.5 Flash Image Preview**: AI image generation with complete event context for historically accurate visual representations
 - **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
 - **Requests**: HTTP library for web scraping
 - **Google Maps Python Client**: Geocoding API integration for address-to-coordinates conversion
