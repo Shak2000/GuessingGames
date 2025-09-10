@@ -39,6 +39,8 @@ class BusinessGame {
         this.productsServicesContent = document.getElementById('productsServicesContent');
         this.subsidiariesSection = document.getElementById('subsidiariesSection');
         this.subsidiariesContent = document.getElementById('subsidiariesContent');
+        this.moreInfoSection = document.getElementById('moreInfoSection');
+        this.moreInfoContent = document.getElementById('moreInfoContent');
         
         // Other sections
         this.victorySection = document.getElementById('victorySection');
@@ -265,12 +267,6 @@ class BusinessGame {
         if (guess.previous_names && guess.previous_names.length > 0) {
             productsServicesInfo += `<p><strong>Previous Names:</strong> ${guess.previous_names.join(', ')}</p>`;
         }
-        if (guess.website) {
-            productsServicesInfo += `<p><strong>Website:</strong> <a href="${guess.website}" target="_blank">${guess.website}</a></p>`;
-        }
-        if (guess.wikipedia_url) {
-            productsServicesInfo += `<p><strong>Wikipedia:</strong> <a href="${guess.wikipedia_url}" target="_blank">View Wikipedia Page</a></p>`;
-        }
         
         if (productsServicesInfo) {
             this.productsServicesContent.innerHTML = productsServicesInfo;
@@ -285,6 +281,22 @@ class BusinessGame {
             this.subsidiariesSection.classList.remove('hidden');
         } else {
             this.subsidiariesSection.classList.add('hidden');
+        }
+
+        // More Information
+        let moreInfoContent = '';
+        if (guess.website) {
+            moreInfoContent += `<p><strong>Website:</strong> <a href="${guess.website}" target="_blank">Visit Website</a></p>`;
+        }
+        if (guess.wikipedia_url) {
+            moreInfoContent += `<p><strong>Wikipedia:</strong> <a href="${guess.wikipedia_url}" target="_blank">View Wikipedia Page</a></p>`;
+        }
+        
+        if (moreInfoContent) {
+            this.moreInfoContent.innerHTML = moreInfoContent;
+            this.moreInfoSection.classList.remove('hidden');
+        } else {
+            this.moreInfoSection.classList.add('hidden');
         }
     }
 

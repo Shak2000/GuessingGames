@@ -1096,6 +1096,8 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: white;
     padding: 10px;
+    display: block;
+    margin: 0 auto;
 }
 
 .business-details {
