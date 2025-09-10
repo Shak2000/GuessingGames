@@ -159,13 +159,25 @@ class BusinessGame {
             return;
         }
 
-        // Display business name
-        this.guessText.innerHTML = `<div class="name-box">${guess.name}</div>`;
-        
-        // Display overview
+        // Build overview section
+        let overviewInfo = '';
         if (guess.overview) {
-            this.guessTextOverview.innerHTML = `<div class="overview-box">${guess.overview}</div>`;
+            overviewInfo = `
+                <div class="bio-section overview-section">
+                    <h4>Overview:</h4>
+                    <p>${guess.overview}</p>
+                </div>
+            `;
         }
+
+        // Display business name and overview
+        this.guessText.innerHTML = `
+            <div class="name-box">${guess.name}</div>
+            ${overviewInfo}
+        `;
+        
+        // Hide the separate overview section since we're including it in the main content
+        this.guessTextOverview.style.display = 'none';
 
         // Display business image if available
         if (guess.image_url) {
