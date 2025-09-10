@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the City - Multi-Game App</title>
+    <title>Guess the Business - Multi-Game App</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" href="/favicon.ico">
@@ -17,26 +17,26 @@
             <div class="toolbar-content">
                 <a href="/" class="toolbar-item">🏠 Home</a>
                 <a href="/person" class="toolbar-item">🎭 Guess the Famous Person</a>
-                <a href="/city" class="toolbar-item active">🏙️ Guess the City</a>
+                <a href="/city" class="toolbar-item">🏙️ Guess the City</a>
                 <a href="/odd" class="toolbar-item">🎪 Odd Situation Game</a>
                 <a href="/event" class="toolbar-item">📅 Guess the Event</a>
-                <a href="/business" class="toolbar-item">🏢 Guess the Business</a>
+                <a href="/business" class="toolbar-item active">🏢 Guess the Business</a>
             </div>
         </nav>
 
         <header class="header">
-            <h1 class="title">🏙️ Guess the City</h1>
-            <p class="subtitle">Enter information about a city and I'll try to guess which city it is!</p>
+            <h1 class="title">🏢 Guess the Business</h1>
+            <p class="subtitle">Enter information about a business and I'll try to guess which business it is!</p>
         </header>
 
         <main class="main-content">
             <div class="input-section">
                 <div class="input-group">
-                    <label for="userInput" class="input-label">Tell me about the city:</label>
+                    <label for="userInput" class="input-label">Tell me about the business:</label>
                     <textarea 
                         id="userInput" 
                         class="input-textarea" 
-                        placeholder="e.g., 'This city is the capital of France, known for the Eiffel Tower, and is located on the Seine River...'"
+                        placeholder="e.g., 'This company was founded in 1976 by Steve Jobs and Steve Wozniak in a garage in California. They revolutionized personal computing and later created the iPhone...'"
                         rows="4"
                     ></textarea>
                 </div>
@@ -46,7 +46,33 @@
             <div id="gameSection" class="game-section hidden">
                 <div class="guess-display">
                     <h3 class="guess-title">My Guess:</h3>
+                    <div id="businessImageContainer" class="business-image-container" style="display: none;">
+                        <img id="businessImage" class="business-image" alt="Business logo" onerror="this.style.display='none'">
+                    </div>
                     <div id="guessText" class="guess-text"></div>
+                    <div id="guessTextOverview" class="guess-text overview-section"></div>
+                    <div id="businessDetails" class="business-details">
+                        <div id="basicInfoSection" class="info-section hidden">
+                            <h4>Basic Information</h4>
+                            <div id="basicInfoContent"></div>
+                        </div>
+                        <div id="financialInfoSection" class="info-section hidden">
+                            <h4>Financial Information</h4>
+                            <div id="financialInfoContent"></div>
+                        </div>
+                        <div id="leadershipSection" class="info-section hidden">
+                            <h4>Leadership</h4>
+                            <div id="leadershipContent"></div>
+                        </div>
+                        <div id="productsServicesSection" class="info-section hidden">
+                            <h4>Products & Services</h4>
+                            <div id="productsServicesContent"></div>
+                        </div>
+                        <div id="subsidiariesSection" class="info-section hidden">
+                            <h4>Subsidiaries</h4>
+                            <div id="subsidiariesContent"></div>
+                        </div>
+                    </div>
                     <div id="guessTextReasoning" class="guess-text"></div>
                     <div id="map" class="map-container" style="display: none;"></div>
                 </div>
@@ -84,7 +110,7 @@
         </footer>
     </div>
 
-    <!-- Google Maps API will be loaded dynamically by city.js -->
-    <script src="/static/city.js?v=1"></script>
+    <!-- Google Maps API will be loaded dynamically by business.js -->
+    <script src="/static/business.js?v=1"></script>
 </body>
 </html>

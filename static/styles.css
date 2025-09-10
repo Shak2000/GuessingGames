@@ -1082,3 +1082,51 @@ body {
         max-height: 100%;
     }
 }
+
+/* Business-specific styles */
+.business-image-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.business-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: white;
+    padding: 10px;
+}
+
+.business-details {
+    margin: 20px 0;
+}
+
+.info-section {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4f46e5;
+}
+
+.info-section h4 {
+    color: #4f46e5;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.info-section p {
+    margin: 5px 0;
+    line-height: 1.5;
+}
+
+.info-section a {
+    color: #4f46e5;
+    text-decoration: none;
+}
+
+.info-section a:hover {
+    text-decoration: underline;
+}
