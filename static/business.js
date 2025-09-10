@@ -211,11 +211,11 @@ class BusinessGame {
         if (guess.year_founded) basicInfo += `<p><strong>Founded:</strong> ${guess.year_founded}</p>`;
         if (guess.city_founded) basicInfo += `<p><strong>Founded in:</strong> ${guess.city_founded}</p>`;
         if (guess.founders && guess.founders.length > 0) {
-            basicInfo += `<p><strong>Founders:</strong> ${guess.founders.join(', ')}</p>`;
+            basicInfo += `<p><strong>Founders:</strong> ${this.formatListWithSpaces(guess.founders)}</p>`;
         }
         if (guess.current_headquarters) basicInfo += `<p><strong>Headquarters:</strong> ${guess.current_headquarters}</p>`;
         if (guess.areas_served) basicInfo += `<p><strong>Areas Served:</strong> ${guess.areas_served}</p>`;
-        if (guess.number_of_employees) basicInfo += `<p><strong>Employees:</strong> ${guess.number_of_employees}</p>`;
+        if (guess.number_of_employees) basicInfo += `<p><strong>Employees:</strong> ${this.formatNumberWithCommas(guess.number_of_employees)}</p>`;
         
         if (basicInfo) {
             this.basicInfoContent.innerHTML = basicInfo;
@@ -232,15 +232,15 @@ class BusinessGame {
         if (guess.ticker && guess.ticker !== 'N/A') {
             financialInfo += `<p><strong>Ticker:</strong> ${guess.ticker}</p>`;
         }
-        if (guess.revenue) financialInfo += `<p><strong>Revenue:</strong> ${guess.revenue}</p>`;
-        if (guess.operating_income) financialInfo += `<p><strong>Operating Income:</strong> ${guess.operating_income}</p>`;
-        if (guess.net_income) financialInfo += `<p><strong>Net Income:</strong> ${guess.net_income}</p>`;
-        if (guess.total_assets) financialInfo += `<p><strong>Total Assets:</strong> ${guess.total_assets}</p>`;
-        if (guess.total_equity) financialInfo += `<p><strong>Total Equity:</strong> ${guess.total_equity}</p>`;
+        if (guess.revenue) financialInfo += `<p><strong>Revenue:</strong> ${this.formatNumberWithCommas(guess.revenue)}</p>`;
+        if (guess.operating_income) financialInfo += `<p><strong>Operating Income:</strong> ${this.formatNumberWithCommas(guess.operating_income)}</p>`;
+        if (guess.net_income) financialInfo += `<p><strong>Net Income:</strong> ${this.formatNumberWithCommas(guess.net_income)}</p>`;
+        if (guess.total_assets) financialInfo += `<p><strong>Total Assets:</strong> ${this.formatNumberWithCommas(guess.total_assets)}</p>`;
+        if (guess.total_equity) financialInfo += `<p><strong>Total Equity:</strong> ${this.formatNumberWithCommas(guess.total_equity)}</p>`;
         if (guess.owner) {
             financialInfo += `<p><strong>Owner:</strong> ${guess.owner}`;
             if (guess.owner_equity_percentage) {
-                financialInfo += ` (${guess.owner_equity_percentage})`;
+                financialInfo += ` (${this.formatOwnershipPercentage(guess.owner_equity_percentage)})`;
             }
             financialInfo += `</p>`;
         }
@@ -268,16 +268,16 @@ class BusinessGame {
         // Products & Services
         let productsServicesInfo = '';
         if (guess.products && guess.products.length > 0) {
-            productsServicesInfo += `<p><strong>Products:</strong> ${guess.products.join(', ')}</p>`;
+            productsServicesInfo += `<p><strong>Products:</strong> ${this.formatListWithSpaces(guess.products)}</p>`;
         }
         if (guess.services && guess.services.length > 0) {
-            productsServicesInfo += `<p><strong>Services:</strong> ${guess.services.join(', ')}</p>`;
+            productsServicesInfo += `<p><strong>Services:</strong> ${this.formatListWithSpaces(guess.services)}</p>`;
         }
         if (guess.predecessors && guess.predecessors.length > 0) {
-            productsServicesInfo += `<p><strong>Predecessors:</strong> ${guess.predecessors.join(', ')}</p>`;
+            productsServicesInfo += `<p><strong>Predecessors:</strong> ${this.formatListWithSpaces(guess.predecessors)}</p>`;
         }
         if (guess.previous_names && guess.previous_names.length > 0) {
-            productsServicesInfo += `<p><strong>Previous Names:</strong> ${guess.previous_names.join(', ')}</p>`;
+            productsServicesInfo += `<p><strong>Previous Names:</strong> ${this.formatListWithSpaces(guess.previous_names)}</p>`;
         }
         
         if (productsServicesInfo) {
@@ -289,7 +289,7 @@ class BusinessGame {
 
         // Subsidiaries
         if (guess.subsidiaries && guess.subsidiaries.length > 0) {
-            this.subsidiariesContent.innerHTML = `<p>${guess.subsidiaries.join(', ')}</p>`;
+            this.subsidiariesContent.innerHTML = `<p>${this.formatListWithSpaces(guess.subsidiaries)}</p>`;
             this.subsidiariesSection.classList.remove('hidden');
         } else {
             this.subsidiariesSection.classList.add('hidden');
@@ -455,6 +455,7 @@ class BusinessGame {
         this.leadershipSection.classList.add('hidden');
         this.productsServicesSection.classList.add('hidden');
         this.subsidiariesSection.classList.add('hidden');
+        this.moreInfoSection.classList.add('hidden');
         
         // Clear content
         this.basicInfoContent.innerHTML = '';
@@ -462,11 +463,30 @@ class BusinessGame {
         this.leadershipContent.innerHTML = '';
         this.productsServicesContent.innerHTML = '';
         this.subsidiariesContent.innerHTML = '';
+        this.moreInfoContent.innerHTML = '';
         
         // Reset map
         if (this.map) {
             this.map = null;
         }
+    }
+
+    // Formatting functions
+    formatNumberWithCommas(number) {
+        if (!number || isNaN(number)) return number;
+        return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    formatListWithSpaces(list) {
+        if (!Array.isArray(list)) return list;
+        return list.join(', ');
+    }
+
+    formatOwnershipPercentage(percentage) {
+        if (!percentage) return percentage;
+        // Remove any existing % sign and add it back
+        const cleanPercentage = percentage.toString().replace('%', '');
+        return `${cleanPercentage}%`;
     }
 }
 
