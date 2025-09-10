@@ -207,14 +207,14 @@ class BusinessGame {
         // Basic Information
         let basicInfo = '';
         if (guess.type) basicInfo += `<p><strong>Type:</strong> ${guess.type}</p>`;
-        if (guess.industry) basicInfo += `<p><strong>Industry:</strong> ${guess.industry}</p>`;
+        if (guess.industry) basicInfo += `<p><strong>Industry:</strong> ${this.formatListWithSpaces(guess.industry)}</p>`;
         if (guess.year_founded) basicInfo += `<p><strong>Founded:</strong> ${guess.year_founded}</p>`;
         if (guess.city_founded) basicInfo += `<p><strong>Founded in:</strong> ${guess.city_founded}</p>`;
         if (guess.founders && guess.founders.length > 0) {
             basicInfo += `<p><strong>Founders:</strong> ${this.formatListWithSpaces(guess.founders)}</p>`;
         }
         if (guess.current_headquarters) basicInfo += `<p><strong>Headquarters:</strong> ${guess.current_headquarters}</p>`;
-        if (guess.areas_served) basicInfo += `<p><strong>Areas Served:</strong> ${guess.areas_served}</p>`;
+        if (guess.areas_served) basicInfo += `<p><strong>Areas Served:</strong> ${this.formatListWithSpaces(guess.areas_served)}</p>`;
         if (guess.number_of_employees) basicInfo += `<p><strong>Employees:</strong> ${this.formatNumberWithCommas(guess.number_of_employees)}</p>`;
         
         if (basicInfo) {
@@ -478,7 +478,14 @@ class BusinessGame {
     }
 
     formatListWithSpaces(list) {
-        if (!Array.isArray(list)) return list;
+        if (!Array.isArray(list)) {
+            // If it's a string, split by comma and rejoin with proper spacing
+            if (typeof list === 'string') {
+                return list.split(',').map(item => item.trim()).join(', ');
+            }
+            return list;
+        }
+        // For arrays, join with proper spacing
         return list.join(', ');
     }
 

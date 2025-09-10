@@ -63,14 +63,14 @@ Please respond with a JSON object containing the following fields:
 - type: The business type (public, private, subsidiary, etc.)
 - stock_exchange: The stock exchange where the company is listed (if public, otherwise "N/A")
 - ticker: The stock ticker symbol (if public, otherwise "N/A")
-- industry: The primary industry or industries the business operates in
+- industry: An array of industries the business operates in
 - predecessors: An array of predecessor companies (if any, otherwise empty array)
 - previous_names: An array of previous company names (if any, otherwise empty array)
 - city_founded: The city where the company was founded, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
 - year_founded: The year the company was founded
 - founders: An array of founder names (if known, otherwise empty array)
 - current_headquarters: The current headquarters location, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
-- areas_served: The geographic areas where the company operates
+- areas_served: An array of geographic areas where the company operates
 - chairman: The current chairman (if known, otherwise null)
 - ceo: The current CEO (if known, otherwise null)
 - products: An array of main products (if any, otherwise empty array)
