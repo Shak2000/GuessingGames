@@ -117,6 +117,9 @@ class BusinessGame {
             return;
         }
 
+        // Disable button and show loading
+        this.submitBtn.disabled = true;
+        this.submitBtn.textContent = 'Thinking...';
         this.hideAllSections();
         this.showLoading();
 
@@ -144,6 +147,10 @@ class BusinessGame {
             console.error('Error starting business game:', error);
             this.hideLoading();
             this.showError(`Failed to start game: ${error.message}`);
+        } finally {
+            // Re-enable button and hide loading
+            this.submitBtn.disabled = false;
+            this.submitBtn.textContent = 'Submit Information';
         }
     }
 
@@ -434,6 +441,10 @@ class BusinessGame {
         this.currentSessionId = null;
         this.userInput.value = '';
         this.hideAllSections();
+        
+        // Reset button state
+        this.submitBtn.disabled = false;
+        this.submitBtn.textContent = 'Submit Information';
         
         // Clear previous guess data
         this.guessText.innerHTML = '';
