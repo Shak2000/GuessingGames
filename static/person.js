@@ -244,6 +244,8 @@ class FamousPersonGame {
         const placeOfBirth = data.place_of_birth;
         const dateOfDeath = data.date_of_death;
         const placeOfDeath = data.place_of_death;
+        const placeOfResidence = data.place_of_residence;
+        const placeOfBurial = data.place_of_burial;
         const parents = data.parents || [];
         const siblings = data.siblings || [];
         const spouse = data.spouse || [];
@@ -259,7 +261,7 @@ class FamousPersonGame {
         
         // Build biographical information
         let bioInfo = '';
-        if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath || wikipediaUrl) {
+        if (dateOfBirth || placeOfBirth || dateOfDeath || placeOfDeath || placeOfResidence || placeOfBurial || wikipediaUrl) {
             bioInfo += '<div class="bio-section">';
             bioInfo += '<h4>Biographical Information:</h4>';
             if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
@@ -270,6 +272,14 @@ class FamousPersonGame {
             }
             if (placeOfDeath && placeOfDeath !== null && placeOfDeath.toLowerCase() !== 'n/a') {
                 bioInfo += `<p><strong>Place of Death:</strong> <a href="/city" class="city-link" data-city="${placeOfDeath}">${placeOfDeath}</a></p>`;
+            }
+            // Show place of residence if available and person is alive (not deceased)
+            if (placeOfResidence && placeOfResidence !== null && placeOfResidence.toLowerCase() !== 'n/a' && placeOfResidence.toLowerCase() !== 'null' && placeOfResidence.toLowerCase() !== 'unknown' && (!dateOfDeath || dateOfDeath.toLowerCase() === 'n/a' || dateOfDeath.toLowerCase() === 'alive' || dateOfDeath.toLowerCase() === 'still alive')) {
+                bioInfo += `<p><strong>Place of Residence:</strong> <a href="/city" class="city-link" data-city="${placeOfResidence}">${placeOfResidence}</a></p>`;
+            }
+            // Show place of burial if available and person is deceased
+            if (placeOfBurial && placeOfBurial !== null && placeOfBurial.toLowerCase() !== 'n/a' && placeOfBurial.toLowerCase() !== 'null' && placeOfBurial.toLowerCase() !== 'unknown' && dateOfDeath && dateOfDeath.toLowerCase() !== 'n/a' && dateOfDeath.toLowerCase() !== 'alive' && dateOfDeath.toLowerCase() !== 'still alive') {
+                bioInfo += `<p><strong>Place of Burial:</strong> <a href="/city" class="city-link" data-city="${placeOfBurial}">${placeOfBurial}</a></p>`;
             }
             // Add Wikipedia link if available
             if (wikipediaUrl && wikipediaUrl !== null) {
@@ -383,6 +393,14 @@ class FamousPersonGame {
                     lat: coordinates.deathplace.lat,
                     lng: coordinates.deathplace.lng
                 } : null;
+                const residenceCoords = coordinates.residence && (!dateOfDeath || dateOfDeath.toLowerCase() === 'n/a' || dateOfDeath.toLowerCase() === 'alive' || dateOfDeath.toLowerCase() === 'still alive') ? {
+                    lat: coordinates.residence.lat,
+                    lng: coordinates.residence.lng
+                } : null;
+                const burialCoords = coordinates.burial && dateOfDeath && dateOfDeath.toLowerCase() !== 'n/a' && dateOfDeath.toLowerCase() !== 'alive' && dateOfDeath.toLowerCase() !== 'still alive' ? {
+                    lat: coordinates.burial.lat,
+                    lng: coordinates.burial.lng
+                } : null;
                 
                 // Show the map container
                 if (this.mapEl) {
@@ -395,7 +413,7 @@ class FamousPersonGame {
                 }
                 
                 // Initialize the map
-                this.initMap(birthCoords, deathCoords);
+                this.initMap(birthCoords, deathCoords, residenceCoords, burialCoords);
             } catch (e) {
                 // Error parsing coordinates
             }
@@ -466,8 +484,8 @@ class FamousPersonGame {
         this.userInput.focus();
     }
 
-    initMap(birthCoords, deathCoords) {
-        console.log('initMap called with coords:', { birthCoords, deathCoords });
+    initMap(birthCoords, deathCoords, residenceCoords = null, burialCoords = null) {
+        console.log('initMap called with coords:', { birthCoords, deathCoords, residenceCoords, burialCoords });
         console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
         
         if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
@@ -526,6 +544,42 @@ class FamousPersonGame {
                 }
             });
             bounds.extend(deathMarker.getPosition());
+            markerCount++;
+        }
+
+        if (residenceCoords) {
+            const residenceMarker = new google.maps.Marker({
+                position: residenceCoords,
+                map: this.map,
+                title: `Residence`,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#3B82F6" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">R</text>
+                        </svg>
+                    `)
+                }
+            });
+            bounds.extend(residenceMarker.getPosition());
+            markerCount++;
+        }
+
+        if (burialCoords) {
+            const burialMarker = new google.maps.Marker({
+                position: burialCoords,
+                map: this.map,
+                title: `Burial Place`,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#8B5CF6" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">✝</text>
+                        </svg>
+                    `)
+                }
+            });
+            bounds.extend(burialMarker.getPosition());
             markerCount++;
         }
 
@@ -768,6 +822,14 @@ class FamousPersonGame {
                         lat: coordsData.deathplace.lat,
                         lng: coordsData.deathplace.lng
                     } : null;
+                    const residenceCoords = coordsData.residence && (!dateOfDeath || dateOfDeath.toLowerCase() === 'n/a' || dateOfDeath.toLowerCase() === 'alive' || dateOfDeath.toLowerCase() === 'still alive') ? {
+                        lat: coordsData.residence.lat,
+                        lng: coordsData.residence.lng
+                    } : null;
+                    const burialCoords = coordsData.burial && dateOfDeath && dateOfDeath.toLowerCase() !== 'n/a' && dateOfDeath.toLowerCase() !== 'alive' && dateOfDeath.toLowerCase() !== 'still alive' ? {
+                        lat: coordsData.burial.lat,
+                        lng: coordsData.burial.lng
+                    } : null;
                     
                     // Show the map container
                     if (this.mapEl) {
@@ -780,7 +842,7 @@ class FamousPersonGame {
                     }
                     
                     // Initialize the map
-                    this.initMap(birthCoords, deathCoords);
+                    this.initMap(birthCoords, deathCoords, residenceCoords, burialCoords);
                 } catch (e) {
                     // Error parsing coordinates
                 }

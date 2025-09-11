@@ -55,9 +55,11 @@ class FamousPersonGuesser:
         Return the information as a JSON object with the following keys:
         - 'name': The person's full name
         - 'date_of_birth': The person's date of birth, or null if unknown
-        - 'place_of_birth': The person's place of birth (city, country), or null if unknown
+        - 'place_of_birth': The person's place of birth (city, administrative division, country (e.g., "Dallas, Texas, United States")), or null if unknown
+        - 'place_of_residence': The person's place of residence (city, administrative division, country (e.g., "Dallas, Texas, United States")), or null if dead or unknown
         - 'date_of_death': The person's date of death, or null if still alive
-        - 'place_of_death': The person's place of death (city, country), or null if still alive
+        - 'place_of_death': The person's place of death (city, administrative division, country (e.g., "Dallas, Texas, United States")), or null if still alive
+        - 'place_of_burial': The person's place of burial (city, administrative division, country (e.g., "Dallas, Texas, United States")), or null if still alive or unknown
         - 'parents': An array of strings with parent names, or empty array [] if unknown
         - 'siblings': An array of strings with sibling names, or empty array [] if unknown
         - 'spouse': An array of strings with spouse names, or empty array [] if unknown
@@ -107,6 +109,8 @@ class FamousPersonGuesser:
                 place_of_birth = data.get('place_of_birth')
                 date_of_death = data.get('date_of_death')
                 place_of_death = data.get('place_of_death')
+                place_of_residence = data.get('place_of_residence')
+                place_of_burial = data.get('place_of_burial')
                 parents = data.get('parents', [])
                 siblings = data.get('siblings', [])
                 spouse = data.get('spouse', [])
@@ -146,6 +150,16 @@ class FamousPersonGuesser:
                 if death_coords:
                     coordinates['deathplace'] = death_coords
             
+            if place_of_residence and place_of_residence.lower() not in ['n/a', 'null', 'unknown']:
+                residence_coords = self._get_place_coordinates(place_of_residence)
+                if residence_coords:
+                    coordinates['residence'] = residence_coords
+            
+            if place_of_burial and place_of_burial.lower() not in ['n/a', 'null', 'unknown']:
+                burial_coords = self._get_place_coordinates(place_of_burial)
+                if burial_coords:
+                    coordinates['burial'] = burial_coords
+            
             # Build the final response as JSON
             final_response = {
                 "name": name,
@@ -156,6 +170,8 @@ class FamousPersonGuesser:
                 "date_of_death": date_of_death,
                 "place_of_death": place_of_death,
                 "deathplace_area_mi": data.get('deathplace_area_mi'),
+                "place_of_residence": place_of_residence,
+                "place_of_burial": place_of_burial,
                 "parents": parents,
                 "siblings": siblings,
                 "spouse": spouse,
