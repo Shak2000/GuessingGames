@@ -143,13 +143,19 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 if wikipedia_url and wikipedia_url.lower() != 'n/a':
                     image_url = self._extract_image_from_url(wikipedia_url)
                 
-                # Get coordinates for the headquarters
-                coordinates = None
+                # Get coordinates for founding city and headquarters
+                coordinates = {}
+                founding_city = business_data.get('city_founded')
+                if founding_city and founding_city.lower() != 'n/a':
+                    founding_coords = self._get_place_coordinates(founding_city)
+                    if founding_coords:
+                        coordinates['founding'] = founding_coords
+                
                 headquarters = business_data.get('current_headquarters')
-                if headquarters:
+                if headquarters and headquarters.lower() != 'n/a':
                     headquarters_coords = self._get_place_coordinates(headquarters)
                     if headquarters_coords:
-                        coordinates = headquarters_coords
+                        coordinates['headquarters'] = headquarters_coords
                 
                 # Build the final response as JSON (matching other games structure)
                 final_response = {

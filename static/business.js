@@ -201,8 +201,8 @@ class BusinessGame {
         }
 
         // Display map if coordinates are available
-        if (guess.coordinates) {
-            this.displayMap(guess.coordinates, guess.current_headquarters);
+        if (guess.coordinates && (guess.coordinates.founding || guess.coordinates.headquarters)) {
+            this.displayMap(guess.coordinates);
         } else {
             this.mapEl.style.display = 'none';
         }
@@ -310,7 +310,7 @@ class BusinessGame {
         }
     }
 
-    displayMap(coordinates, locationName) {
+    displayMap(coordinates) {
         if (!this.mapsApiKey) {
             console.log('Maps API key not available');
             return;
@@ -319,7 +319,7 @@ class BusinessGame {
         // Wait for Google Maps to load
         const checkMapsLoaded = () => {
             if (typeof google !== 'undefined' && google.maps) {
-                this.initializeMap(coordinates, locationName);
+                this.initializeMap(coordinates);
             } else {
                 setTimeout(checkMapsLoaded, 100);
             }
@@ -327,26 +327,100 @@ class BusinessGame {
         checkMapsLoaded();
     }
 
-    initializeMap(coordinates, locationName) {
-        try {
-            const mapOptions = {
-                zoom: 10,
-                center: { lat: coordinates.lat, lng: coordinates.lng },
-                mapTypeId: google.maps.MapTypeId.ROADMAP
-            };
+    initializeMap(coordinates) {
+        console.log('initMap called with coords:', coordinates);
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
+            if (this.mapEl) {
+                this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
+            }
+            return;
+        }
 
-            this.map = new google.maps.Map(this.mapEl, mapOptions);
+        if (!this.mapEl) {
+            return;
+        }
 
-            // Add marker
-            const marker = new google.maps.Marker({
-                position: { lat: coordinates.lat, lng: coordinates.lng },
+        const mapOptions = {
+            zoom: 2,
+            center: { lat: 20, lng: 0 },
+            mapTypeId: 'terrain'
+        };
+        this.map = new google.maps.Map(this.mapEl, mapOptions);
+
+        const bounds = new google.maps.LatLngBounds();
+        let markerCount = 0;
+        let coordsAreIdentical = false;
+
+        // Add founding city marker
+        if (coordinates.founding) {
+            const foundingMarker = new google.maps.Marker({
+                position: coordinates.founding,
                 map: this.map,
-                title: locationName || 'Business Location'
+                title: `Founded in`,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#10B981" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">F</text>
+                        </svg>
+                    `)
+                }
             });
+            bounds.extend(foundingMarker.getPosition());
+            markerCount++;
+        }
 
+        // Add headquarters marker
+        if (coordinates.headquarters) {
+            const headquartersMarker = new google.maps.Marker({
+                position: coordinates.headquarters,
+                map: this.map,
+                title: `Headquarters`,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#3B82F6" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">H</text>
+                        </svg>
+                    `)
+                }
+            });
+            bounds.extend(headquartersMarker.getPosition());
+            markerCount++;
+        }
+
+        // Check if coordinates are identical (same city)
+        if (coordinates.founding && coordinates.headquarters) {
+            const foundingLat = coordinates.founding.lat;
+            const foundingLng = coordinates.founding.lng;
+            const headquartersLat = coordinates.headquarters.lat;
+            const headquartersLng = coordinates.headquarters.lng;
+            
+            const latDiff = Math.abs(foundingLat - headquartersLat);
+            const lngDiff = Math.abs(foundingLng - headquartersLng);
+            
+            // Consider coordinates identical if they're within 0.01 degrees (~1km)
+            if (latDiff < 0.01 && lngDiff < 0.01) {
+                coordsAreIdentical = true;
+            }
+        }
+
+        if (markerCount > 0) {
             this.mapEl.style.display = 'block';
-        } catch (error) {
-            console.error('Error initializing map:', error);
+            
+            if (markerCount === 1 || coordsAreIdentical) {
+                // Single marker or identical coordinates - center on the marker
+                const singleMarker = coordinates.founding || coordinates.headquarters;
+                this.map.setCenter(singleMarker);
+                this.map.setZoom(10);
+            } else {
+                // Multiple different markers - fit bounds
+                this.map.fitBounds(bounds);
+            }
+        } else {
             this.mapEl.style.display = 'none';
         }
     }
