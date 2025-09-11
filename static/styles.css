@@ -578,20 +578,48 @@ body {
 .toolbar-content {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    padding: 0 10px;
+    scroll-behavior: smooth;
+    /* Hide scrollbar on webkit browsers */
+    -ms-overflow-style: none;
+}
+
+.toolbar-content::-webkit-scrollbar {
+    height: 6px;
+}
+
+.toolbar-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.toolbar-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 3px;
+}
+
+.toolbar-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 .toolbar-item {
     display: flex;
     align-items: center;
-    padding: 15px 25px;
+    padding: 15px 35px;
     color: white; /* Changed to solid white */
     text-decoration: none;
     font-weight: 500;
     font-size: 0.95rem;
     transition: all 0.3s ease;
     border-radius: 12px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-width: 180px;
+    justify-content: center;
     /* margin has been removed */
 }
 
@@ -605,6 +633,27 @@ body {
     color: white;
     background: rgba(255, 255, 255, 0.15);
     font-weight: 600;
+}
+
+/* Responsive toolbar behavior */
+@media (max-width: 768px) {
+    .toolbar-content {
+        padding: 0 5px;
+    }
+    
+    .toolbar-item {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+        min-width: 160px;
+    }
+}
+
+@media (max-width: 480px) {
+    .toolbar-item {
+        padding: 10px 20px;
+        font-size: 0.85rem;
+        min-width: 140px;
+    }
 }
 
 /* --- MODIFIED STYLES END HERE --- */
