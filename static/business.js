@@ -206,21 +206,21 @@ class BusinessGame {
     displayBusinessDetails(guess) {
         // Basic Information
         let basicInfo = '';
-        if (guess.type) basicInfo += `<p><strong>Type:</strong> ${guess.type}</p>`;
-        if (guess.current_status) basicInfo += `<p><strong>Status:</strong> ${guess.current_status}</p>`;
-        if (guess.industry) basicInfo += `<p><strong>Industry:</strong> ${this.formatListWithSpaces(guess.industry)}</p>`;
-        if (guess.year_founded) basicInfo += `<p><strong>Founded:</strong> ${guess.year_founded}</p>`;
-        if (guess.city_founded) basicInfo += `<p><strong>Founded in:</strong> ${guess.city_founded}</p>`;
-        if (guess.founders && guess.founders.length > 0) {
+        if (this.shouldDisplay(guess.type)) basicInfo += `<p><strong>Type:</strong> ${guess.type}</p>`;
+        if (this.shouldDisplay(guess.current_status)) basicInfo += `<p><strong>Status:</strong> ${guess.current_status}</p>`;
+        if (this.shouldDisplay(guess.industry)) basicInfo += `<p><strong>Industry:</strong> ${this.formatListWithSpaces(guess.industry)}</p>`;
+        if (this.shouldDisplay(guess.year_founded)) basicInfo += `<p><strong>Founded:</strong> ${guess.year_founded}</p>`;
+        if (this.shouldDisplay(guess.city_founded)) basicInfo += `<p><strong>Founded in:</strong> ${guess.city_founded}</p>`;
+        if (this.shouldDisplay(guess.founders)) {
             basicInfo += `<p><strong>Founders:</strong> ${this.formatListWithSpaces(guess.founders)}</p>`;
         }
-        if (guess.current_headquarters) basicInfo += `<p><strong>Headquarters:</strong> ${guess.current_headquarters}</p>`;
-        if (guess.areas_served) basicInfo += `<p><strong>Areas Served:</strong> ${this.formatListWithSpaces(guess.areas_served)}</p>`;
-        if (guess.number_of_locations) basicInfo += `<p><strong>Number of Locations:</strong> ${this.formatNumberWithCommas(guess.number_of_locations)}</p>`;
-        if (guess.number_of_employees) basicInfo += `<p><strong>Employees:</strong> ${this.formatNumberWithCommas(guess.number_of_employees)}</p>`;
-        if (guess.year_defunct) basicInfo += `<p><strong>Year Defunct:</strong> ${guess.year_defunct}</p>`;
-        if (guess.fate) basicInfo += `<p><strong>Fate:</strong> ${guess.fate}</p>`;
-        if (guess.successors) basicInfo += `<p><strong>Successors:</strong> ${this.formatListWithSpaces(guess.successors)}</p>`;
+        if (this.shouldDisplay(guess.current_headquarters)) basicInfo += `<p><strong>Headquarters:</strong> ${guess.current_headquarters}</p>`;
+        if (this.shouldDisplay(guess.areas_served)) basicInfo += `<p><strong>Areas Served:</strong> ${this.formatListWithSpaces(guess.areas_served)}</p>`;
+        if (this.shouldDisplay(guess.number_of_locations)) basicInfo += `<p><strong>Number of Locations:</strong> ${this.formatNumberWithCommas(guess.number_of_locations)}</p>`;
+        if (this.shouldDisplay(guess.number_of_employees)) basicInfo += `<p><strong>Employees:</strong> ${this.formatNumberWithCommas(guess.number_of_employees)}</p>`;
+        if (this.shouldDisplay(guess.year_defunct)) basicInfo += `<p><strong>Year Defunct:</strong> ${guess.year_defunct}</p>`;
+        if (this.shouldDisplay(guess.fate)) basicInfo += `<p><strong>Fate:</strong> ${guess.fate}</p>`;
+        if (this.shouldDisplay(guess.successors)) basicInfo += `<p><strong>Successors:</strong> ${this.formatListWithSpaces(guess.successors)}</p>`;
         
         if (basicInfo) {
             this.basicInfoContent.innerHTML = basicInfo;
@@ -231,25 +231,25 @@ class BusinessGame {
 
         // Financial Information
         let financialInfo = '';
-        if (guess.stock_exchange && guess.stock_exchange !== 'N/A') {
+        if (this.shouldDisplay(guess.stock_exchange)) {
             financialInfo += `<p><strong>Stock Exchange:</strong> ${guess.stock_exchange}</p>`;
         }
-        if (guess.ticker && guess.ticker !== 'N/A') {
+        if (this.shouldDisplay(guess.ticker)) {
             financialInfo += `<p><strong>Ticker:</strong> ${guess.ticker}</p>`;
         }
-        if (guess.revenue) financialInfo += `<p><strong>Revenue:</strong> ${this.formatNumberWithCommas(guess.revenue)}</p>`;
-        if (guess.operating_income) financialInfo += `<p><strong>Operating Income:</strong> ${this.formatNumberWithCommas(guess.operating_income)}</p>`;
-        if (guess.net_income) financialInfo += `<p><strong>Net Income:</strong> ${this.formatNumberWithCommas(guess.net_income)}</p>`;
-        if (guess.total_assets) financialInfo += `<p><strong>Total Assets:</strong> ${this.formatNumberWithCommas(guess.total_assets)}</p>`;
-        if (guess.total_equity) financialInfo += `<p><strong>Total Equity:</strong> ${this.formatNumberWithCommas(guess.total_equity)}</p>`;
-        if (guess.owner) {
+        if (this.shouldDisplay(guess.revenue)) financialInfo += `<p><strong>Revenue:</strong> ${this.formatNumberWithCommas(guess.revenue)}</p>`;
+        if (this.shouldDisplay(guess.operating_income)) financialInfo += `<p><strong>Operating Income:</strong> ${this.formatNumberWithCommas(guess.operating_income)}</p>`;
+        if (this.shouldDisplay(guess.net_income)) financialInfo += `<p><strong>Net Income:</strong> ${this.formatNumberWithCommas(guess.net_income)}</p>`;
+        if (this.shouldDisplay(guess.total_assets)) financialInfo += `<p><strong>Total Assets:</strong> ${this.formatNumberWithCommas(guess.total_assets)}</p>`;
+        if (this.shouldDisplay(guess.total_equity)) financialInfo += `<p><strong>Total Equity:</strong> ${this.formatNumberWithCommas(guess.total_equity)}</p>`;
+        if (this.shouldDisplay(guess.owner)) {
             financialInfo += `<p><strong>Owner:</strong> ${guess.owner}`;
-            if (guess.owner_equity_percentage) {
+            if (this.shouldDisplay(guess.owner_equity_percentage)) {
                 financialInfo += ` (${this.formatOwnershipPercentage(guess.owner_equity_percentage)})`;
             }
             financialInfo += `</p>`;
         }
-        if (guess.parent) financialInfo += `<p><strong>Parent Company:</strong> ${guess.parent}</p>`;
+        if (this.shouldDisplay(guess.parent)) financialInfo += `<p><strong>Parent Company:</strong> ${guess.parent}</p>`;
         
         if (financialInfo) {
             this.financialInfoContent.innerHTML = financialInfo;
@@ -260,8 +260,8 @@ class BusinessGame {
 
         // Leadership
         let leadershipInfo = '';
-        if (guess.ceo) leadershipInfo += `<p><strong>CEO:</strong> ${guess.ceo}</p>`;
-        if (guess.chairman) leadershipInfo += `<p><strong>Chairman:</strong> ${guess.chairman}</p>`;
+        if (this.shouldDisplay(guess.ceo)) leadershipInfo += `<p><strong>CEO:</strong> ${guess.ceo}</p>`;
+        if (this.shouldDisplay(guess.chairman)) leadershipInfo += `<p><strong>Chairman:</strong> ${guess.chairman}</p>`;
         
         if (leadershipInfo) {
             this.leadershipContent.innerHTML = leadershipInfo;
@@ -272,16 +272,16 @@ class BusinessGame {
 
         // Products & Services
         let productsServicesInfo = '';
-        if (guess.products && guess.products.length > 0) {
+        if (this.shouldDisplay(guess.products)) {
             productsServicesInfo += `<p><strong>Products:</strong> ${this.formatListWithSpaces(guess.products)}</p>`;
         }
-        if (guess.services && guess.services.length > 0) {
+        if (this.shouldDisplay(guess.services)) {
             productsServicesInfo += `<p><strong>Services:</strong> ${this.formatListWithSpaces(guess.services)}</p>`;
         }
-        if (guess.predecessors && guess.predecessors.length > 0) {
+        if (this.shouldDisplay(guess.predecessors)) {
             productsServicesInfo += `<p><strong>Predecessors:</strong> ${this.formatListWithSpaces(guess.predecessors)}</p>`;
         }
-        if (guess.previous_names && guess.previous_names.length > 0) {
+        if (this.shouldDisplay(guess.previous_names)) {
             productsServicesInfo += `<p><strong>Previous Names:</strong> ${this.formatListWithSpaces(guess.previous_names)}</p>`;
         }
         
@@ -293,7 +293,7 @@ class BusinessGame {
         }
 
         // Subsidiaries
-        if (guess.subsidiaries && guess.subsidiaries.length > 0) {
+        if (this.shouldDisplay(guess.subsidiaries)) {
             this.subsidiariesContent.innerHTML = `<p>${this.formatListWithSpaces(guess.subsidiaries)}</p>`;
             this.subsidiariesSection.classList.remove('hidden');
         } else {
@@ -302,10 +302,10 @@ class BusinessGame {
 
         // More Information
         let moreInfoContent = '';
-        if (guess.website) {
+        if (this.shouldDisplay(guess.website)) {
             moreInfoContent += `<p><strong>Website:</strong> <a href="${guess.website}" target="_blank">Visit Website</a></p>`;
         }
-        if (guess.wikipedia_url) {
+        if (this.shouldDisplay(guess.wikipedia_url)) {
             moreInfoContent += `<p><strong>Wikipedia:</strong> <a href="${guess.wikipedia_url}" target="_blank">View Wikipedia Page</a></p>`;
         }
         
@@ -474,6 +474,19 @@ class BusinessGame {
         if (this.map) {
             this.map = null;
         }
+    }
+
+    // Helper function to check if a value should be displayed
+    shouldDisplay(value) {
+        if (value === null || value === undefined) return false;
+        if (typeof value === 'string') {
+            const trimmed = value.trim();
+            return trimmed !== '' && trimmed !== 'N/A' && trimmed !== 'null';
+        }
+        if (Array.isArray(value)) {
+            return value.length > 0 && value.some(item => this.shouldDisplay(item));
+        }
+        return true;
     }
 
     // Formatting functions
