@@ -225,10 +225,10 @@ class BusinessGame {
         if (this.shouldDisplay(guess.number_of_employees)) basicInfo += `<p><strong>Employees:</strong> ${this.formatNumberWithCommas(guess.number_of_employees)}</p>`;
         if (this.shouldDisplay(guess.year_defunct)) basicInfo += `<p><strong>Year Defunct:</strong> ${guess.year_defunct}</p>`;
         if (this.shouldDisplay(guess.fate)) basicInfo += `<p><strong>Fate:</strong> ${guess.fate}</p>`;
-        if (this.shouldDisplay(guess.successors)) basicInfo += `<p><strong>Successors:</strong> ${this.formatListWithSpaces(guess.successors)}</p>`;
-        if (this.shouldDisplay(guess.parent)) basicInfo += `<p><strong>Parent Company:</strong> ${guess.parent}</p>`;
-        if (this.shouldDisplay(guess.predecessors)) basicInfo += `<p><strong>Predecessors:</strong> ${this.formatListWithSpaces(guess.predecessors)}</p>`;
-        if (this.shouldDisplay(guess.subsidiaries)) basicInfo += `<p><strong>Subsidiaries:</strong> ${this.formatListWithSpaces(guess.subsidiaries)}</p>`;
+        if (this.shouldDisplay(guess.parent)) basicInfo += `<p><strong>Parent Company:</strong> <span class="clickable-name" data-name="${guess.parent}">${guess.parent}</span></p>`;
+        if (this.shouldDisplay(guess.predecessors)) basicInfo += `<p><strong>Predecessors:</strong> ${this.formatClickableList(guess.predecessors)}</p>`;
+        if (this.shouldDisplay(guess.subsidiaries)) basicInfo += `<p><strong>Subsidiaries:</strong> ${this.formatClickableList(guess.subsidiaries)}</p>`;
+        if (this.shouldDisplay(guess.successors)) basicInfo += `<p><strong>Successors:</strong> ${this.formatClickableList(guess.successors)}</p>`;
         if (this.shouldDisplay(guess.previous_names)) basicInfo += `<p><strong>Previous Names:</strong> ${this.formatListWithSpaces(guess.previous_names)}</p>`;
         
         if (basicInfo) {
@@ -423,6 +423,25 @@ class BusinessGame {
         } else {
             this.mapEl.style.display = 'none';
         }
+        
+        // Set up clickable names for business relationships
+        this.setupClickableNames();
+    }
+
+    setupClickableNames() {
+        // Add event listeners to all clickable names
+        const clickableNames = document.querySelectorAll('.clickable-name');
+        clickableNames.forEach(nameElement => {
+            nameElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const companyName = nameElement.getAttribute('data-name');
+                if (companyName) {
+                    // Clear the input and start a new search for this company
+                    this.userInput.value = companyName;
+                    this.startNewGame();
+                }
+            });
+        });
     }
 
     async submitFeedback(isCorrect) {
@@ -574,6 +593,22 @@ class BusinessGame {
         }
         // For arrays, join with proper spacing
         return list.join(', ');
+    }
+
+    formatClickableList(list) {
+        if (!Array.isArray(list)) {
+            // If it's a string, split by comma and create clickable elements
+            if (typeof list === 'string') {
+                return list.split(',').map(item => 
+                    `<span class="clickable-name" data-name="${item.trim()}">${item.trim()}</span>`
+                ).join(', ');
+            }
+            return list;
+        }
+        // For arrays, create clickable elements
+        return list.map(item => 
+            `<span class="clickable-name" data-name="${item.trim()}">${item.trim()}</span>`
+        ).join(', ');
     }
 
     formatOwnershipPercentage(percentage) {
