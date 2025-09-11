@@ -263,13 +263,13 @@ class FamousPersonGame {
             bioInfo += '<div class="bio-section">';
             bioInfo += '<h4>Biographical Information:</h4>';
             if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
-            if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> ${placeOfBirth}</p>`;
+            if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> <a href="/city" class="city-link" data-city="${placeOfBirth}">${placeOfBirth}</a></p>`;
             // Only show death information if the person is actually deceased
             if (dateOfDeath && dateOfDeath !== null && dateOfDeath.toLowerCase() !== 'n/a') {
                 bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
             }
             if (placeOfDeath && placeOfDeath !== null && placeOfDeath.toLowerCase() !== 'n/a') {
-                bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+                bioInfo += `<p><strong>Place of Death:</strong> <a href="/city" class="city-link" data-city="${placeOfDeath}">${placeOfDeath}</a></p>`;
             }
             // Add Wikipedia link if available
             if (wikipediaUrl && wikipediaUrl !== null) {
@@ -368,6 +368,9 @@ class FamousPersonGame {
         
         // Add event listeners for clickable parent names
         this.setupClickableNames();
+        
+        // Add event listeners for city links
+        this.setupCityLinks();
         
         // Initialize map if coordinates are available
         if (coordinates && coordinates !== null) {
@@ -609,6 +612,23 @@ class FamousPersonGame {
         });
     }
 
+    setupCityLinks() {
+        // Add event listeners to all city links
+        const cityLinks = document.querySelectorAll('.city-link');
+        cityLinks.forEach(linkElement => {
+            linkElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cityName = linkElement.getAttribute('data-city');
+                if (cityName) {
+                    // Store the city name in localStorage for the city game to use
+                    localStorage.setItem('citySearchFromPerson', cityName);
+                    // Navigate to the city game
+                    window.location.href = '/city';
+                }
+            });
+        });
+    }
+
     displayGuessOldFormat(guess) {
         // Safety check
         if (guess === null || guess === undefined) {
@@ -669,12 +689,12 @@ class FamousPersonGame {
                 bioInfo += '<div class="bio-section">';
                 bioInfo += '<h4>Biographical Information:</h4>';
                 if (dateOfBirth) bioInfo += `<p><strong>Born:</strong> ${dateOfBirth}</p>`;
-                if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> ${placeOfBirth}</p>`;
+                if (placeOfBirth) bioInfo += `<p><strong>Birthplace:</strong> <a href="/city" class="city-link" data-city="${placeOfBirth}">${placeOfBirth}</a></p>`;
                 if (dateOfDeath && dateOfDeath.toLowerCase() !== 'n/a' && dateOfDeath.toLowerCase() !== 'alive' && dateOfDeath.toLowerCase() !== 'still alive') {
                     bioInfo += `<p><strong>Died:</strong> ${dateOfDeath}</p>`;
                 }
                 if (placeOfDeath && placeOfDeath.toLowerCase() !== 'n/a' && placeOfDeath.toLowerCase() !== 'alive' && placeOfDeath.toLowerCase() !== 'still alive') {
-                    bioInfo += `<p><strong>Place of Death:</strong> ${placeOfDeath}</p>`;
+                    bioInfo += `<p><strong>Place of Death:</strong> <a href="/city" class="city-link" data-city="${placeOfDeath}">${placeOfDeath}</a></p>`;
                 }
                 if (wikipediaUrl && wikipediaUrl.toLowerCase() !== 'n/a') {
                     bioInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
@@ -780,6 +800,9 @@ class FamousPersonGame {
             
             // Add event listeners for clickable names (in case any were added)
             this.setupClickableNames();
+            
+            // Add event listeners for city links
+            this.setupCityLinks();
         } else {
             // Fallback for old format or error messages
             this.guessText.textContent = guess;

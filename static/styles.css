@@ -564,6 +564,21 @@ body {
     text-decoration: none;
 }
 
+/* City Link Styling */
+.city-link {
+    color: #059669;
+    text-decoration: none;
+    font-weight: 500;
+    border-bottom: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.city-link:hover {
+    color: #047857;
+    border-bottom-color: #047857;
+    text-decoration: none;
+}
+
 /* --- MODIFIED STYLES START HERE --- */
 
 /* Navigation Toolbar Styles */
