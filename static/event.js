@@ -29,6 +29,9 @@ class EventGame {
         
         // Load Google Maps script
         this.loadGoogleMapsScript();
+        
+        // Check for URL parameters
+        this.checkForUrlParameters();
     }
     
     setupEventListeners() {
@@ -407,6 +410,39 @@ class EventGame {
         // Hide the event image container
         if (this.eventImageContainer) {
             this.eventImageContainer.style.display = 'none';
+        }
+    }
+
+    checkForUrlParameters() {
+        // Check if there's an event name stored in localStorage from the person game
+        const eventFromPerson = localStorage.getItem('eventSearchFromPerson');
+        
+        if (eventFromPerson) {
+            // Clear the stored value
+            localStorage.removeItem('eventSearchFromPerson');
+            // Set the input field with the event name
+            if (this.userInput) {
+                this.userInput.value = eventFromPerson;
+                // Automatically start the search after a short delay to ensure everything is loaded
+                setTimeout(() => {
+                    this.startNewSession();
+                }, 500);
+            }
+        } else {
+            // Fallback: Check if there's a 'search' parameter in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            
+            if (searchParam) {
+                // Set the input field with the search parameter
+                if (this.userInput) {
+                    this.userInput.value = searchParam;
+                    // Automatically start the search after a short delay to ensure everything is loaded
+                    setTimeout(() => {
+                        this.startNewSession();
+                    }, 500);
+                }
+            }
         }
     }
 }

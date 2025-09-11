@@ -64,6 +64,8 @@ class FamousPersonGuesser:
         - 'siblings': An array of strings with sibling names, or empty array [] if unknown
         - 'spouse': An array of strings with spouse names, or empty array [] if unknown
         - 'children': An array of strings with children names, or empty array [] if unknown
+        - 'businesses': An array of strings with names of businesses the person is associated with, or empty array [] if unknown
+        - 'events': An array of strings with names of events the person is associated with, or empty array [] if unknown
         - 'wikipedia_url': Wikipedia URL for this person, or null if not found
         - 'reasoning': Brief explanation of why you think this is the correct person based on the information provided
         - 'overview': A brief overview of the person's life in 50 to 75 words.
@@ -115,6 +117,8 @@ class FamousPersonGuesser:
                 siblings = data.get('siblings', [])
                 spouse = data.get('spouse', [])
                 children = data.get('children', [])
+                businesses = data.get('businesses', [])
+                events = data.get('events', [])
                 wikipedia_url = data.get('wikipedia_url')
                 reasoning = data.get('reasoning', '')
                 overview = data.get('overview', '')
@@ -176,6 +180,8 @@ class FamousPersonGuesser:
                 "siblings": siblings,
                 "spouse": spouse,
                 "children": children,
+                "businesses": businesses,
+                "events": events,
                 "wikipedia_url": wikipedia_url,
                 "reasoning": reasoning,
                 "image_url": image_url if image_url != "N/A" else None,

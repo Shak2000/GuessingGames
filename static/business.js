@@ -7,6 +7,7 @@ class BusinessGame {
         this.initializeElements();
         this.attachEventListeners();
         this.loadGoogleMapsScript();
+        this.checkForUrlParameters();
     }
 
     initializeElements() {
@@ -616,6 +617,39 @@ class BusinessGame {
         // Remove any existing % sign and add it back
         const cleanPercentage = percentage.toString().replace('%', '');
         return `${cleanPercentage}%`;
+    }
+
+    checkForUrlParameters() {
+        // Check if there's a business name stored in localStorage from the person game
+        const businessFromPerson = localStorage.getItem('businessSearchFromPerson');
+        
+        if (businessFromPerson) {
+            // Clear the stored value
+            localStorage.removeItem('businessSearchFromPerson');
+            // Set the input field with the business name
+            if (this.userInput) {
+                this.userInput.value = businessFromPerson;
+                // Automatically start the search after a short delay to ensure everything is loaded
+                setTimeout(() => {
+                    this.startNewGame();
+                }, 500);
+            }
+        } else {
+            // Fallback: Check if there's a 'search' parameter in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            
+            if (searchParam) {
+                // Set the input field with the search parameter
+                if (this.userInput) {
+                    this.userInput.value = searchParam;
+                    // Automatically start the search after a short delay to ensure everything is loaded
+                    setTimeout(() => {
+                        this.startNewGame();
+                    }, 500);
+                }
+            }
+        }
     }
 }
 

@@ -250,6 +250,8 @@ class FamousPersonGame {
         const siblings = data.siblings || [];
         const spouse = data.spouse || [];
         const children = data.children || [];
+        const businesses = data.businesses || [];
+        const events = data.events || [];
         const imageUrl = data.image_url;
         const wikipediaUrl = data.wikipedia_url;
         const coordinates = data.coordinates;
@@ -328,6 +330,30 @@ class FamousPersonGame {
             familyInfo += '</div>';
         }
         
+        // Build businesses information
+        let businessesInfo = '';
+        if (businesses && businesses.length > 0) {
+            businessesInfo += '<div class="bio-section">';
+            businessesInfo += '<h4>Businesses:</h4>';
+            const clickableBusinesses = businesses.map(business => 
+                `<a href="/business" class="business-link" data-business="${business.trim()}">${business.trim()}</a>`
+            ).join(', ');
+            businessesInfo += `<p>${clickableBusinesses}</p>`;
+            businessesInfo += '</div>';
+        }
+        
+        // Build events information
+        let eventsInfo = '';
+        if (events && events.length > 0) {
+            eventsInfo += '<div class="bio-section">';
+            eventsInfo += '<h4>Events:</h4>';
+            const clickableEvents = events.map(event => 
+                `<a href="/event" class="event-link" data-event="${event.trim()}">${event.trim()}</a>`
+            ).join(', ');
+            eventsInfo += `<p>${clickableEvents}</p>`;
+            eventsInfo += '</div>';
+        }
+        
         // Hide the old family sections since we're using the new approach
         this.guessTextFamily.classList.add('hidden');
         
@@ -361,7 +387,7 @@ class FamousPersonGame {
             `;
         }
         
-        // Display image, name, overview, biographical info, and family info in the first element
+        // Display image, name, overview, biographical info, family info, businesses, and events in the first element
         this.guessText.innerHTML = `
             ${imageHtml}
             <div class="name-box">
@@ -370,6 +396,8 @@ class FamousPersonGame {
             ${overviewInfo}
             ${bioInfo}
             ${familyInfo}
+            ${businessesInfo}
+            ${eventsInfo}
         `;
         
         // Hide the separate overview section since we're including it in the main content
@@ -381,6 +409,12 @@ class FamousPersonGame {
         
         // Add event listeners for city links
         this.setupCityLinks();
+        
+        // Add event listeners for business links
+        this.setupBusinessLinks();
+        
+        // Add event listeners for event links
+        this.setupEventLinks();
         
         // Initialize map if coordinates are available
         if (coordinates && coordinates !== null) {
@@ -683,6 +717,40 @@ class FamousPersonGame {
         });
     }
 
+    setupBusinessLinks() {
+        // Add event listeners to all business links
+        const businessLinks = document.querySelectorAll('.business-link');
+        businessLinks.forEach(linkElement => {
+            linkElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const businessName = linkElement.getAttribute('data-business');
+                if (businessName) {
+                    // Store the business name in localStorage for the business game to use
+                    localStorage.setItem('businessSearchFromPerson', businessName);
+                    // Navigate to the business game
+                    window.location.href = '/business';
+                }
+            });
+        });
+    }
+
+    setupEventLinks() {
+        // Add event listeners to all event links
+        const eventLinks = document.querySelectorAll('.event-link');
+        eventLinks.forEach(linkElement => {
+            linkElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const eventName = linkElement.getAttribute('data-event');
+                if (eventName) {
+                    // Store the event name in localStorage for the event game to use
+                    localStorage.setItem('eventSearchFromPerson', eventName);
+                    // Navigate to the event game
+                    window.location.href = '/event';
+                }
+            });
+        });
+    }
+
     displayGuessOldFormat(guess) {
         // Safety check
         if (guess === null || guess === undefined) {
@@ -865,6 +933,12 @@ class FamousPersonGame {
             
             // Add event listeners for city links
             this.setupCityLinks();
+            
+            // Add event listeners for business links
+            this.setupBusinessLinks();
+            
+            // Add event listeners for event links
+            this.setupEventLinks();
         } else {
             // Fallback for old format or error messages
             this.guessText.textContent = guess;
