@@ -37,8 +37,6 @@ class BusinessGame {
         this.leadershipContent = document.getElementById('leadershipContent');
         this.productsServicesSection = document.getElementById('productsServicesSection');
         this.productsServicesContent = document.getElementById('productsServicesContent');
-        this.subsidiariesSection = document.getElementById('subsidiariesSection');
-        this.subsidiariesContent = document.getElementById('subsidiariesContent');
         this.moreInfoSection = document.getElementById('moreInfoSection');
         this.moreInfoContent = document.getElementById('moreInfoContent');
         
@@ -221,6 +219,9 @@ class BusinessGame {
         if (this.shouldDisplay(guess.year_defunct)) basicInfo += `<p><strong>Year Defunct:</strong> ${guess.year_defunct}</p>`;
         if (this.shouldDisplay(guess.fate)) basicInfo += `<p><strong>Fate:</strong> ${guess.fate}</p>`;
         if (this.shouldDisplay(guess.successors)) basicInfo += `<p><strong>Successors:</strong> ${this.formatListWithSpaces(guess.successors)}</p>`;
+        if (this.shouldDisplay(guess.parent)) basicInfo += `<p><strong>Parent Company:</strong> ${guess.parent}</p>`;
+        if (this.shouldDisplay(guess.predecessors)) basicInfo += `<p><strong>Predecessors:</strong> ${this.formatListWithSpaces(guess.predecessors)}</p>`;
+        if (this.shouldDisplay(guess.subsidiaries)) basicInfo += `<p><strong>Subsidiaries:</strong> ${this.formatListWithSpaces(guess.subsidiaries)}</p>`;
         
         if (basicInfo) {
             this.basicInfoContent.innerHTML = basicInfo;
@@ -249,8 +250,6 @@ class BusinessGame {
             }
             financialInfo += `</p>`;
         }
-        if (this.shouldDisplay(guess.parent)) financialInfo += `<p><strong>Parent Company:</strong> ${guess.parent}</p>`;
-        
         if (financialInfo) {
             this.financialInfoContent.innerHTML = financialInfo;
             this.financialInfoSection.classList.remove('hidden');
@@ -278,9 +277,6 @@ class BusinessGame {
         if (this.shouldDisplay(guess.services)) {
             productsServicesInfo += `<p><strong>Services:</strong> ${this.formatListWithSpaces(guess.services)}</p>`;
         }
-        if (this.shouldDisplay(guess.predecessors)) {
-            productsServicesInfo += `<p><strong>Predecessors:</strong> ${this.formatListWithSpaces(guess.predecessors)}</p>`;
-        }
         if (this.shouldDisplay(guess.previous_names)) {
             productsServicesInfo += `<p><strong>Previous Names:</strong> ${this.formatListWithSpaces(guess.previous_names)}</p>`;
         }
@@ -290,14 +286,6 @@ class BusinessGame {
             this.productsServicesSection.classList.remove('hidden');
         } else {
             this.productsServicesSection.classList.add('hidden');
-        }
-
-        // Subsidiaries
-        if (this.shouldDisplay(guess.subsidiaries)) {
-            this.subsidiariesContent.innerHTML = `<p>${this.formatListWithSpaces(guess.subsidiaries)}</p>`;
-            this.subsidiariesSection.classList.remove('hidden');
-        } else {
-            this.subsidiariesSection.classList.add('hidden');
         }
 
         // More Information
@@ -459,7 +447,6 @@ class BusinessGame {
         this.financialInfoSection.classList.add('hidden');
         this.leadershipSection.classList.add('hidden');
         this.productsServicesSection.classList.add('hidden');
-        this.subsidiariesSection.classList.add('hidden');
         this.moreInfoSection.classList.add('hidden');
         
         // Clear content
@@ -467,7 +454,6 @@ class BusinessGame {
         this.financialInfoContent.innerHTML = '';
         this.leadershipContent.innerHTML = '';
         this.productsServicesContent.innerHTML = '';
-        this.subsidiariesContent.innerHTML = '';
         this.moreInfoContent.innerHTML = '';
         
         // Reset map
