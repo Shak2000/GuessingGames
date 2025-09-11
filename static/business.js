@@ -207,6 +207,7 @@ class BusinessGame {
         // Basic Information
         let basicInfo = '';
         if (guess.type) basicInfo += `<p><strong>Type:</strong> ${guess.type}</p>`;
+        if (guess.current_status) basicInfo += `<p><strong>Status:</strong> ${guess.current_status}</p>`;
         if (guess.industry) basicInfo += `<p><strong>Industry:</strong> ${this.formatListWithSpaces(guess.industry)}</p>`;
         if (guess.year_founded) basicInfo += `<p><strong>Founded:</strong> ${guess.year_founded}</p>`;
         if (guess.city_founded) basicInfo += `<p><strong>Founded in:</strong> ${guess.city_founded}</p>`;
@@ -215,7 +216,11 @@ class BusinessGame {
         }
         if (guess.current_headquarters) basicInfo += `<p><strong>Headquarters:</strong> ${guess.current_headquarters}</p>`;
         if (guess.areas_served) basicInfo += `<p><strong>Areas Served:</strong> ${this.formatListWithSpaces(guess.areas_served)}</p>`;
+        if (guess.number_of_locations) basicInfo += `<p><strong>Number of Locations:</strong> ${this.formatNumberWithCommas(guess.number_of_locations)}</p>`;
         if (guess.number_of_employees) basicInfo += `<p><strong>Employees:</strong> ${this.formatNumberWithCommas(guess.number_of_employees)}</p>`;
+        if (guess.year_defunct) basicInfo += `<p><strong>Year Defunct:</strong> ${guess.year_defunct}</p>`;
+        if (guess.fate) basicInfo += `<p><strong>Fate:</strong> ${guess.fate}</p>`;
+        if (guess.successors) basicInfo += `<p><strong>Successors:</strong> ${this.formatListWithSpaces(guess.successors)}</p>`;
         
         if (basicInfo) {
             this.basicInfoContent.innerHTML = basicInfo;

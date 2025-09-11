@@ -71,6 +71,11 @@ Please respond with a JSON object containing the following fields:
 - founders: An array of founder names (if known, otherwise empty array)
 - current_headquarters: The current headquarters location, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
 - areas_served: An array of geographic areas where the company operates
+- number_of_locations: The number of locations the company has
+- current_status: Extant or Defunct (if known, otherwise null)
+- year_defunct: The year the company went out of business (if defunct and known, otherwise null)
+- fate: The fate of the company (if defunct and known, otherwise null)
+- successors: The successor companies (if defunct and known, otherwise null)
 - chairman: The current chairman (if known, otherwise null)
 - ceo: The current CEO (if known, otherwise null)
 - products: An array of main products (if any, otherwise empty array)
@@ -160,6 +165,11 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "founders": business_data.get('founders', []),
                     "current_headquarters": business_data.get('current_headquarters'),
                     "areas_served": business_data.get('areas_served'),
+                    "number_of_locations": business_data.get('number_of_locations'),
+                    "current_status": business_data.get('current_status'),
+                    "year_defunct": business_data.get('year_defunct'),
+                    "fate": business_data.get('fate'),
+                    "successors": business_data.get('successors'),
                     "chairman": business_data.get('chairman'),
                     "ceo": business_data.get('ceo'),
                     "products": business_data.get('products', []),
