@@ -229,6 +229,7 @@ class BusinessGame {
         if (this.shouldDisplay(guess.parent)) basicInfo += `<p><strong>Parent Company:</strong> ${guess.parent}</p>`;
         if (this.shouldDisplay(guess.predecessors)) basicInfo += `<p><strong>Predecessors:</strong> ${this.formatListWithSpaces(guess.predecessors)}</p>`;
         if (this.shouldDisplay(guess.subsidiaries)) basicInfo += `<p><strong>Subsidiaries:</strong> ${this.formatListWithSpaces(guess.subsidiaries)}</p>`;
+        if (this.shouldDisplay(guess.previous_names)) basicInfo += `<p><strong>Previous Names:</strong> ${this.formatListWithSpaces(guess.previous_names)}</p>`;
         
         if (basicInfo) {
             this.basicInfoContent.innerHTML = basicInfo;
@@ -283,9 +284,6 @@ class BusinessGame {
         }
         if (this.shouldDisplay(guess.services)) {
             productsServicesInfo += `<p><strong>Services:</strong> ${this.formatListWithSpaces(guess.services)}</p>`;
-        }
-        if (this.shouldDisplay(guess.previous_names)) {
-            productsServicesInfo += `<p><strong>Previous Names:</strong> ${this.formatListWithSpaces(guess.previous_names)}</p>`;
         }
         
         if (productsServicesInfo) {
