@@ -327,7 +327,6 @@ class CityGame {
             }
             
             if (yearFounded) adminInfo += `<p><strong>Year Founded:</strong> ${yearFounded}</p>`;
-            if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
             
             // Add notable attractions
             if (notableAttractions && notableAttractions.length > 0) {
@@ -348,6 +347,8 @@ class CityGame {
             if (notableBusinesses && notableBusinesses.length > 0) {
                 adminInfo += `<p><strong>Notable Businesses:</strong> ${notableBusinesses.join(', ')}</p>`;
             }
+            
+            if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
             
             adminInfo += '</div>';
         }
