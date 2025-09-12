@@ -335,7 +335,10 @@ class CityGame {
             
             // Add notable people
             if (notablePeople && notablePeople.length > 0) {
-                adminInfo += `<p><strong>Notable People:</strong> ${notablePeople.join(', ')}</p>`;
+                const clickablePeople = notablePeople.map(person => 
+                    `<span class="clickable-name" data-name="${person.trim()}">${person.trim()}</span>`
+                ).join(', ');
+                adminInfo += `<p><strong>Notable People:</strong> ${clickablePeople}</p>`;
             }
             
             // Add notable events
@@ -400,6 +403,9 @@ class CityGame {
                 ${reasoning}
             </div>
         `;
+        
+        // Setup clickable names for notable people
+        this.setupClickableNames();
         
         // Initialize map if coordinates are available
         const coordinates = data.coordinates;
@@ -618,6 +624,21 @@ class CityGame {
             const zoomLevel = this.calculateZoomFromArea(areaInSquareMiles);
             this.map.setZoom(zoomLevel);
         }
+    }
+
+    setupClickableNames() {
+        // Add event listeners to all clickable names
+        const clickableNames = document.querySelectorAll('.clickable-name');
+        clickableNames.forEach(nameElement => {
+            nameElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const personName = nameElement.getAttribute('data-name');
+                if (personName) {
+                    // Navigate to the person game with the person's name
+                    window.location.href = `/person?search=${encodeURIComponent(personName)}`;
+                }
+            });
+        });
     }
 }
 
