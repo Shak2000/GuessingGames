@@ -262,6 +262,10 @@ class CityGame {
         const imageUrl = data.image_url || '';
         const reasoning = data.reasoning || '';
         const overview = data.overview || '';
+        const notableAttractions = data.notable_attractions || [];
+        const notablePeople = data.notable_people || [];
+        const notableEvents = data.notable_events || [];
+        const notableBusinesses = data.notable_businesses || [];
         
         // Build administrative information
         let adminInfo = '';
@@ -282,7 +286,7 @@ class CityGame {
         if (autonomousCommunity) adminDivisions.push(`<strong>Autonomous Community:</strong> ${autonomousCommunity}`);
         if (otherAdminDivision) adminDivisions.push(`<strong>Other:</strong> ${otherAdminDivision}`);
         
-        if (adminDivisions.length > 0 || country || population || latitude || longitude || areaMi || areaKm || populationDensity || elevation || yearFounded || wikipediaUrl) {
+        if (adminDivisions.length > 0 || country || population || latitude || longitude || areaMi || areaKm || populationDensity || elevation || yearFounded || wikipediaUrl || (notableAttractions && notableAttractions.length > 0) || (notablePeople && notablePeople.length > 0) || (notableEvents && notableEvents.length > 0) || (notableBusinesses && notableBusinesses.length > 0)) {
             adminInfo += '<div class="bio-section">';
             adminInfo += '<h4>City Information:</h4>';
             if (adminDivisions.length > 0) {
@@ -324,6 +328,27 @@ class CityGame {
             
             if (yearFounded) adminInfo += `<p><strong>Year Founded:</strong> ${yearFounded}</p>`;
             if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
+            
+            // Add notable attractions
+            if (notableAttractions && notableAttractions.length > 0) {
+                adminInfo += `<p><strong>Notable Attractions:</strong> ${notableAttractions.join(', ')}</p>`;
+            }
+            
+            // Add notable people
+            if (notablePeople && notablePeople.length > 0) {
+                adminInfo += `<p><strong>Notable People:</strong> ${notablePeople.join(', ')}</p>`;
+            }
+            
+            // Add notable events
+            if (notableEvents && notableEvents.length > 0) {
+                adminInfo += `<p><strong>Notable Events:</strong> ${notableEvents.join(', ')}</p>`;
+            }
+            
+            // Add notable businesses
+            if (notableBusinesses && notableBusinesses.length > 0) {
+                adminInfo += `<p><strong>Notable Businesses:</strong> ${notableBusinesses.join(', ')}</p>`;
+            }
+            
             adminInfo += '</div>';
         }
         
@@ -356,6 +381,7 @@ class CityGame {
                 </div>
             `;
         }
+        
         
         // Display image, name, overview, and city info
         this.guessText.innerHTML = `

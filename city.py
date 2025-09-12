@@ -81,6 +81,10 @@ Please respond with a JSON object containing the following fields:
 - population_density: The population density of the city in people per square mile (if known, otherwise null)
 - elevation: The elevation of the city in feet (if known, otherwise null)
 - year_founded: Year the city was founded (if known, otherwise null)
+- notable_attractions: An array of strings with names of notable attractions within the city, or empty array [] if unknown
+- notable_people: An array of strings with names of notable residents of the city (past and present), or empty array [] if unknown
+- notable_events: An array of strings with names of notable historical events within the city, or empty array [] if unknown
+- notable_businesses: An array of strings with names of notable businesses founded or headquartered in the city, or empty array [] if unknown
 - wikipedia_url: Wikipedia URL for the city (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct city
 - overview: A concise 50-75 word overview of the city's history, significance, and notable features
@@ -168,6 +172,10 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "population_density": city_data.get('population_density'),
                     "elevation": city_data.get('elevation'),
                     "year_founded": city_data.get('year_founded'),
+                    "notable_attractions": city_data.get('notable_attractions', []),
+                    "notable_people": city_data.get('notable_people', []),
+                    "notable_events": city_data.get('notable_events', []),
+                    "notable_businesses": city_data.get('notable_businesses', []),
                     "wikipedia_url": city_data.get('wikipedia_url'),
                     "reasoning": city_data.get('reasoning'),
                     "overview": city_data.get('overview'),
@@ -203,6 +211,10 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "population_density": None,
                     "elevation": None,
                     "year_founded": None,
+                    "notable_attractions": [],
+                    "notable_people": [],
+                    "notable_events": [],
+                    "notable_businesses": [],
                     "wikipedia_url": None,
                     "image_url": None,
                     "reasoning": f"Error parsing AI response: {str(e)}",
@@ -234,6 +246,10 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 "population_density": None,
                 "elevation": None,
                 "year_founded": None,
+                "notable_attractions": [],
+                "notable_people": [],
+                "notable_events": [],
+                "notable_businesses": [],
                 "wikipedia_url": None,
                 "image": None,
                 "reasoning": f"Error making guess: {str(e)}",
