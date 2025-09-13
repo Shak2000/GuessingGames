@@ -635,18 +635,34 @@ class BusinessGame {
                 }, 500);
             }
         } else {
-            // Fallback: Check if there's a 'search' parameter in the URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchParam = urlParams.get('search');
+            // Check if there's a business name stored in localStorage from the city game
+            const businessFromCity = localStorage.getItem('businessSearchFromCity');
             
-            if (searchParam) {
-                // Set the input field with the search parameter
+            if (businessFromCity) {
+                // Clear the stored value
+                localStorage.removeItem('businessSearchFromCity');
+                // Set the input field with the business name
                 if (this.userInput) {
-                    this.userInput.value = searchParam;
+                    this.userInput.value = businessFromCity;
                     // Automatically start the search after a short delay to ensure everything is loaded
                     setTimeout(() => {
                         this.startNewGame();
                     }, 500);
+                }
+            } else {
+                // Fallback: Check if there's a 'search' parameter in the URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const searchParam = urlParams.get('search');
+                
+                if (searchParam) {
+                    // Set the input field with the search parameter
+                    if (this.userInput) {
+                        this.userInput.value = searchParam;
+                        // Automatically start the search after a short delay to ensure everything is loaded
+                        setTimeout(() => {
+                            this.startNewGame();
+                        }, 500);
+                    }
                 }
             }
         }

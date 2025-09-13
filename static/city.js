@@ -343,12 +343,18 @@ class CityGame {
             
             // Add notable events
             if (notableEvents && notableEvents.length > 0) {
-                adminInfo += `<p><strong>Notable Events:</strong> ${notableEvents.join(', ')}</p>`;
+                const clickableEvents = notableEvents.map(event => 
+                    `<span class="clickable-event" data-event="${event.trim()}">${event.trim()}</span>`
+                ).join(', ');
+                adminInfo += `<p><strong>Notable Events:</strong> ${clickableEvents}</p>`;
             }
             
             // Add notable businesses
             if (notableBusinesses && notableBusinesses.length > 0) {
-                adminInfo += `<p><strong>Notable Businesses:</strong> ${notableBusinesses.join(', ')}</p>`;
+                const clickableBusinesses = notableBusinesses.map(business => 
+                    `<span class="clickable-business" data-business="${business.trim()}">${business.trim()}</span>`
+                ).join(', ');
+                adminInfo += `<p><strong>Notable Businesses:</strong> ${clickableBusinesses}</p>`;
             }
             
             if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
@@ -627,7 +633,7 @@ class CityGame {
     }
 
     setupClickableNames() {
-        // Add event listeners to all clickable names
+        // Add event listeners to all clickable names (people)
         const clickableNames = document.querySelectorAll('.clickable-name');
         clickableNames.forEach(nameElement => {
             nameElement.addEventListener('click', (e) => {
@@ -636,6 +642,36 @@ class CityGame {
                 if (personName) {
                     // Navigate to the person game with the person's name
                     window.location.href = `/person?search=${encodeURIComponent(personName)}`;
+                }
+            });
+        });
+
+        // Add event listeners to all clickable events
+        const clickableEvents = document.querySelectorAll('.clickable-event');
+        clickableEvents.forEach(eventElement => {
+            eventElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const eventName = eventElement.getAttribute('data-event');
+                if (eventName) {
+                    // Store the event name in localStorage for the event game to use
+                    localStorage.setItem('eventSearchFromCity', eventName);
+                    // Navigate to the event game
+                    window.location.href = '/event';
+                }
+            });
+        });
+
+        // Add event listeners to all clickable businesses
+        const clickableBusinesses = document.querySelectorAll('.clickable-business');
+        clickableBusinesses.forEach(businessElement => {
+            businessElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const businessName = businessElement.getAttribute('data-business');
+                if (businessName) {
+                    // Store the business name in localStorage for the business game to use
+                    localStorage.setItem('businessSearchFromCity', businessName);
+                    // Navigate to the business game
+                    window.location.href = '/business';
                 }
             });
         });

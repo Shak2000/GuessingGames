@@ -564,6 +564,32 @@ body {
     text-decoration: none;
 }
 
+/* Clickable Events Styling */
+.clickable-event {
+    color: #dc2626;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.clickable-event:hover {
+    color: #b91c1c;
+    text-decoration: none;
+}
+
+/* Clickable Businesses Styling */
+.clickable-business {
+    color: #059669;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.clickable-business:hover {
+    color: #047857;
+    text-decoration: none;
+}
+
 /* City Link Styling */
 .city-link {
     color: #059669;
