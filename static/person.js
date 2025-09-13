@@ -753,18 +753,34 @@ class FamousPersonGame {
     }
 
     checkForUrlParameters() {
-        // Check if there's a 'search' parameter in the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchParam = urlParams.get('search');
+        // Check if there's a person name stored in localStorage from the event game
+        const personFromEvent = localStorage.getItem('personSearchFromEvent');
         
-        if (searchParam) {
-            // Set the input field with the search parameter
+        if (personFromEvent) {
+            // Clear the stored value
+            localStorage.removeItem('personSearchFromEvent');
+            // Set the input field with the person name
             if (this.userInput) {
-                this.userInput.value = searchParam;
+                this.userInput.value = personFromEvent;
                 // Automatically start the search after a short delay to ensure everything is loaded
                 setTimeout(() => {
                     this.startNewGame();
                 }, 500);
+            }
+        } else {
+            // Fallback: Check if there's a 'search' parameter in the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            
+            if (searchParam) {
+                // Set the input field with the search parameter
+                if (this.userInput) {
+                    this.userInput.value = searchParam;
+                    // Automatically start the search after a short delay to ensure everything is loaded
+                    setTimeout(() => {
+                        this.startNewGame();
+                    }, 500);
+                }
             }
         }
     }

@@ -603,6 +603,19 @@ body {
     text-decoration: none;
 }
 
+/* Clickable Figures Styling */
+.clickable-figure {
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.clickable-figure:hover {
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
 /* City Link Styling */
 .city-link {
     color: #059669;

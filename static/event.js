@@ -197,7 +197,10 @@ class EventGame {
             if (location) eventInfo += `<p><strong>Location:</strong> ${location}</p>`;
             
             if (keyFigures.length > 0) {
-                eventInfo += `<p><strong>Key Figures:</strong> ${keyFigures.join(', ')}</p>`;
+                const clickableFigures = keyFigures.map(figure => 
+                    `<span class="clickable-figure" data-figure="${figure.trim()}">${figure.trim()}</span>`
+                ).join(', ');
+                eventInfo += `<p><strong>Key Figures:</strong> ${clickableFigures}</p>`;
             }
             
             if (keyCities.length > 0) {
@@ -248,8 +251,8 @@ class EventGame {
             </div>
         `;
         
-        // Setup clickable city links
-        this.setupClickableCities();
+        // Setup clickable city and figure links
+        this.setupClickableLinks();
         
         // Initialize map if coordinates are available
         if (coordinates && coordinates !== null) {
@@ -481,7 +484,7 @@ class EventGame {
         }
     }
     
-    setupClickableCities() {
+    setupClickableLinks() {
         // Add event listeners to all clickable city links
         const clickableCities = document.querySelectorAll('.clickable-city');
         clickableCities.forEach(cityElement => {
@@ -493,6 +496,21 @@ class EventGame {
                     localStorage.setItem('citySearchFromEvent', cityName);
                     // Navigate to the city game
                     window.location.href = '/city';
+                }
+            });
+        });
+
+        // Add event listeners to all clickable figure links
+        const clickableFigures = document.querySelectorAll('.clickable-figure');
+        clickableFigures.forEach(figureElement => {
+            figureElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const figureName = figureElement.getAttribute('data-figure');
+                if (figureName) {
+                    // Store the figure name in localStorage for the person game to use
+                    localStorage.setItem('personSearchFromEvent', figureName);
+                    // Navigate to the person game
+                    window.location.href = '/person';
                 }
             });
         });
