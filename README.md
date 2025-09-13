@@ -5,7 +5,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 ## Features
 
 ### Platform Features
-- 🎮 **Multi-Game Platform**: Choose from multiple interactive games in one unified platform
+- 🎮 **Multi-Game Platform**: Choose from 5 interactive games in one unified platform
 - 🧭 **Easy Navigation**: Seamless navigation between games with persistent toolbar
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and consistent styling
 - 🖼️ **Custom Branding**: Custom favicon support with multiple format compatibility
@@ -51,6 +51,34 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🗺️ **Interactive Maps**: Google Maps integration showing event locations with custom markers
 - 🏛️ **Rich Context**: Event overview, key figures, causes, developments, and outcomes
 - 🔗 **Wikipedia Integration**: Direct links to event Wikipedia pages with automatic image extraction
+- ⚡ **Real-time**: Fast API responses with loading indicators and button states
+- 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
+- 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
+
+### Odd Situation Game
+- 🎨 **AI-Generated Images**: Uses Google Gemini 2.5 Flash Image Preview to create unique visual scenarios
+- 🎭 **Random Outfits**: Combines famous people with unusual outfits from a curated list
+- 🌍 **Unique Settings**: Places characters in unexpected locations and situations
+- 🎯 **Guess & Reveal**: Players guess the famous person, then reveal the answer with detailed information
+- 📝 **Comprehensive Data**: Complete biographical information including birth/death dates, achievements, and Wikipedia links
+- 📸 **Automatic Image Extraction**: Beautiful Soup extracts person photos from Wikipedia pages
+- 🔄 **Session Management**: Tracks game progress and maintains state throughout the session
+- ⚡ **Real-time**: Fast API responses with loading indicators and button states
+- 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
+- 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
+
+### Guess the Business Game
+- 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent business identification
+- 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
+- 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
+- 💭 **Detailed Explanations**: Each guess includes both the business name and reasoning
+- 📝 **Comprehensive Business Data**: Complete JSON information including founding details, financial data, leadership, products/services, and company history
+- 📸 **Automatic Logo Extraction**: Beautiful Soup extracts business logos from Wikipedia pages
+- 🗺️ **Interactive Maps**: Google Maps integration showing business headquarters and locations
+- 💰 **Financial Information**: Revenue, market cap, employee count, and other business metrics when available
+- 👔 **Leadership Details**: CEO, founders, and key executives information
+- 🏢 **Company Overview**: Industry, products/services, and business model descriptions
+- 🔗 **Wikipedia Integration**: Direct links to business Wikipedia pages with automatic image extraction
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
 - 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
@@ -165,6 +193,38 @@ The application will be available at `http://localhost:8000`
 6. **Victory**: When the AI guesses correctly, you'll see a victory message!
 7. **New Game**: Start fresh anytime by entering new information
 
+### Odd Situation Game
+1. **Start Game**: Click "Start New Game" to begin
+2. **View Scenario**: The AI will generate a unique scenario showing a famous person in an unusual outfit and setting
+3. **Make Your Guess**: Type your guess of who the famous person is in the text area
+4. **Submit Guess**: Click "Submit Guess" to see if you're correct
+5. **Review Result**: The game will show:
+   - **Your Guess**: What you guessed
+   - **Correct Answer**: The actual famous person
+   - **Person's Photo**: Automatically extracted from Wikipedia (if available)
+   - **Biographical Information**: Birth/death dates, places, and Wikipedia link
+   - **Overview**: A concise summary of the person's life and achievements
+6. **New Scenario**: Click "Start New Game" to get a completely new scenario with a different person, outfit, and setting
+7. **Explore**: Each game session creates unique combinations of people, outfits, and settings
+
+### Guess the Business Game
+1. **Enter Information**: Type information about a business in the text area
+2. **Submit**: Click "Submit Information" or press Ctrl+Enter
+3. **Review Guess**: The AI will display its guess with:
+   - **Business Logo**: Automatically extracted from Wikipedia (if available)
+   - **Name Box**: The business's name in a blue gradient box
+   - **Overview Box**: A concise 50-75 word summary of the business's history and significance
+   - **Comprehensive Business Data**: Complete information including founding details, financial data, leadership, products/services, and company history
+   - **Interactive Map**: Google Maps showing business headquarters and locations
+   - **Financial Information**: Revenue, market cap, employee count, and other business metrics when available
+   - **Leadership Details**: CEO, founders, and key executives information
+   - **Wikipedia Link**: Direct link to the business's Wikipedia page
+   - **Explanation Box**: The AI's reasoning in a gray box below
+4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
+5. **Continue**: If incorrect, the AI will make another guess with improved context
+6. **Victory**: When the AI guesses correctly, you'll see a victory message!
+7. **New Game**: Start fresh anytime by entering new information
+
 ## File Structure
 
 ```
@@ -173,20 +233,30 @@ FirstAPI/
 ├── person.py            # Guess the Famous Person game logic with Gemini AI integration
 ├── city.py              # Guess the City game logic with Gemini AI integration
 ├── event.py             # Guess the Historical Event game logic with enhanced AI image generation
+├── odd.py               # Odd Situation Game logic with AI-generated scenarios
+├── business.py          # Guess the Business game logic with Gemini AI integration
 ├── config.py            # API key configuration
 ├── requirements.txt     # Python dependencies
 ├── README.md           # This file
 ├── .gitignore          # Git ignore rules
+├── people.txt          # Famous people data for Odd Situation Game
+├── outfits.txt         # Outfit data for Odd Situation Game
+├── settings.txt        # Setting data for Odd Situation Game
 └── static/             # Frontend files
     ├── index.html      # Home page with game selection
     ├── person.html     # Guess the Famous Person game interface
     ├── city.html       # Guess the City game interface
     ├── event.html      # Guess the Historical Event game interface
+    ├── odd.html        # Odd Situation Game interface
+    ├── business.html   # Guess the Business game interface
     ├── styles.css      # Modern styling and responsive design
     ├── script.js       # General app utilities and shared functionality
+    ├── toolbar.js      # Navigation toolbar functionality
     ├── person.js       # Famous Person game specific JavaScript logic
     ├── city.js         # City guessing game specific JavaScript logic
     ├── event.js        # Historical Event game specific JavaScript logic
+    ├── odd.js          # Odd Situation Game specific JavaScript logic
+    ├── business.js     # Business guessing game specific JavaScript logic
     ├── favicon.ico     # App favicon (ICO format)
     └── favicon.png     # App favicon (PNG format)
 ```
@@ -196,14 +266,26 @@ FirstAPI/
 - **`person.py`** - Guess the Famous Person game logic with Gemini AI integration, JSON response format, overview generation, image extraction, and session management
 - **`city.py`** - Guess the City game logic with Gemini AI integration, JSON response format, and session management
 - **`event.py`** - Guess the Historical Event game logic with enhanced AI image generation using complete event context
+- **`odd.py`** - Odd Situation Game logic with AI-generated scenarios, random outfit/setting combinations, and session management
+- **`business.py`** - Guess the Business game logic with Gemini AI integration, comprehensive business data, financial information, and session management
 - **`config.py`** - API key configuration (excluded from version control)
 - **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
+- **`people.txt`** - Famous people data file for Odd Situation Game scenarios
+- **`outfits.txt`** - Outfit data file for Odd Situation Game scenarios
+- **`settings.txt`** - Setting data file for Odd Situation Game scenarios
 - **`static/index.html`** - Home page with game selection grid
 - **`static/person.html`** - Guess the Famous Person game interface
 - **`static/city.html`** - Guess the City game interface
-- **`static/city.js`** - City guessing game specific JavaScript logic and UI interactions
+- **`static/event.html`** - Guess the Historical Event game interface
+- **`static/odd.html`** - Odd Situation Game interface
+- **`static/business.html`** - Guess the Business game interface
+- **`static/toolbar.js`** - Navigation toolbar functionality and active state management
 - **`static/script.js`** - General app utilities and shared functionality for all games
 - **`static/person.js`** - Famous Person game specific JavaScript logic and UI interactions
+- **`static/city.js`** - City guessing game specific JavaScript logic and UI interactions
+- **`static/event.js`** - Historical Event game specific JavaScript logic and UI interactions
+- **`static/odd.js`** - Odd Situation Game specific JavaScript logic and UI interactions
+- **`static/business.js`** - Business guessing game specific JavaScript logic and UI interactions
 - **`static/`** - All frontend files organized in a dedicated directory
 
 ## API Endpoints
@@ -212,7 +294,9 @@ FirstAPI/
 - `GET /` - Serves the home page with game selection
 - `GET /person` - Serves the Guess the Famous Person game page
 - `GET /city` - Serves the Guess the City game page
+- `GET /odd` - Serves the Odd Situation Game page
 - `GET /event` - Serves the Guess the Historical Event game page
+- `GET /business` - Serves the Guess the Business game page
 - `GET /api/health` - Health check endpoint
 - `GET /static/*` - Serves static files (CSS, JS, images, favicons)
 - `GET /favicon.ico` - Serves app favicon (ICO format)
@@ -237,6 +321,17 @@ FirstAPI/
 - `POST /api/submit-event-feedback` - Submits feedback for an event guess
 - `GET /api/event-session/{session_id}` - Gets event guessing session information
 
+### Odd Situation Game
+- `POST /api/start-odd-game` - Starts a new odd situation game session
+- `POST /api/submit-odd-guess` - Submits a guess for the odd situation
+- `POST /api/reveal-odd-answer` - Reveals the correct answer for the odd situation
+- `GET /api/odd-session/{session_id}` - Gets odd situation game session information
+
+### Guess the Business Game
+- `POST /api/start-business-guess` - Starts a new business guessing session
+- `POST /api/submit-business-feedback` - Submits feedback for a business guess
+- `GET /api/business-session/{session_id}` - Gets business guessing session information
+
 ## Tips for Better Results
 
 - **Be Specific**: Provide unique details about the person
@@ -249,7 +344,25 @@ FirstAPI/
 
 ## Recent Updates
 
-### Enhanced Event Game Image Generation (Latest)
+### New Games Added (Latest)
+- 🎪 **Odd Situation Game**: Brand new game where players guess famous people in unusual outfits and settings
+  - 🎨 **AI-Generated Scenarios**: Uses Gemini 2.5 Flash Image Preview to create unique visual scenarios
+  - 🎭 **Random Combinations**: Combines famous people with random outfits and settings from curated data files
+  - 📝 **Data Files**: Added `people.txt`, `outfits.txt`, and `settings.txt` for scenario generation
+  - 🎯 **Guess & Reveal**: Players make guesses then reveal the correct answer with full biographical information
+  - 🔄 **Session Management**: Complete session tracking and state management
+- 🏢 **Business Guessing Game**: New game for identifying businesses based on user-provided information
+  - 🤖 **AI-Powered Identification**: Uses Gemini 2.5 Flash Lite for intelligent business identification
+  - 💰 **Financial Data**: Comprehensive business information including revenue, market cap, employee count
+  - 👔 **Leadership Information**: CEO, founders, and key executives details
+  - 🏢 **Company Details**: Industry, products/services, founding information, and business model
+  - 📸 **Logo Extraction**: Automatic business logo extraction from Wikipedia pages
+  - 🗺️ **Interactive Maps**: Google Maps integration showing business headquarters and locations
+- 🧭 **Enhanced Navigation**: Updated navigation toolbar to include all 5 games with active state indicators
+- 📁 **File Organization**: Added new game files (`odd.py`, `business.py`, `odd.html`, `business.html`, `odd.js`, `business.js`)
+- 🔗 **API Endpoints**: New REST endpoints for both games with complete session management
+
+### Enhanced Event Game Image Generation
 - 🖼️ **Complete Context Image Generation**: Event guessing game now provides complete JSON event data to Gemini 2.5 Flash Image Preview for historically accurate visual representations
 - 📊 **Rich Event Context**: Image generation now includes event name, location, time period, key figures, and comprehensive overview for better visual accuracy
 - 🎨 **Enhanced Visual Quality**: AI-generated images are more historically accurate and contextually relevant due to the comprehensive event information provided
