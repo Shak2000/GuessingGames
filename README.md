@@ -48,7 +48,8 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
 - 💭 **Detailed Explanations**: Each guess includes both the event name and reasoning
 - 📝 **Comprehensive Event Data**: Complete JSON information including dates, locations, key figures, causes, developments, and results
-- 🏙️ **Key Cities**: AI identifies and displays key cities involved in historical events as clickable links ✨ **NEW**
+- 👥 **Key Figures**: AI identifies and displays key figures involved in historical events as clickable links ✨ **NEW**
+- 🏙️ **Key Cities**: AI identifies and displays key cities involved in historical events as clickable links
 - 📸 **Enhanced AI Image Generation**: Uses Gemini 2.5 Flash Image Preview with complete event context for historically accurate visual representations
 - 🗺️ **Interactive Maps**: Google Maps integration showing event locations with custom markers
 - 🏛️ **Rich Context**: Event overview, key figures, causes, developments, and outcomes
@@ -108,8 +109,8 @@ The platform features an innovative cross-game linking system that allows seamle
 - **Businesses**: Click notable businesses to search in Business Game ✨ **NEW**
 
 #### **From Event Game:**
-- **People**: Click key figures to search in Person Game
-- **Cities**: Click key cities to search in City Game ✨ **NEW**
+- **People**: Click key figures to search in Person Game ✨ **NEW**
+- **Cities**: Click key cities to search in City Game
 
 #### **From Business Game:**
 - **People**: Click founders/CEOs to search in Person Game
@@ -234,15 +235,17 @@ The application will be available at `http://localhost:8000`
    - **Name Box**: The event's name in a blue gradient box
    - **Overview Box**: A concise 50-75 word summary of the event's significance and key details
    - **Comprehensive Event Data**: Complete information including start/end dates, location, key figures, causes, developments, and results
-   - **Key Cities**: Clickable green links to cities involved in the event ✨ **NEW**
+   - **Key Figures**: Clickable blue links to people involved in the event ✨ **NEW**
+   - **Key Cities**: Clickable green links to cities involved in the event
    - **Interactive Map**: Google Maps showing the event location with custom markers
    - **Wikipedia Link**: Direct link to the event's Wikipedia page with automatic image extraction
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
-6. **Explore Key Cities**: Click any key city name to automatically search for that city in the City Game
-7. **Victory**: When the AI guesses correctly, you'll see a victory message!
-8. **New Game**: Start fresh anytime by entering new information
+6. **Explore Key Figures**: Click any key figure name to automatically search for that person in the Person Game
+7. **Explore Key Cities**: Click any key city name to automatically search for that city in the City Game
+8. **Victory**: When the AI guesses correctly, you'll see a victory message!
+9. **New Game**: Start fresh anytime by entering new information
 
 ### Odd Situation Game
 1. **Start Game**: Click "Start New Game" to begin
@@ -395,7 +398,16 @@ FirstAPI/
 
 ## Recent Updates
 
-### Key Cities Feature Enhancement (Latest)
+### Key Figures Linking Enhancement (Latest)
+- 👥 **Event Game Key Figures**: Added clickable key figures functionality to the historical event guessing game
+- 🎯 **AI-Powered Figure Identification**: AI now identifies and displays key figures involved in historical events
+- 🔗 **Clickable Figure Links**: Key figures are displayed as clickable blue links that automatically search in Person Game
+- 🧭 **Cross-Game Navigation**: Seamless navigation from event details to person information
+- 📝 **Comprehensive Data**: Figures include full names for accurate person identification
+- 🎨 **Visual Design**: Consistent blue styling matching other person-related links
+- 🔄 **Auto-Search**: Clicking a key figure automatically populates and searches in the Person Game
+
+### Key Cities Feature Enhancement
 - 🏙️ **Event Game Key Cities**: Added key cities functionality to the historical event guessing game
 - 🎯 **AI-Powered City Identification**: AI now identifies and displays key cities involved in historical events
 - 🔗 **Clickable City Links**: Key cities are displayed as clickable green links that automatically search in City Game
