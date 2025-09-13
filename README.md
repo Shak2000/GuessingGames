@@ -7,6 +7,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 ### Platform Features
 - 🎮 **Multi-Game Platform**: Choose from 5 interactive games in one unified platform
 - 🧭 **Easy Navigation**: Seamless navigation between games with persistent toolbar
+- 🔗 **Cross-Game Linking**: Clickable links between related content across all games
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and consistent styling
 - 🖼️ **Custom Branding**: Custom favicon support with multiple format compatibility
 - 📱 **Mobile Friendly**: Fully responsive design that works perfectly on all devices
@@ -83,6 +84,48 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
 - 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
 
+## Cross-Game Linking System
+
+The platform features an innovative cross-game linking system that allows seamless navigation between related content across all games:
+
+### 🔗 **How Cross-Game Links Work**
+- **Clickable Content**: Related items (people, events, businesses, cities) are displayed as clickable links
+- **Automatic Navigation**: Clicking a link automatically navigates to the relevant game
+- **Auto-Search**: The target game automatically searches for the clicked item
+- **Visual Distinction**: Different colored links for different content types
+
+### 🎯 **Available Cross-Game Links**
+
+#### **From Person Game:**
+- **Cities**: Click birth/death locations to search in City Game
+- **Events**: Click historical events to search in Event Game  
+- **Businesses**: Click business affiliations to search in Business Game
+
+#### **From City Game:**
+- **People**: Click notable residents to search in Person Game
+- **Events**: Click historical events to search in Event Game ✨ **NEW**
+- **Businesses**: Click notable businesses to search in Business Game ✨ **NEW**
+
+#### **From Event Game:**
+- **People**: Click key figures to search in Person Game
+- **Cities**: Click event locations to search in City Game
+
+#### **From Business Game:**
+- **People**: Click founders/CEOs to search in Person Game
+- **Cities**: Click headquarters locations to search in City Game
+
+### 🎨 **Visual Design**
+- **People Links**: Blue color (`#2563eb`) with hover effects
+- **Event Links**: Red color (`#dc2626`) with hover effects  
+- **Business Links**: Green color (`#059669`) with hover effects
+- **City Links**: Green color (`#059669`) with hover effects
+
+### 🔧 **Technical Implementation**
+- **localStorage**: Stores search terms for seamless game transitions
+- **URL Parameters**: Fallback method for direct game-to-game navigation
+- **Automatic Detection**: Games detect incoming searches and auto-populate input fields
+- **Session Management**: Maintains game state across navigation
+
 ## Setup Instructions
 
 ### 1. Install Dependencies
@@ -142,6 +185,7 @@ The application will be available at `http://localhost:8000`
 1. **Choose a Game**: Visit the home page and select from available games using the game selection cards
 2. **Navigate**: Use the navigation toolbar at the top to switch between games anytime
 3. **Play**: Each game has its own unique interface and rules
+4. **Explore Cross-Game Links**: Click on related content (people, events, businesses, cities) to seamlessly navigate between games
 
 ### Guess the Famous Person Game
 1. **Enter Information**: Type information about a famous person in the text area
@@ -170,12 +214,16 @@ The application will be available at `http://localhost:8000`
    - **Administrative Information**: County, parish, borough, state, prefecture, province, department, region, territory, canton, voivodeship, autonomous community, and other administrative divisions
    - **Population Information**: City population when available
    - **Founding Information**: Year founded when available
+   - **Notable People**: Clickable blue links to search famous residents in Person Game
+   - **Notable Events**: Clickable red links to search historical events in Event Game ✨ **NEW**
+   - **Notable Businesses**: Clickable green links to search companies in Business Game ✨ **NEW**
    - **Wikipedia Link**: Direct link to the city's Wikipedia page
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
-6. **Victory**: When the AI guesses correctly, you'll see a victory message!
-7. **New Game**: Start fresh anytime by entering new information
+6. **Explore Related Content**: Click any notable person, event, or business to automatically search in the respective game
+7. **Victory**: When the AI guesses correctly, you'll see a victory message!
+8. **New Game**: Start fresh anytime by entering new information
 
 ### Guess the Historical Event Game
 1. **Enter Information**: Type information about a historical event in the text area
@@ -344,7 +392,16 @@ FirstAPI/
 
 ## Recent Updates
 
-### New Games Added (Latest)
+### Cross-Game Linking Enhancement (Latest)
+- 🔗 **Enhanced City Game Links**: Added clickable links for events and businesses in the city-guessing game
+- 🎯 **Event Links**: Notable events in city results are now clickable red links that automatically search in Event Game
+- 🏢 **Business Links**: Notable businesses in city results are now clickable green links that automatically search in Business Game
+- 🎨 **Visual Design**: Consistent color-coded linking system across all games
+- 🔄 **Seamless Navigation**: Users can now explore related content across all 5 games with automatic search functionality
+- 📱 **Responsive Design**: Cross-game links work perfectly on all devices and screen sizes
+- 🧠 **Smart Detection**: Games automatically detect incoming searches from other games and populate input fields
+
+### New Games Added
 - 🎪 **Odd Situation Game**: Brand new game where players guess famous people in unusual outfits and settings
   - 🎨 **AI-Generated Scenarios**: Uses Gemini 2.5 Flash Image Preview to create unique visual scenarios
   - 🎭 **Random Combinations**: Combines famous people with random outfits and settings from curated data files
