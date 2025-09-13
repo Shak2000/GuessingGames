@@ -86,6 +86,9 @@ class EventGame {
             return;
         }
         
+        // Disable button and show loading
+        this.submitBtn.disabled = true;
+        this.submitBtn.textContent = 'Thinking...';
         this.hideAllSections();
         this.showLoading();
         
@@ -112,6 +115,11 @@ class EventGame {
         } catch (error) {
             console.error('Error starting new session:', error);
             this.showError('Failed to start new session. Please try again.');
+        } finally {
+            // Re-enable button and hide loading
+            this.submitBtn.disabled = false;
+            this.submitBtn.textContent = 'Submit Information';
+            this.hideLoading();
         }
     }
     
