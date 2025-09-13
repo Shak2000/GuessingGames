@@ -48,6 +48,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
 - 💭 **Detailed Explanations**: Each guess includes both the event name and reasoning
 - 📝 **Comprehensive Event Data**: Complete JSON information including dates, locations, key figures, causes, developments, and results
+- 🏙️ **Key Cities**: AI identifies and displays key cities involved in historical events as clickable links ✨ **NEW**
 - 📸 **Enhanced AI Image Generation**: Uses Gemini 2.5 Flash Image Preview with complete event context for historically accurate visual representations
 - 🗺️ **Interactive Maps**: Google Maps integration showing event locations with custom markers
 - 🏛️ **Rich Context**: Event overview, key figures, causes, developments, and outcomes
@@ -108,7 +109,7 @@ The platform features an innovative cross-game linking system that allows seamle
 
 #### **From Event Game:**
 - **People**: Click key figures to search in Person Game
-- **Cities**: Click event locations to search in City Game
+- **Cities**: Click key cities to search in City Game ✨ **NEW**
 
 #### **From Business Game:**
 - **People**: Click founders/CEOs to search in Person Game
@@ -233,13 +234,15 @@ The application will be available at `http://localhost:8000`
    - **Name Box**: The event's name in a blue gradient box
    - **Overview Box**: A concise 50-75 word summary of the event's significance and key details
    - **Comprehensive Event Data**: Complete information including start/end dates, location, key figures, causes, developments, and results
+   - **Key Cities**: Clickable green links to cities involved in the event ✨ **NEW**
    - **Interactive Map**: Google Maps showing the event location with custom markers
    - **Wikipedia Link**: Direct link to the event's Wikipedia page with automatic image extraction
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
-6. **Victory**: When the AI guesses correctly, you'll see a victory message!
-7. **New Game**: Start fresh anytime by entering new information
+6. **Explore Key Cities**: Click any key city name to automatically search for that city in the City Game
+7. **Victory**: When the AI guesses correctly, you'll see a victory message!
+8. **New Game**: Start fresh anytime by entering new information
 
 ### Odd Situation Game
 1. **Start Game**: Click "Start New Game" to begin
@@ -392,7 +395,16 @@ FirstAPI/
 
 ## Recent Updates
 
-### Cross-Game Linking Enhancement (Latest)
+### Key Cities Feature Enhancement (Latest)
+- 🏙️ **Event Game Key Cities**: Added key cities functionality to the historical event guessing game
+- 🎯 **AI-Powered City Identification**: AI now identifies and displays key cities involved in historical events
+- 🔗 **Clickable City Links**: Key cities are displayed as clickable green links that automatically search in City Game
+- 🗺️ **Cross-Game Navigation**: Seamless navigation from event details to city information
+- 📝 **Comprehensive Data**: Cities include full administrative divisions and country names for accurate identification
+- 🎨 **Visual Design**: Consistent green styling matching other city-related links
+- 🔄 **Auto-Search**: Clicking a key city automatically populates and searches in the City Game
+
+### Cross-Game Linking Enhancement
 - 🔗 **Enhanced City Game Links**: Added clickable links for events and businesses in the city-guessing game
 - 🎯 **Event Links**: Notable events in city results are now clickable red links that automatically search in Event Game
 - 🏢 **Business Links**: Notable businesses in city results are now clickable green links that automatically search in Business Game
