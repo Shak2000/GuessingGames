@@ -55,6 +55,7 @@ Please respond with a JSON object containing the following fields:
 - start: Start date of the event (if known, otherwise null)
 - end: End date of the event (if known, otherwise null)
 - location: The primary location where the event took place (if known, otherwise null)
+- key_cities: An array of key cities involved in the event (if known, otherwise empty array), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
 - key_figures: An array of key figures involved in the event (if known, otherwise empty array)
 - causes: The main causes or triggers of the event (if known, otherwise null), answered as a complete sentence
 - key_developments: Key developments or phases of the event (if known, otherwise null), answered as a complete sentence

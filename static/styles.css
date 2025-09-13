@@ -590,6 +590,19 @@ body {
     text-decoration: none;
 }
 
+/* Clickable Cities Styling */
+.clickable-city {
+    color: #059669;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.clickable-city:hover {
+    color: #047857;
+    text-decoration: none;
+}
+
 /* City Link Styling */
 .city-link {
     color: #059669;
