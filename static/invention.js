@@ -83,8 +83,11 @@ class InventionGame {
             return;
         }
 
+        // Disable button and show loading
+        this.submitBtn.disabled = true;
+        this.submitBtn.textContent = 'Thinking...';
+        this.hideAllSections();
         this.showLoading();
-        this.hideError();
 
         try {
             const response = await fetch('/api/start-invention-guess', {
@@ -107,12 +110,16 @@ class InventionGame {
 
             this.currentSessionId = data.session_id;
             this.displayGuess(data.guess);
+            this.hideLoading();
             this.showGameSection();
 
         } catch (error) {
             console.error('Error starting game:', error);
             this.showError('Failed to start the game. Please try again.');
         } finally {
+            // Re-enable button and hide loading
+            this.submitBtn.disabled = false;
+            this.submitBtn.textContent = 'Submit Information';
             this.hideLoading();
         }
     }
@@ -122,6 +129,9 @@ class InventionGame {
             return;
         }
 
+        // Disable feedback buttons during processing
+        this.correctBtn.disabled = true;
+        this.incorrectBtn.disabled = true;
         this.showLoading();
 
         try {
@@ -156,6 +166,9 @@ class InventionGame {
             console.error('Error submitting feedback:', error);
             this.showError('Failed to submit feedback. Please try again.');
         } finally {
+            // Re-enable feedback buttons and hide loading
+            this.correctBtn.disabled = false;
+            this.incorrectBtn.disabled = false;
             this.hideLoading();
         }
     }
@@ -381,15 +394,20 @@ class InventionGame {
     }
 
     showGameSection() {
+        this.hideAllSections();
         this.gameSection.classList.remove('hidden');
+    }
+
+    hideAllSections() {
+        this.gameSection.classList.add('hidden');
         this.victorySection.classList.add('hidden');
+        this.loadingSection.classList.add('hidden');
         this.errorSection.classList.add('hidden');
     }
 
     showVictory() {
+        this.hideAllSections();
         this.victorySection.classList.remove('hidden');
-        this.gameSection.classList.add('hidden');
-        this.errorSection.classList.add('hidden');
     }
 
     showLoading() {
@@ -402,6 +420,7 @@ class InventionGame {
 
     showError(message) {
         this.errorMessage.textContent = message;
+        this.hideAllSections();
         this.errorSection.classList.remove('hidden');
     }
 
@@ -412,9 +431,7 @@ class InventionGame {
     startNewGame() {
         this.currentSessionId = null;
         this.userInput.value = '';
-        this.gameSection.classList.add('hidden');
-        this.victorySection.classList.add('hidden');
-        this.errorSection.classList.add('hidden');
+        this.hideAllSections();
         this.guessText.innerHTML = '';
         this.guessTextOverview.style.display = 'none';
         this.guessTextReasoning.innerHTML = '';
