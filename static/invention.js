@@ -65,12 +65,14 @@ class InventionGame {
             });
         }
 
-        // Allow Enter key to submit
+        // Allow Enter key to submit, Shift+Enter for new line
         if (this.userInput) {
             this.userInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && e.ctrlKey) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault(); // Prevent default new line behavior
                     this.startNewGameFromButton();
                 }
+                // Shift+Enter allows default behavior (new line)
             });
         }
     }
