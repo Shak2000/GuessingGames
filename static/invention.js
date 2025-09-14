@@ -276,11 +276,37 @@ class InventionGame {
             // Display image
             this.displayInventionImage(guess.image_url, name);
             
-            // Initialize map if place is available
-            if (place && place.trim() !== '') {
-                this.initMapForPlace(place);
+            // Initialize map if coordinates are available
+            const coordinates = guess.coordinates;
+            const city = guess.city;
+            if (coordinates && coordinates !== null) {
+                try {
+                    const inventionCoords = {
+                        lat: coordinates.lat,
+                        lng: coordinates.lng
+                    };
+                    
+                    // Show the map container
+                    if (this.mapEl) {
+                        this.mapEl.style.display = 'block';
+                        this.mapEl.style.height = '400px';
+                        this.mapEl.style.width = '100%';
+                        this.mapEl.style.marginTop = '15px';
+                        this.mapEl.style.borderRadius = '10px';
+                        this.mapEl.style.border = '1px solid #bae6fd';
+                    }
+                    
+                    // Initialize the map with city context (preferred) or place fallback
+                    this.initMap(inventionCoords, city || place);
+                } catch (e) {
+                    // Error parsing coordinates
+                    console.error('Error initializing map:', e);
+                    if (this.mapEl) {
+                        this.mapEl.style.display = 'none';
+                    }
+                }
             } else {
-                // Hide the map container if no place
+                // Hide the map container if no coordinates
                 if (this.mapEl) {
                     this.mapEl.style.display = 'none';
                 }
@@ -320,77 +346,87 @@ class InventionGame {
         }
     }
 
-    async initMapForPlace(place) {
-        if (!this.mapsApiKey) {
-            console.log('Maps API key not available yet');
+    initMap(inventionCoords, location = null) {
+        console.log('initMap called with coords:', inventionCoords);
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
+            if (this.mapEl) {
+                this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
+            }
             return;
         }
 
-        try {
-            // Use Google Maps Geocoding API to get coordinates
-            const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(place)}&key=${this.mapsApiKey}`;
-            const response = await fetch(geocodeUrl);
-            const data = await response.json();
+        if (!this.mapEl) {
+            return;
+        }
 
-            if (data.results && data.results.length > 0) {
-                const location = data.results[0].geometry.location;
-                
-                // Show the map container
-                if (this.mapEl) {
-                    this.mapEl.style.display = 'block';
-                    this.mapEl.style.height = '400px';
-                    this.mapEl.style.width = '100%';
-                    this.mapEl.style.marginTop = '15px';
-                    this.mapEl.style.borderRadius = '10px';
-                    this.mapEl.style.border = '1px solid #bae6fd';
-                }
-
-                // Initialize the map
-                this.map = new google.maps.Map(this.mapEl, {
-                    center: location,
-                    zoom: 4,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP,
-                    styles: [
-                        {
-                            featureType: 'poi',
-                            elementType: 'labels',
-                            stylers: [{ visibility: 'off' }]
-                        }
-                    ]
-                });
-
-                // Add a marker
-                new google.maps.Marker({
-                    position: location,
-                    map: this.map,
-                    title: `Invention location: ${place}`
-                });
-
-                // Add an info window
-                const infoWindow = new google.maps.InfoWindow({
-                    content: `<div style="padding: 10px;"><strong>Invention Location</strong><br>${place}</div>`
-                });
-
-                // Show info window on marker click
-                google.maps.event.addListener(this.map, 'click', () => {
-                    infoWindow.open(this.map, new google.maps.Marker({
-                        position: location,
-                        map: this.map
-                    }));
-                });
-
-            } else {
-                console.log('No results found for place:', place);
-                if (this.mapEl) {
-                    this.mapEl.style.display = 'none';
-                }
+        // Determine appropriate zoom level based on location type
+        let zoomLevel = 10; // Default zoom for cities
+        
+        if (location) {
+            const locationLower = location.toLowerCase();
+            
+            // Check for continents
+            if (locationLower.includes('continent') || 
+                locationLower.includes('north america') || 
+                locationLower.includes('south america') || 
+                locationLower.includes('europe') || 
+                locationLower.includes('asia') || 
+                locationLower.includes('africa') || 
+                locationLower.includes('australia') || 
+                locationLower.includes('antarctica')) {
+                zoomLevel = 3;
             }
-        } catch (error) {
-            console.error('Error initializing map:', error);
-            if (this.mapEl) {
-                this.mapEl.style.display = 'none';
+            // Check for countries
+            else if (locationLower.includes('country') || 
+                     locationLower.includes('nation') || 
+                     locationLower.includes('united states') || 
+                     locationLower.includes('canada') || 
+                     locationLower.includes('china') || 
+                     locationLower.includes('russia') || 
+                     locationLower.includes('brazil') || 
+                     locationLower.includes('australia') || 
+                     locationLower.includes('india')) {
+                zoomLevel = 5;
+            }
+            // Check for states/provinces/regions
+            else if (locationLower.includes('state') || 
+                     locationLower.includes('province') || 
+                     locationLower.includes('region') || 
+                     locationLower.includes('territory') || 
+                     locationLower.includes('county')) {
+                zoomLevel = 7;
+            }
+            // Default to city level
+            else {
+                zoomLevel = 10;
             }
         }
+
+        const mapOptions = {
+            zoom: zoomLevel,
+            center: inventionCoords,
+            mapTypeId: 'terrain'
+        };
+        this.map = new google.maps.Map(this.mapEl, mapOptions);
+
+        // Add marker for the invention location
+        const markerTitle = location ? `Invention Location: ${location}` : 'Invention Location';
+        const inventionMarker = new google.maps.Marker({
+            position: inventionCoords,
+            map: this.map,
+            title: markerTitle,
+            icon: {
+                url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="#059669" stroke="white" stroke-width="2"/>
+                        <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">I</text>
+                    </svg>
+                `)
+            }
+        });
     }
 
     showGameSection() {

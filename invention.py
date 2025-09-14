@@ -4,7 +4,8 @@ import json
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
-from config import GEMINI_API_KEY
+import googlemaps
+from config import GEMINI_API_KEY, GOOGLE_MAPS_API_KEY
 
 class InventionGuesser:
     def __init__(self):
@@ -15,6 +16,7 @@ class InventionGuesser:
         
         genai.configure(api_key=GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash-lite')
+        self.gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
         self.current_session = None
     
     def start_new_session(self, user_input: str) -> Dict[str, Any]:
@@ -133,6 +135,15 @@ class InventionGuesser:
             if wikipedia_url and wikipedia_url.lower() != 'n/a':
                 image_url = self._extract_wikimedia_image(wikipedia_url)
             
+            # Get coordinates for the city if available (preferred for map centering)
+            coordinates = None
+            city = data.get('city')
+            if city:
+                coordinates = self._get_location_coordinates(city)
+            elif place_invented:
+                # Fallback to place_invented if city is not available
+                coordinates = self._get_location_coordinates(place_invented)
+            
             # Build the final response as JSON
             final_response = {
                 "name": name,
@@ -147,7 +158,9 @@ class InventionGuesser:
                 "historical_events": historical_events,
                 "wikipedia_url": wikipedia_url,
                 "reasoning": reasoning,
-                "image_url": image_url if image_url != "N/A" else None
+                "image_url": image_url if image_url != "N/A" else None,
+                "city": city,
+                "coordinates": coordinates
             }
 
             return final_response
@@ -227,6 +240,21 @@ class InventionGuesser:
         except Exception as e:
             print(f"Error extracting image from {url}: {str(e)}")
             return "N/A"
+    
+    def _get_location_coordinates(self, location: str) -> Optional[Dict[str, float]]:
+        """Get coordinates for a location using Google Maps Geocoding API."""
+        try:
+            geocode_result = self.gmaps.geocode(location)
+            if geocode_result:
+                location_data = geocode_result[0]['geometry']['location']
+                return {
+                    'lat': location_data['lat'],
+                    'lng': location_data['lng']
+                }
+        except Exception as e:
+            print(f"Error getting coordinates for {location}: {e}")
+        
+        return None
     
     def submit_feedback(self, session_id: int, is_correct: bool) -> Dict[str, Any]:
         """Submit feedback for the current guess and make next guess if incorrect."""
