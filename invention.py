@@ -60,7 +60,12 @@ class InventionGuesser:
         - 'materials_used': An array of strings with materials used in the invention, or empty array [] if unknown
         - 'previous_inventions': An array of strings with names of previous inventions it relied on, or empty array [] if unknown
         - 'later_inventions': An array of strings with names of later inventions it enabled, or empty array [] if unknown
+        - 'consumer_uses': An array of strings with consumer uses of the invention, or empty array [] if unknown
+        - 'commercial_uses': An array of strings with commercial uses of the invention, or empty array [] if unknown
+        - 'institutional_uses': An array of strings with institutional (government, military, education, scientific, nonprofit, etc.) uses of the invention, or empty array [] if unknown
         - 'businesses': An array of strings with names of businesses that produce this invention, or empty array [] if unknown
+        - 'design_hubs': An array of strings with names of cities where the invention is or was historically designed, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
+        - 'manufacturing_hubs': An array of strings with names of cities where the invention is or was historically manufactured, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
         - 'historical_events': An array of strings with historical events where this invention was used, or empty array [] if unknown
         - 'wikipedia_url': Wikipedia URL for this invention, or null if not found
         - 'reasoning': Brief explanation of why you think this is the correct invention based on the information provided
@@ -108,7 +113,12 @@ class InventionGuesser:
                 materials_used = data.get('materials_used', [])
                 previous_inventions = data.get('previous_inventions', [])
                 later_inventions = data.get('later_inventions', [])
+                consumer_uses = data.get('consumer_uses', [])
+                commercial_uses = data.get('commercial_uses', [])
+                institutional_uses = data.get('institutional_uses', [])
                 businesses = data.get('businesses', [])
+                design_hubs = data.get('design_hubs', [])
+                manufacturing_hubs = data.get('manufacturing_hubs', [])
                 historical_events = data.get('historical_events', [])
                 wikipedia_url = data.get('wikipedia_url')
                 reasoning = data.get('reasoning', '')
@@ -154,7 +164,12 @@ class InventionGuesser:
                 "materials_used": materials_used,
                 "previous_inventions": previous_inventions,
                 "later_inventions": later_inventions,
+                "consumer_uses": consumer_uses,
+                "commercial_uses": commercial_uses,
+                "institutional_uses": institutional_uses,
                 "businesses": businesses,
+                "design_hubs": design_hubs,
+                "manufacturing_hubs": manufacturing_hubs,
                 "historical_events": historical_events,
                 "wikipedia_url": wikipedia_url,
                 "reasoning": reasoning,

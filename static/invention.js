@@ -217,7 +217,12 @@ class InventionGame {
             const materials = guess.materials_used || [];
             const previous = guess.previous_inventions || [];
             const later = guess.later_inventions || [];
+            const consumerUses = guess.consumer_uses || [];
+            const commercialUses = guess.commercial_uses || [];
+            const institutionalUses = guess.institutional_uses || [];
             const businesses = guess.businesses || [];
+            const designHubs = guess.design_hubs || [];
+            const manufacturingHubs = guess.manufacturing_hubs || [];
             const events = guess.historical_events || [];
             const wikipediaUrl = guess.wikipedia_url;
             const reasoning = guess.reasoning;
@@ -226,7 +231,9 @@ class InventionGame {
             // Build invention info section
             let inventionInfo = '';
             if (year || place || inventors.length > 0 || materials.length > 0 || 
-                previous.length > 0 || later.length > 0 || businesses.length > 0 || events.length > 0) {
+                previous.length > 0 || later.length > 0 || consumerUses.length > 0 || 
+                commercialUses.length > 0 || institutionalUses.length > 0 || 
+                businesses.length > 0 || designHubs.length > 0 || manufacturingHubs.length > 0 || events.length > 0) {
                 inventionInfo = '<div class="bio-section">';
                 inventionInfo += '<h4>Invention Information:</h4>';
                 
@@ -236,7 +243,12 @@ class InventionGame {
                 if (materials.length > 0) inventionInfo += `<p><strong>Materials Used:</strong> ${materials.join(', ')}</p>`;
                 if (previous.length > 0) inventionInfo += `<p><strong>Previous Inventions:</strong> ${previous.join(', ')}</p>`;
                 if (later.length > 0) inventionInfo += `<p><strong>Later Inventions:</strong> ${later.join(', ')}</p>`;
+                if (consumerUses.length > 0) inventionInfo += `<p><strong>Consumer Uses:</strong> ${consumerUses.join(', ')}</p>`;
+                if (commercialUses.length > 0) inventionInfo += `<p><strong>Commercial Uses:</strong> ${commercialUses.join(', ')}</p>`;
+                if (institutionalUses.length > 0) inventionInfo += `<p><strong>Institutional Uses:</strong> ${institutionalUses.join(', ')}</p>`;
                 if (businesses.length > 0) inventionInfo += `<p><strong>Businesses:</strong> ${businesses.join(', ')}</p>`;
+                if (designHubs.length > 0) inventionInfo += `<p><strong>Design Hubs:</strong> ${designHubs.join(', ')}</p>`;
+                if (manufacturingHubs.length > 0) inventionInfo += `<p><strong>Manufacturing Hubs:</strong> ${manufacturingHubs.join(', ')}</p>`;
                 if (events.length > 0) inventionInfo += `<p><strong>Historical Events:</strong> ${events.join(', ')}</p>`;
                 
                 if (wikipediaUrl) {
