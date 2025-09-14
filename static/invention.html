@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Business - Multi-Game App</title>
+    <title>Guess the Invention - Multi-Game App</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" href="/favicon.ico">
@@ -21,24 +21,24 @@
                 <a href="/city" class="toolbar-item">🏙️ Guess the City</a>
                 <a href="/odd" class="toolbar-item">🎪 Odd Situation Game</a>
                 <a href="/event" class="toolbar-item">📅 Guess the Event</a>
-                <a href="/business" class="toolbar-item active">🏢 Guess the Business</a>
-                <a href="/invention" class="toolbar-item">🔧 Guess the Invention</a>
+                <a href="/business" class="toolbar-item">🏢 Guess the Business</a>
+                <a href="/invention" class="toolbar-item active">🔧 Guess the Invention</a>
             </div>
         </nav>
 
         <header class="header">
-            <h1 class="title">🏢 Guess the Business</h1>
-            <p class="subtitle">Enter information about a business and I'll try to guess which business it is!</p>
+            <h1 class="title">🔧 Guess the Invention</h1>
+            <p class="subtitle">Enter information about an invention and I'll try to guess which invention it is!</p>
         </header>
 
         <main class="main-content">
             <div class="input-section">
                 <div class="input-group">
-                    <label for="userInput" class="input-label">Tell me about the business:</label>
+                    <label for="userInput" class="input-label">Tell me about the invention:</label>
                     <textarea 
                         id="userInput" 
                         class="input-textarea" 
-                        placeholder="e.g., 'This company was founded in 1976 by Steve Jobs and Steve Wozniak in a garage in California. They revolutionized personal computing and later created the iPhone...'"
+                        placeholder="e.g., 'This device was invented in the late 1800s and uses electricity to transmit sound over long distances. It revolutionized communication and was used by businesses and homes worldwide...'"
                         rows="4"
                     ></textarea>
                 </div>
@@ -48,35 +48,12 @@
             <div id="gameSection" class="game-section hidden">
                 <div class="guess-display">
                     <h3 class="guess-title">My Guess:</h3>
-                    <div id="businessImageContainer" class="business-image-container" style="display: none;">
-                        <img id="businessImage" class="business-image" alt="Business logo" onerror="this.style.display='none'">
+                    <div id="inventionImageContainer" class="invention-image-container" style="display: none;">
+                        <img id="inventionImage" class="invention-image" alt="Invention illustration" onerror="this.style.display='none'">
                     </div>
                     <div id="guessText" class="guess-text"></div>
                     <div id="guessTextOverview" class="guess-text overview-section"></div>
-                    <div id="businessDetails" class="business-details">
-                        <div id="basicInfoSection" class="info-section hidden">
-                            <h4>Basic Information</h4>
-                            <div id="basicInfoContent"></div>
-                        </div>
-                        <div id="financialInfoSection" class="info-section hidden">
-                            <h4>Financial Information</h4>
-                            <div id="financialInfoContent"></div>
-                        </div>
-                        <div id="leadershipSection" class="info-section hidden">
-                            <h4>Leadership</h4>
-                            <div id="leadershipContent"></div>
-                        </div>
-                        <div id="productsServicesSection" class="info-section hidden">
-                            <h4>Products & Services</h4>
-                            <div id="productsServicesContent"></div>
-                        </div>
-                        <div id="moreInfoSection" class="info-section hidden">
-                            <h4>More Information</h4>
-                            <div id="moreInfoContent"></div>
-                        </div>
-                    </div>
                     <div id="guessTextReasoning" class="guess-text"></div>
-                    <div id="map" class="map-container" style="display: none;"></div>
                 </div>
                 
                 <div class="feedback-buttons">
@@ -106,13 +83,8 @@
                 </div>
             </div>
         </main>
-
-        <footer class="footer">
-            <p>Powered by Google Gemini AI</p>
-        </footer>
     </div>
 
-    <!-- Google Maps API will be loaded dynamically by business.js -->
-    <script src="/static/business.js?v=1"></script>
+    <script src="/static/invention.js"></script>
 </body>
 </html>

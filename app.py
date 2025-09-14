@@ -9,6 +9,7 @@ from city import city_guesser
 from odd import odd_game
 from event import event_guesser
 from business import business_guesser
+from invention import invention_guesser
 
 app = FastAPI(title="Multi-Game App", version="1.0.0")
 
@@ -63,6 +64,13 @@ class BusinessFeedback(BaseModel):
     session_id: int
     is_correct: bool
 
+class InventionInput(BaseModel):
+    text: str
+
+class InventionFeedback(BaseModel):
+    session_id: int
+    is_correct: bool
+
 @app.get("/")
 async def read_index():
     """Serve the home page."""
@@ -92,6 +100,11 @@ async def read_event():
 async def read_business():
     """Serve the Guess the Business game page."""
     return FileResponse("static/business.html")
+
+@app.get("/invention")
+async def read_invention():
+    """Serve the Guess the Invention game page."""
+    return FileResponse("static/invention.html")
 
 @app.post("/api/start-guess")
 async def start_guess(user_input: UserInput):
@@ -274,6 +287,41 @@ async def get_business_session(session_id: int):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting business session: {str(e)}")
+
+# Invention Guessing Game API Routes
+@app.post("/api/start-invention-guess")
+async def start_invention_guess(user_input: InventionInput):
+    """Start a new invention guessing session."""
+    try:
+        if not user_input.text.strip():
+            raise HTTPException(status_code=400, detail="Input text cannot be empty")
+        
+        result = invention_guesser.start_new_session(user_input.text.strip())
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error starting invention guess: {str(e)}")
+
+@app.post("/api/submit-invention-feedback")
+async def submit_invention_feedback(feedback: InventionFeedback):
+    """Submit feedback for the current invention guess."""
+    try:
+        result = invention_guesser.submit_feedback(feedback.session_id, feedback.is_correct)
+        if 'error' in result:
+            raise HTTPException(status_code=400, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error submitting invention feedback: {str(e)}")
+
+@app.get("/api/invention-session/{session_id}")
+async def get_invention_session(session_id: int):
+    """Get invention guessing session information."""
+    try:
+        result = invention_guesser.get_session_status(session_id)
+        if 'error' in result:
+            raise HTTPException(status_code=404, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting invention session: {str(e)}")
 
 @app.get("/api/health")
 async def health_check():
