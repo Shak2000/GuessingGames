@@ -1,8 +1,12 @@
 class InventionGame {
     constructor() {
         this.currentSessionId = null;
+        this.mapsApiKey = null;
+        this.map = null;
+        this.googleMapsScriptLoaded = false;
         this.initializeElements();
         this.attachEventListeners();
+        this.loadGoogleMapsScript();
     }
 
     initializeElements() {
@@ -17,6 +21,7 @@ class InventionGame {
         this.guessTextReasoning = document.getElementById('guessTextReasoning');
         this.inventionImageContainer = document.getElementById('inventionImageContainer');
         this.inventionImage = document.getElementById('inventionImage');
+        this.mapEl = document.getElementById('map');
         this.correctBtn = document.getElementById('correctBtn');
         this.incorrectBtn = document.getElementById('incorrectBtn');
         
@@ -155,6 +160,34 @@ class InventionGame {
         }
     }
 
+    async loadGoogleMapsScript() {
+        if (this.googleMapsScriptLoaded) {
+            console.log('Google Maps script already loaded');
+            return;
+        }
+        
+        console.log('Loading Google Maps script...');
+        try {
+            const response = await fetch('/api/maps-key');
+            if (!response.ok) {
+                throw new Error('Could not fetch Google Maps API key.');
+            }
+            const data = await response.json();
+            this.mapsApiKey = data.maps_key;
+            console.log('Got API key, loading script...');
+
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.mapsApiKey}`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+            this.googleMapsScriptLoaded = true;
+            console.log('Google Maps script added to DOM');
+        } catch (error) {
+            console.error('Failed to load Google Maps script:', error);
+        }
+    }
+
     displayGuess(guess) {
         if (typeof guess === 'string') {
             // Handle old text format
@@ -180,6 +213,7 @@ class InventionGame {
             if (year || place || inventors.length > 0 || materials.length > 0 || 
                 previous.length > 0 || later.length > 0 || businesses.length > 0 || events.length > 0) {
                 inventionInfo = '<div class="bio-section">';
+                inventionInfo += '<h4>Invention Information:</h4>';
                 
                 if (year) inventionInfo += `<p><strong>Year Invented:</strong> ${year}</p>`;
                 if (place) inventionInfo += `<p><strong>Place Invented:</strong> ${place}</p>`;
@@ -228,10 +262,24 @@ class InventionGame {
             
             // Display image
             this.displayInventionImage(guess.image_url, name);
+            
+            // Initialize map if place is available
+            if (place && place.trim() !== '') {
+                this.initMapForPlace(place);
+            } else {
+                // Hide the map container if no place
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'none';
+                }
+            }
         } else {
             this.guessText.innerHTML = '<div class="name-box"><strong>No guess available</strong></div>';
             this.guessTextOverview.style.display = 'none';
             this.guessTextReasoning.style.display = 'none';
+            // Hide map
+            if (this.mapEl) {
+                this.mapEl.style.display = 'none';
+            }
         }
     }
 
@@ -256,6 +304,79 @@ class InventionGame {
         } else {
             // Hide the image container if no valid image URL
             this.inventionImageContainer.style.display = 'none';
+        }
+    }
+
+    async initMapForPlace(place) {
+        if (!this.mapsApiKey) {
+            console.log('Maps API key not available yet');
+            return;
+        }
+
+        try {
+            // Use Google Maps Geocoding API to get coordinates
+            const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(place)}&key=${this.mapsApiKey}`;
+            const response = await fetch(geocodeUrl);
+            const data = await response.json();
+
+            if (data.results && data.results.length > 0) {
+                const location = data.results[0].geometry.location;
+                
+                // Show the map container
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'block';
+                    this.mapEl.style.height = '400px';
+                    this.mapEl.style.width = '100%';
+                    this.mapEl.style.marginTop = '15px';
+                    this.mapEl.style.borderRadius = '10px';
+                    this.mapEl.style.border = '1px solid #bae6fd';
+                }
+
+                // Initialize the map
+                this.map = new google.maps.Map(this.mapEl, {
+                    center: location,
+                    zoom: 10,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    styles: [
+                        {
+                            featureType: 'poi',
+                            elementType: 'labels',
+                            stylers: [{ visibility: 'off' }]
+                        }
+                    ]
+                });
+
+                // Add a marker
+                new google.maps.Marker({
+                    position: location,
+                    map: this.map,
+                    title: `Invention location: ${place}`
+                });
+
+                // Add an info window
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<div style="padding: 10px;"><strong>Invention Location</strong><br>${place}</div>`
+                });
+
+                // Show info window on marker click
+                google.maps.event.addListener(this.map, 'click', () => {
+                    infoWindow.open(this.map, new google.maps.Marker({
+                        position: location,
+                        map: this.map
+                    }));
+                });
+
+            } else {
+                console.log('No results found for place:', place);
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            console.error('Error initializing map:', error);
+            if (this.mapEl) {
+                this.mapEl.style.display = 'none';
+            }
         }
     }
 
@@ -298,6 +419,9 @@ class InventionGame {
         this.guessTextOverview.style.display = 'none';
         this.guessTextReasoning.innerHTML = '';
         this.inventionImageContainer.style.display = 'none';
+        if (this.mapEl) {
+            this.mapEl.style.display = 'none';
+        }
     }
 }
 
