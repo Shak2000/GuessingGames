@@ -551,18 +551,34 @@ class CityGame {
                     }, 500);
                 }
             } else {
-                // Fallback: Check if there's a 'search' parameter in the URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const searchParam = urlParams.get('search');
+                // Check if there's a city name stored in localStorage from the business game
+                const cityFromBusiness = localStorage.getItem('citySearchFromBusiness');
                 
-                if (searchParam) {
-                    // Set the input field with the search parameter
+                if (cityFromBusiness) {
+                    // Clear the stored value
+                    localStorage.removeItem('citySearchFromBusiness');
+                    // Set the input field with the city name
                     if (this.userInput) {
-                        this.userInput.value = searchParam;
+                        this.userInput.value = cityFromBusiness;
                         // Automatically start the search after a short delay to ensure everything is loaded
                         setTimeout(() => {
                             this.startNewGame();
                         }, 500);
+                    }
+                } else {
+                    // Fallback: Check if there's a 'search' parameter in the URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const searchParam = urlParams.get('search');
+                    
+                    if (searchParam) {
+                        // Set the input field with the search parameter
+                        if (this.userInput) {
+                            this.userInput.value = searchParam;
+                            // Automatically start the search after a short delay to ensure everything is loaded
+                            setTimeout(() => {
+                                this.startNewGame();
+                            }, 500);
+                        }
                     }
                 }
             }

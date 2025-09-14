@@ -196,6 +196,9 @@ class BusinessGame {
         // Display business details
         this.displayBusinessDetails(guess);
 
+        // Setup clickable links
+        this.setupClickableLinks();
+
         // Display reasoning
         if (guess.reasoning) {
             this.guessTextReasoning.innerHTML = `<div class="reasoning-box">${guess.reasoning}</div>`;
@@ -216,11 +219,16 @@ class BusinessGame {
         if (this.shouldDisplay(guess.current_status)) basicInfo += `<p><strong>Status:</strong> ${guess.current_status}</p>`;
         if (this.shouldDisplay(guess.industry)) basicInfo += `<p><strong>Industry:</strong> ${this.formatListWithSpaces(guess.industry)}</p>`;
         if (this.shouldDisplay(guess.year_founded)) basicInfo += `<p><strong>Founded:</strong> ${guess.year_founded}</p>`;
-        if (this.shouldDisplay(guess.city_founded)) basicInfo += `<p><strong>Founded in:</strong> ${guess.city_founded}</p>`;
-        if (this.shouldDisplay(guess.founders)) {
-            basicInfo += `<p><strong>Founders:</strong> ${this.formatListWithSpaces(guess.founders)}</p>`;
+        if (this.shouldDisplay(guess.city_founded)) {
+            basicInfo += `<p><strong>Founded in:</strong> <span class="clickable-city" data-city="${guess.city_founded}">${guess.city_founded}</span></p>`;
         }
-        if (this.shouldDisplay(guess.current_headquarters)) basicInfo += `<p><strong>Headquarters:</strong> ${guess.current_headquarters}</p>`;
+        if (this.shouldDisplay(guess.founders)) {
+            const clickableFounders = this.formatClickablePersonList(guess.founders);
+            basicInfo += `<p><strong>Founders:</strong> ${clickableFounders}</p>`;
+        }
+        if (this.shouldDisplay(guess.current_headquarters)) {
+            basicInfo += `<p><strong>Headquarters:</strong> <span class="clickable-city" data-city="${guess.current_headquarters}">${guess.current_headquarters}</span></p>`;
+        }
         if (this.shouldDisplay(guess.areas_served)) basicInfo += `<p><strong>Areas Served:</strong> ${this.formatListWithSpaces(guess.areas_served)}</p>`;
         if (this.shouldDisplay(guess.number_of_locations)) basicInfo += `<p><strong>Number of Locations:</strong> ${this.formatNumberWithCommas(guess.number_of_locations)}</p>`;
         if (this.shouldDisplay(guess.number_of_employees)) basicInfo += `<p><strong>Employees:</strong> ${this.formatNumberWithCommas(guess.number_of_employees)}</p>`;
@@ -268,8 +276,12 @@ class BusinessGame {
 
         // Leadership
         let leadershipInfo = '';
-        if (this.shouldDisplay(guess.ceo)) leadershipInfo += `<p><strong>CEO:</strong> ${guess.ceo}</p>`;
-        if (this.shouldDisplay(guess.chairman)) leadershipInfo += `<p><strong>Chairman:</strong> ${guess.chairman}</p>`;
+        if (this.shouldDisplay(guess.ceo)) {
+            leadershipInfo += `<p><strong>CEO:</strong> <span class="clickable-person" data-person="${guess.ceo}">${guess.ceo}</span></p>`;
+        }
+        if (this.shouldDisplay(guess.chairman)) {
+            leadershipInfo += `<p><strong>Chairman:</strong> <span class="clickable-person" data-person="${guess.chairman}">${guess.chairman}</span></p>`;
+        }
         
         if (leadershipInfo) {
             this.leadershipContent.innerHTML = leadershipInfo;
@@ -612,6 +624,22 @@ class BusinessGame {
         ).join(', ');
     }
 
+    formatClickablePersonList(list) {
+        if (!Array.isArray(list)) {
+            // If it's a string, split by comma and create clickable person elements
+            if (typeof list === 'string') {
+                return list.split(',').map(item => 
+                    `<span class="clickable-person" data-person="${item.trim()}">${item.trim()}</span>`
+                ).join(', ');
+            }
+            return list;
+        }
+        // For arrays, create clickable person elements
+        return list.map(item => 
+            `<span class="clickable-person" data-person="${item.trim()}">${item.trim()}</span>`
+        ).join(', ');
+    }
+
     formatOwnershipPercentage(percentage) {
         if (!percentage) return percentage;
         // Remove any existing % sign and add it back
@@ -666,6 +694,38 @@ class BusinessGame {
                 }
             }
         }
+    }
+
+    setupClickableLinks() {
+        // Add event listeners to all clickable person links
+        const clickablePersons = document.querySelectorAll('.clickable-person');
+        clickablePersons.forEach(personElement => {
+            personElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const personName = personElement.getAttribute('data-person');
+                if (personName) {
+                    // Store the person name in localStorage for the person game to use
+                    localStorage.setItem('personSearchFromBusiness', personName);
+                    // Navigate to the person game
+                    window.location.href = '/person';
+                }
+            });
+        });
+
+        // Add event listeners to all clickable city links
+        const clickableCities = document.querySelectorAll('.clickable-city');
+        clickableCities.forEach(cityElement => {
+            cityElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cityName = cityElement.getAttribute('data-city');
+                if (cityName) {
+                    // Store the city name in localStorage for the city game to use
+                    localStorage.setItem('citySearchFromBusiness', cityName);
+                    // Navigate to the city game
+                    window.location.href = '/city';
+                }
+            });
+        });
     }
 }
 

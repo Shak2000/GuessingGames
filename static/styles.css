@@ -616,6 +616,19 @@ body {
     text-decoration: none;
 }
 
+/* Clickable Person Styling */
+.clickable-person {
+    color: #2563eb;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s ease;
+}
+
+.clickable-person:hover {
+    color: #1d4ed8;
+    text-decoration: none;
+}
+
 /* City Link Styling */
 .city-link {
     color: #059669;
