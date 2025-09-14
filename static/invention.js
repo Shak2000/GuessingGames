@@ -228,32 +228,61 @@ class InventionGame {
             const reasoning = guess.reasoning;
             const overview = guess.overview;
             
-            // Build invention info section
+            // Basic Information
+            let basicInfo = '';
+            if (year) basicInfo += `<p><strong>Year Invented:</strong> ${year}</p>`;
+            if (place) basicInfo += `<p><strong>Place Invented:</strong> ${place}</p>`;
+            if (inventors.length > 0) basicInfo += `<p><strong>Inventors:</strong> ${inventors.join(', ')}</p>`;
+            if (wikipediaUrl) {
+                basicInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
+            }
+            
+            // Technical Information
+            let technicalInfo = '';
+            if (materials.length > 0) technicalInfo += `<p><strong>Materials Used:</strong> ${materials.join(', ')}</p>`;
+            if (previous.length > 0) technicalInfo += `<p><strong>Previous Inventions:</strong> ${previous.join(', ')}</p>`;
+            if (later.length > 0) technicalInfo += `<p><strong>Later Inventions:</strong> ${later.join(', ')}</p>`;
+            
+            // Uses
+            let usesInfo = '';
+            if (consumerUses.length > 0) usesInfo += `<p><strong>Consumer Uses:</strong> ${consumerUses.join(', ')}</p>`;
+            if (commercialUses.length > 0) usesInfo += `<p><strong>Commercial Uses:</strong> ${commercialUses.join(', ')}</p>`;
+            if (institutionalUses.length > 0) usesInfo += `<p><strong>Institutional Uses:</strong> ${institutionalUses.join(', ')}</p>`;
+            
+            // This Invention and the World
+            let worldInfo = '';
+            if (businesses.length > 0) worldInfo += `<p><strong>Businesses:</strong> ${businesses.join(', ')}</p>`;
+            if (designHubs.length > 0) worldInfo += `<p><strong>Design Hubs:</strong> ${designHubs.join(', ')}</p>`;
+            if (manufacturingHubs.length > 0) worldInfo += `<p><strong>Manufacturing Hubs:</strong> ${manufacturingHubs.join(', ')}</p>`;
+            if (events.length > 0) worldInfo += `<p><strong>Historical Events:</strong> ${events.join(', ')}</p>`;
+            
+            // Build the complete invention info with categories
             let inventionInfo = '';
-            if (year || place || inventors.length > 0 || materials.length > 0 || 
-                previous.length > 0 || later.length > 0 || consumerUses.length > 0 || 
-                commercialUses.length > 0 || institutionalUses.length > 0 || 
-                businesses.length > 0 || designHubs.length > 0 || manufacturingHubs.length > 0 || events.length > 0) {
-                inventionInfo = '<div class="bio-section">';
-                inventionInfo += '<h4>Invention Information:</h4>';
-                
-                if (year) inventionInfo += `<p><strong>Year Invented:</strong> ${year}</p>`;
-                if (place) inventionInfo += `<p><strong>Place Invented:</strong> ${place}</p>`;
-                if (inventors.length > 0) inventionInfo += `<p><strong>Inventors:</strong> ${inventors.join(', ')}</p>`;
-                if (materials.length > 0) inventionInfo += `<p><strong>Materials Used:</strong> ${materials.join(', ')}</p>`;
-                if (previous.length > 0) inventionInfo += `<p><strong>Previous Inventions:</strong> ${previous.join(', ')}</p>`;
-                if (later.length > 0) inventionInfo += `<p><strong>Later Inventions:</strong> ${later.join(', ')}</p>`;
-                if (consumerUses.length > 0) inventionInfo += `<p><strong>Consumer Uses:</strong> ${consumerUses.join(', ')}</p>`;
-                if (commercialUses.length > 0) inventionInfo += `<p><strong>Commercial Uses:</strong> ${commercialUses.join(', ')}</p>`;
-                if (institutionalUses.length > 0) inventionInfo += `<p><strong>Institutional Uses:</strong> ${institutionalUses.join(', ')}</p>`;
-                if (businesses.length > 0) inventionInfo += `<p><strong>Businesses:</strong> ${businesses.join(', ')}</p>`;
-                if (designHubs.length > 0) inventionInfo += `<p><strong>Design Hubs:</strong> ${designHubs.join(', ')}</p>`;
-                if (manufacturingHubs.length > 0) inventionInfo += `<p><strong>Manufacturing Hubs:</strong> ${manufacturingHubs.join(', ')}</p>`;
-                if (events.length > 0) inventionInfo += `<p><strong>Historical Events:</strong> ${events.join(', ')}</p>`;
-                
-                if (wikipediaUrl) {
-                    inventionInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
-                }
+            if (basicInfo) {
+                inventionInfo += '<div class="bio-section">';
+                inventionInfo += '<h4>Basic Information:</h4>';
+                inventionInfo += basicInfo;
+                inventionInfo += '</div>';
+            }
+            
+            if (technicalInfo) {
+                inventionInfo += '<div class="bio-section">';
+                inventionInfo += '<h4>Technical Information:</h4>';
+                inventionInfo += technicalInfo;
+                inventionInfo += '</div>';
+            }
+            
+            if (usesInfo) {
+                inventionInfo += '<div class="bio-section">';
+                inventionInfo += '<h4>Uses:</h4>';
+                inventionInfo += usesInfo;
+                inventionInfo += '</div>';
+            }
+            
+            if (worldInfo) {
+                inventionInfo += '<div class="bio-section">';
+                inventionInfo += '<h4>This Invention and the World:</h4>';
+                inventionInfo += worldInfo;
                 inventionInfo += '</div>';
             }
             
