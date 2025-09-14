@@ -335,7 +335,7 @@ class InventionGame {
                 // Initialize the map
                 this.map = new google.maps.Map(this.mapEl, {
                     center: location,
-                    zoom: 10,
+                    zoom: 4,
                     mapTypeId: google.maps.MapTypeId.ROADMAP,
                     styles: [
                         {
