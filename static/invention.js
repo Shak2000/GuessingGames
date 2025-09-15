@@ -281,7 +281,7 @@ class InventionGame {
             
             if (worldInfo) {
                 inventionInfo += '<div class="bio-section">';
-                inventionInfo += '<h4>This Invention and the World:</h4>';
+                inventionInfo += `<h4>The ${name} and the World:</h4>`;
                 inventionInfo += worldInfo;
                 inventionInfo += '</div>';
             }
