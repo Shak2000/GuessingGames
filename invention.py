@@ -71,7 +71,7 @@ class InventionGuesser:
         - 'wikipedia_url': Wikipedia URL for this invention, or null if not found
         - 'reasoning': Brief explanation of why you think this is the correct invention based on the information provided
         - 'overview': A brief overview of the invention in 50 to 75 words.
-        - 'city': A modern-day city that is located near the geographic center of the invention (if known, otherwise null), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
+        - 'city': A modern-day city that is located in, at, or near the place where the invention was invented (if known, otherwise null), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
         
         Information: {context}{exclusion_text}
         

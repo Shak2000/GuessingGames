@@ -240,8 +240,18 @@ class InventionGame {
             // Technical Information
             let technicalInfo = '';
             if (materials.length > 0) technicalInfo += `<p><strong>Materials Used:</strong> ${materials.join(', ')}</p>`;
-            if (previous.length > 0) technicalInfo += `<p><strong>Previous Inventions:</strong> ${previous.join(', ')}</p>`;
-            if (later.length > 0) technicalInfo += `<p><strong>Later Inventions:</strong> ${later.join(', ')}</p>`;
+            if (previous.length > 0) {
+                const clickablePrevious = previous.map(invention => 
+                    `<span class="clickable-invention" data-invention="${invention.trim()}">${invention.trim()}</span>`
+                ).join(', ');
+                technicalInfo += `<p><strong>Previous Inventions:</strong> ${clickablePrevious}</p>`;
+            }
+            if (later.length > 0) {
+                const clickableLater = later.map(invention => 
+                    `<span class="clickable-invention" data-invention="${invention.trim()}">${invention.trim()}</span>`
+                ).join(', ');
+                technicalInfo += `<p><strong>Later Inventions:</strong> ${clickableLater}</p>`;
+            }
             
             // Uses
             let usesInfo = '';
@@ -319,6 +329,9 @@ class InventionGame {
             // Display image
             this.displayInventionImage(guess.image_url, name);
             
+            // Setup clickable invention links
+            this.setupClickableInventionLinks();
+            
             // Initialize map if coordinates are available
             const coordinates = guess.coordinates;
             const city = guess.city;
@@ -387,6 +400,27 @@ class InventionGame {
             // Hide the image container if no valid image URL
             this.inventionImageContainer.style.display = 'none';
         }
+    }
+
+    setupClickableInventionLinks() {
+        // Add event listeners to all clickable invention links
+        const clickableInventions = document.querySelectorAll('.clickable-invention');
+        clickableInventions.forEach(inventionElement => {
+            inventionElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const inventionName = inventionElement.getAttribute('data-invention');
+                if (inventionName) {
+                    // Set the input field with the invention name
+                    if (this.userInput) {
+                        this.userInput.value = inventionName;
+                        // Automatically start the search after a short delay to ensure everything is loaded
+                        setTimeout(() => {
+                            this.startNewGameFromButton();
+                        }, 500);
+                    }
+                }
+            });
+        });
     }
 
     initMap(inventionCoords, location = null) {
