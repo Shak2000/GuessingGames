@@ -16,6 +16,7 @@ class InventionGuesser:
         
         genai.configure(api_key=GEMINI_API_KEY)
         self.model = genai.GenerativeModel('gemini-2.5-flash-lite')
+        self.image_model = genai.GenerativeModel('gemini-2.5-flash-image-preview')
         self.gmaps = googlemaps.Client(key=GOOGLE_MAPS_API_KEY)
         self.current_session = None
     
@@ -66,7 +67,7 @@ class InventionGuesser:
         - 'businesses': An array of strings with names of businesses that produce this invention, or empty array [] if unknown
         - 'design_hubs': An array of strings with names of cities where the invention is or was historically designed, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
         - 'manufacturing_hubs': An array of strings with names of cities where the invention is or was historically manufactured, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
-        - 'historical_events': An array of strings with historical events where this invention was used, or empty array [] if unknown
+        - 'historical_events': An array of strings with names of historical events where this invention was used, or empty array [] if unknown
         - 'wikipedia_url': Wikipedia URL for this invention, or null if not found
         - 'reasoning': Brief explanation of why you think this is the correct invention based on the information provided
         - 'overview': A brief overview of the invention in 50 to 75 words.
@@ -140,10 +141,13 @@ class InventionGuesser:
                 # Fallback to old format parsing
                 return self._parse_old_format(guess_text, context, incorrect_names)
             
-            # If we have a Wikipedia URL, try to extract an image
-            image_url = "N/A"
+            # Generate image using Gemini 2.5 Flash Image Preview
+            generated_image_url = self._generate_invention_image(name)
+            
+            # Get Wikipedia image if URL is available (as fallback)
+            wikipedia_image_url = "N/A"
             if wikipedia_url and wikipedia_url.lower() != 'n/a':
-                image_url = self._extract_wikimedia_image(wikipedia_url)
+                wikipedia_image_url = self._extract_wikimedia_image(wikipedia_url)
             
             # Get coordinates for the city if available (preferred for map centering)
             coordinates = None
@@ -173,7 +177,8 @@ class InventionGuesser:
                 "historical_events": historical_events,
                 "wikipedia_url": wikipedia_url,
                 "reasoning": reasoning,
-                "image_url": image_url if image_url != "N/A" else None,
+                "image_url": generated_image_url,
+                "wikipedia_image_url": wikipedia_image_url,
                 "city": city,
                 "coordinates": coordinates
             }
@@ -270,6 +275,40 @@ class InventionGuesser:
             print(f"Error getting coordinates for {location}: {e}")
         
         return None
+    
+    def _generate_invention_image(self, invention_name: str) -> str:
+        """Generate an image for the invention using Gemini 2.5 Flash Image Preview."""
+        if not invention_name or invention_name.strip() == '':
+            return "https://via.placeholder.com/400x400/059669/FFFFFF?text=No+Invention+Name"
+        
+        try:
+            # Create a descriptive prompt for the invention
+            image_prompt = f"Create a technical illustration or artistic representation of the invention: {invention_name}. The image should be technically accurate, visually compelling, and capture the essence of this important invention. Make it suitable for educational purposes."
+            
+            # Generate image using Gemini 2.5 Flash Image Preview
+            response = self.image_model.generate_content([
+                image_prompt,
+                "Generate a high-quality, technically accurate image that represents this invention. The image should be clear, detailed, and appropriate for educational use."
+            ])
+            
+            # Extract image URL from response
+            if hasattr(response, 'parts') and response.parts:
+                for part in response.parts:
+                    if hasattr(part, 'inline_data') and part.inline_data:
+                        # Convert base64 image data to data URL
+                        import base64
+                        image_data = base64.b64encode(part.inline_data.data).decode('utf-8')
+                        image_url = f"data:image/png;base64,{image_data}"
+                        return image_url
+                else:
+                    # Fallback if no image data found
+                    return "https://via.placeholder.com/400x400/059669/FFFFFF?text=No+Image+Generated"
+            else:
+                return "https://via.placeholder.com/400x400/059669/FFFFFF?text=No+Image+Generated"
+            
+        except Exception as e:
+            print(f"Error generating image for invention '{invention_name}': {e}")
+            return "https://via.placeholder.com/400x400/EF4444/FFFFFF?text=Image+Generation+Failed"
     
     def submit_feedback(self, session_id: int, is_correct: bool) -> Dict[str, Any]:
         """Submit feedback for the current guess and make next guess if incorrect."""
