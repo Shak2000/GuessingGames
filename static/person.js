@@ -252,6 +252,7 @@ class FamousPersonGame {
         const spouse = data.spouse || [];
         const children = data.children || [];
         const businesses = data.businesses || [];
+        const technologies = data.technologies || [];
         const events = data.events || [];
         const imageUrl = data.image_url;
         const wikipediaUrl = data.wikipedia_url;
@@ -343,6 +344,18 @@ class FamousPersonGame {
             businessesInfo += '</div>';
         }
         
+        // Build technologies information
+        let technologiesInfo = '';
+        if (technologies && technologies.length > 0) {
+            technologiesInfo += '<div class="bio-section">';
+            technologiesInfo += '<h4>Technologies:</h4>';
+            const clickableTechnologies = technologies.map(technology => 
+                `<a href="/invention" class="invention-link" data-invention="${technology.trim()}">${technology.trim()}</a>`
+            ).join(', ');
+            technologiesInfo += `<p>${clickableTechnologies}</p>`;
+            technologiesInfo += '</div>';
+        }
+        
         // Build events information
         let eventsInfo = '';
         if (events && events.length > 0) {
@@ -388,7 +401,7 @@ class FamousPersonGame {
             `;
         }
         
-        // Display image, name, overview, biographical info, family info, businesses, and events in the first element
+        // Display image, name, overview, biographical info, family info, businesses, technologies, and events in the first element
         this.guessText.innerHTML = `
             ${imageHtml}
             <div class="name-box">
@@ -398,6 +411,7 @@ class FamousPersonGame {
             ${bioInfo}
             ${familyInfo}
             ${businessesInfo}
+            ${technologiesInfo}
             ${eventsInfo}
         `;
         
@@ -413,6 +427,9 @@ class FamousPersonGame {
         
         // Add event listeners for business links
         this.setupBusinessLinks();
+        
+        // Add event listeners for invention links
+        this.setupInventionLinks();
         
         // Add event listeners for event links
         this.setupEventLinks();
@@ -752,6 +769,23 @@ class FamousPersonGame {
         });
     }
 
+    setupInventionLinks() {
+        // Add event listeners to all invention links
+        const inventionLinks = document.querySelectorAll('.invention-link');
+        inventionLinks.forEach(linkElement => {
+            linkElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const inventionName = linkElement.getAttribute('data-invention');
+                if (inventionName) {
+                    // Store the invention name in localStorage for the invention game to use
+                    localStorage.setItem('inventionSearchFromPerson', inventionName);
+                    // Navigate to the invention game
+                    window.location.href = '/invention';
+                }
+            });
+        });
+    }
+
     checkForUrlParameters() {
         // Check if there's a person name stored in localStorage from the event game
         const personFromEvent = localStorage.getItem('personSearchFromEvent');
@@ -1002,6 +1036,9 @@ class FamousPersonGame {
             
             // Add event listeners for business links
             this.setupBusinessLinks();
+            
+            // Add event listeners for invention links
+            this.setupInventionLinks();
             
             // Add event listeners for event links
             this.setupEventLinks();
