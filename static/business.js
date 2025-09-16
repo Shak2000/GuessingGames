@@ -290,13 +290,19 @@ class BusinessGame {
             this.leadershipSection.classList.add('hidden');
         }
 
-        // Products & Services
+        // Products, Services & Technologies
         let productsServicesInfo = '';
         if (this.shouldDisplay(guess.products)) {
             productsServicesInfo += `<p><strong>Products:</strong> ${this.formatListWithSpaces(guess.products)}</p>`;
         }
         if (this.shouldDisplay(guess.services)) {
             productsServicesInfo += `<p><strong>Services:</strong> ${this.formatListWithSpaces(guess.services)}</p>`;
+        }
+        if (this.shouldDisplay(guess.technologies)) {
+            const clickableTechnologies = guess.technologies.map(technology => 
+                `<a href="/invention" class="invention-link" data-invention="${technology.trim()}">${technology.trim()}</a>`
+            ).join(', ');
+            productsServicesInfo += `<p><strong>Technologies:</strong> ${clickableTechnologies}</p>`;
         }
         
         if (productsServicesInfo) {
@@ -739,6 +745,21 @@ class BusinessGame {
                     localStorage.setItem('citySearchFromBusiness', cityName);
                     // Navigate to the city game
                     window.location.href = '/city';
+                }
+            });
+        });
+
+        // Add event listeners to all invention links
+        const inventionLinks = document.querySelectorAll('.invention-link');
+        inventionLinks.forEach(linkElement => {
+            linkElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const inventionName = linkElement.getAttribute('data-invention');
+                if (inventionName) {
+                    // Store the invention name in localStorage for the invention game to use
+                    localStorage.setItem('inventionSearchFromBusiness', inventionName);
+                    // Navigate to the invention game
+                    window.location.href = '/invention';
                 }
             });
         });

@@ -80,6 +80,7 @@ Please respond with a JSON object containing the following fields:
 - ceo: The current CEO (if known, otherwise null)
 - products: An array of main products (if any, otherwise empty array)
 - services: An array of main services (if any, otherwise empty array)
+- technologies: An array of main technologies (if any, otherwise empty array), specifically the type rather than brand name (e.g., smartphone, not iPhone)
 - subsidiaries: An array of subsidiary companies (if any, otherwise empty array)
 - revenue: Annual revenue (if known, otherwise null)
 - operating_income: Annual operating income (if known, otherwise null)
@@ -180,6 +181,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "ceo": business_data.get('ceo'),
                     "products": business_data.get('products', []),
                     "services": business_data.get('services', []),
+                    "technologies": business_data.get('technologies', []),
                     "subsidiaries": business_data.get('subsidiaries', []),
                     "revenue": business_data.get('revenue'),
                     "operating_income": business_data.get('operating_income'),
@@ -219,6 +221,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "ceo": None,
                     "products": [],
                     "services": [],
+                    "technologies": [],
                     "subsidiaries": [],
                     "revenue": None,
                     "operating_income": None,
@@ -254,6 +257,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 "ceo": None,
                 "products": [],
                 "services": [],
+                "technologies": [],
                 "subsidiaries": [],
                 "revenue": None,
                 "operating_income": None,
