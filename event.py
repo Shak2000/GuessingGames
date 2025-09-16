@@ -57,6 +57,7 @@ Please respond with a JSON object containing the following fields:
 - location: The primary location where the event took place (if known, otherwise null)
 - key_cities: An array of key cities involved in the event (if known, otherwise empty array), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
 - key_figures: An array of key figures involved in the event (if known, otherwise empty array)
+- key_technologies: An array of key technologies used in the event (if known, otherwise empty array)
 - causes: The main causes or triggers of the event (if known, otherwise null), answered as a complete sentence
 - key_developments: Key developments or phases of the event (if known, otherwise null), answered as a complete sentence
 - results: The main results or outcomes of the event (if known, otherwise null), answered as a complete sentence
@@ -120,6 +121,10 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 event_data['wikipedia_image_url'] = wikipedia_image_url
                 event_data['coordinates'] = coordinates
                 
+                # Ensure key_technologies is included in the response
+                if 'key_technologies' not in event_data:
+                    event_data['key_technologies'] = []
+                
                 return event_data
                 
             except json.JSONDecodeError as e:
@@ -133,7 +138,9 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     'start': None,
                     'end': None,
                     'location': None,
+                    'key_cities': [],
                     'key_figures': [],
+                    'key_technologies': [],
                     'causes': None,
                     'key_developments': None,
                     'results': None,
@@ -142,7 +149,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     'overview': 'The AI response could not be properly parsed.',
                     'image_url': "https://via.placeholder.com/400x400/EF4444/FFFFFF?text=Parse+Error",
                     'wikipedia_image_url': None,
-                    'coordinates': None
+                    'coordinates': None,
+                    'city': None
                 }
                 
         except Exception as e:
@@ -151,7 +159,9 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 'start': None,
                 'end': None,
                 'location': None,
+                'key_cities': [],
                 'key_figures': [],
+                'key_technologies': [],
                 'causes': None,
                 'key_developments': None,
                 'results': None,
@@ -159,7 +169,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 'reasoning': f'An error occurred while processing the request: {str(e)}',
                 'overview': 'An error occurred while trying to identify the event.',
                 'image_url': None,
-                'coordinates': None
+                'coordinates': None,
+                'city': None
             }
     
     def _get_wikipedia_image(self, wikipedia_url: str) -> Optional[str]:

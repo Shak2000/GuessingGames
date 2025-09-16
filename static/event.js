@@ -174,6 +174,7 @@ class EventGame {
         const city = data.city;
         const keyFigures = data.key_figures || [];
         const keyCities = data.key_cities || [];
+        const keyTechnologies = data.key_technologies || [];
         const causes = data.causes;
         const keyDevelopments = data.key_developments;
         const results = data.results;
@@ -189,7 +190,7 @@ class EventGame {
         
         // Build event information
         let eventInfo = '';
-        if (start || end || location || keyFigures.length > 0 || keyCities.length > 0 || causes || keyDevelopments || results || wikipediaUrl) {
+        if (start || end || location || keyFigures.length > 0 || keyCities.length > 0 || keyTechnologies.length > 0 || causes || keyDevelopments || results || wikipediaUrl) {
             eventInfo += '<div class="bio-section">';
             eventInfo += '<h4>Event Information:</h4>';
             if (start) eventInfo += `<p><strong>Start Date:</strong> ${start}</p>`;
@@ -208,6 +209,13 @@ class EventGame {
                     `<span class="clickable-city" data-city="${city.trim()}">${city.trim()}</span>`
                 ).join(', ');
                 eventInfo += `<p><strong>Key Cities:</strong> ${clickableCities}</p>`;
+            }
+            
+            if (keyTechnologies.length > 0) {
+                const clickableTechnologies = keyTechnologies.map(technology => 
+                    `<a href="/invention" class="invention-link" data-invention="${technology.trim()}">${technology.trim()}</a>`
+                ).join(', ');
+                eventInfo += `<p><strong>Key Technologies:</strong> ${clickableTechnologies}</p>`;
             }
             
             if (causes) eventInfo += `<p><strong>Causes:</strong> ${causes}</p>`;
@@ -527,6 +535,21 @@ class EventGame {
                     localStorage.setItem('personSearchFromEvent', figureName);
                     // Navigate to the person game
                     window.location.href = '/person';
+                }
+            });
+        });
+
+        // Add event listeners to all invention links
+        const inventionLinks = document.querySelectorAll('.invention-link');
+        inventionLinks.forEach(linkElement => {
+            linkElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const inventionName = linkElement.getAttribute('data-invention');
+                if (inventionName) {
+                    // Store the invention name in localStorage for the invention game to use
+                    localStorage.setItem('inventionSearchFromEvent', inventionName);
+                    // Navigate to the invention game
+                    window.location.href = '/invention';
                 }
             });
         });
