@@ -5,7 +5,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 ## Features
 
 ### Platform Features
-- 🎮 **Multi-Game Platform**: Choose from 5 interactive games in one unified platform
+- 🎮 **Multi-Game Platform**: Choose from 6 interactive games in one unified platform
 - 🧭 **Easy Navigation**: Seamless navigation between games with persistent toolbar
 - 🔗 **Cross-Game Linking**: Clickable links between related content across all games
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and consistent styling
@@ -22,6 +22,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 📊 **Comprehensive Biographical Data**: Birth/death dates, places, and Wikipedia links
 - 👨‍👩‍👧‍👦 **Interactive Family Tree**: Displays parents, siblings, spouses, and children with clickable names for navigation
 - 🔗 **Multiple Spouse Support**: Properly handles and displays people with multiple marriages individually
+- 🔧 **Technologies**: Displays technologies invented or improved by the person with clickable links to Invention Game ✨ **NEW**
 - 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
@@ -36,6 +37,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🏛️ **Administrative Information**: County, parish, borough, state, prefecture, province, department, region, territory, canton, voivodeship, autonomous community, and other administrative divisions
 - 📅 **Founding Information**: Year founded when available
 - 👥 **Population Data**: City population when available
+- 🔧 **Notable Technologies**: Displays technologies invented, improved, designed, manufactured, or operated in the city with clickable links to Invention Game ✨ **NEW**
 - 📸 **Automatic Image Extraction**: Beautiful Soup automatically extracts city photos from Wikipedia pages using the same proven method as the famous person game
 - 🔗 **Wikipedia Integration**: Direct links to city Wikipedia pages
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
@@ -50,6 +52,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 📝 **Comprehensive Event Data**: Complete JSON information including dates, locations, key figures, causes, developments, and results
 - 👥 **Key Figures**: AI identifies and displays key figures involved in historical events as clickable links ✨ **NEW**
 - 🏙️ **Key Cities**: AI identifies and displays key cities involved in historical events as clickable links
+- 🔧 **Key Technologies**: Displays technologies involved in historical events with clickable links to Invention Game ✨ **NEW**
 - 📸 **Enhanced AI Image Generation**: Uses Gemini 2.5 Flash Image Preview with complete event context for historically accurate visual representations
 - 🗺️ **Interactive Maps**: Google Maps integration showing event locations with custom markers
 - 🏛️ **Rich Context**: Event overview, key figures, causes, developments, and outcomes
@@ -81,7 +84,23 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 💰 **Financial Information**: Revenue, market cap, employee count, and other business metrics when available
 - 👔 **Leadership Details**: CEO, founders, and key executives information
 - 🏢 **Company Overview**: Industry, products/services, and business model descriptions
+- 🔧 **Technologies**: Displays main technologies used by the business with clickable links to Invention Game ✨ **NEW**
 - 🔗 **Wikipedia Integration**: Direct links to business Wikipedia pages with automatic image extraction
+- ⚡ **Real-time**: Fast API responses with loading indicators and button states
+- 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
+- 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
+
+### Guess the Invention Game
+- 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent invention/technology identification
+- 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
+- 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
+- 💭 **Detailed Explanations**: Each guess includes both the invention name and reasoning
+- 📝 **Comprehensive Technology Data**: Complete JSON information including inventor details, patent information, development history, and impact
+- 📸 **Automatic Image Extraction**: Beautiful Soup extracts invention images from Wikipedia pages
+- 🗺️ **Interactive Maps**: Google Maps integration showing invention development locations
+- 👨‍🔬 **Inventor Information**: Details about inventors, developers, and key contributors
+- 🏢 **Company Connections**: Links to businesses and organizations involved in development
+- 🔗 **Wikipedia Integration**: Direct links to invention Wikipedia pages with automatic image extraction
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
 - 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
@@ -91,7 +110,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 The platform features an innovative cross-game linking system that allows seamless navigation between related content across all games:
 
 ### 🔗 **How Cross-Game Links Work**
-- **Clickable Content**: Related items (people, events, businesses, cities) are displayed as clickable links
+- **Clickable Content**: Related items (people, events, businesses, cities, technologies) are displayed as clickable links
 - **Automatic Navigation**: Clicking a link automatically navigates to the relevant game
 - **Auto-Search**: The target game automatically searches for the clicked item
 - **Visual Distinction**: Different colored links for different content types
@@ -102,25 +121,30 @@ The platform features an innovative cross-game linking system that allows seamle
 - **Cities**: Click birth/death locations to search in City Game
 - **Events**: Click historical events to search in Event Game  
 - **Businesses**: Click business affiliations to search in Business Game
+- **Technologies**: Click technologies invented/improved to search in Invention Game ✨ **NEW**
 
 #### **From City Game:**
 - **People**: Click notable residents to search in Person Game
 - **Events**: Click historical events to search in Event Game ✨ **NEW**
 - **Businesses**: Click notable businesses to search in Business Game ✨ **NEW**
+- **Technologies**: Click notable technologies to search in Invention Game ✨ **NEW**
 
 #### **From Event Game:**
 - **People**: Click key figures to search in Person Game ✨ **NEW**
 - **Cities**: Click key cities to search in City Game
+- **Technologies**: Click key technologies to search in Invention Game ✨ **NEW**
 
 #### **From Business Game:**
 - **People**: Click founders/CEOs to search in Person Game
 - **Cities**: Click headquarters locations to search in City Game
+- **Technologies**: Click main technologies to search in Invention Game ✨ **NEW**
 
 ### 🎨 **Visual Design**
 - **People Links**: Blue color (`#2563eb`) with hover effects
 - **Event Links**: Red color (`#dc2626`) with hover effects  
 - **Business Links**: Green color (`#059669`) with hover effects
 - **City Links**: Green color (`#059669`) with hover effects
+- **Technology Links**: Purple color (`#7c3aed`) with hover effects ✨ **NEW**
 
 ### 🔧 **Technical Implementation**
 - **localStorage**: Stores search terms for seamless game transitions
@@ -272,7 +296,27 @@ The application will be available at `http://localhost:8000`
    - **Interactive Map**: Google Maps showing business headquarters and locations
    - **Financial Information**: Revenue, market cap, employee count, and other business metrics when available
    - **Leadership Details**: CEO, founders, and key executives information
+   - **Technologies**: Main technologies used by the business with clickable links to Invention Game ✨ **NEW**
    - **Wikipedia Link**: Direct link to the business's Wikipedia page
+   - **Explanation Box**: The AI's reasoning in a gray box below
+4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
+5. **Continue**: If incorrect, the AI will make another guess with improved context
+6. **Explore Technologies**: Click any technology link to automatically search in the Invention Game
+7. **Victory**: When the AI guesses correctly, you'll see a victory message!
+8. **New Game**: Start fresh anytime by entering new information
+
+### Guess the Invention Game
+1. **Enter Information**: Type information about an invention or technology in the text area
+2. **Submit**: Click "Submit Information" or press Ctrl+Enter
+3. **Review Guess**: The AI will display its guess with:
+   - **Invention Image**: Automatically extracted from Wikipedia (if available)
+   - **Name Box**: The invention's name in a blue gradient box
+   - **Overview Box**: A concise 50-75 word summary of the invention's significance and impact
+   - **Comprehensive Technology Data**: Complete information including inventor details, patent information, development history, and impact
+   - **Interactive Map**: Google Maps showing invention development locations
+   - **Inventor Information**: Details about inventors, developers, and key contributors
+   - **Company Connections**: Links to businesses and organizations involved in development
+   - **Wikipedia Link**: Direct link to the invention's Wikipedia page
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
@@ -289,6 +333,7 @@ FirstAPI/
 ├── event.py             # Guess the Historical Event game logic with enhanced AI image generation
 ├── odd.py               # Odd Situation Game logic with AI-generated scenarios
 ├── business.py          # Guess the Business game logic with Gemini AI integration
+├── invention.py         # Guess the Invention game logic with Gemini AI integration
 ├── config.py            # API key configuration
 ├── requirements.txt     # Python dependencies
 ├── README.md           # This file
@@ -303,6 +348,7 @@ FirstAPI/
     ├── event.html      # Guess the Historical Event game interface
     ├── odd.html        # Odd Situation Game interface
     ├── business.html   # Guess the Business game interface
+    ├── invention.html  # Guess the Invention game interface
     ├── styles.css      # Modern styling and responsive design
     ├── script.js       # General app utilities and shared functionality
     ├── toolbar.js      # Navigation toolbar functionality
@@ -311,6 +357,7 @@ FirstAPI/
     ├── event.js        # Historical Event game specific JavaScript logic
     ├── odd.js          # Odd Situation Game specific JavaScript logic
     ├── business.js     # Business guessing game specific JavaScript logic
+    ├── invention.js    # Invention guessing game specific JavaScript logic
     ├── favicon.ico     # App favicon (ICO format)
     └── favicon.png     # App favicon (PNG format)
 ```
@@ -322,6 +369,7 @@ FirstAPI/
 - **`event.py`** - Guess the Historical Event game logic with enhanced AI image generation using complete event context
 - **`odd.py`** - Odd Situation Game logic with AI-generated scenarios, random outfit/setting combinations, and session management
 - **`business.py`** - Guess the Business game logic with Gemini AI integration, comprehensive business data, financial information, and session management
+- **`invention.py`** - Guess the Invention game logic with Gemini AI integration, comprehensive technology data, inventor information, and session management
 - **`config.py`** - API key configuration (excluded from version control)
 - **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
 - **`people.txt`** - Famous people data file for Odd Situation Game scenarios
@@ -333,6 +381,7 @@ FirstAPI/
 - **`static/event.html`** - Guess the Historical Event game interface
 - **`static/odd.html`** - Odd Situation Game interface
 - **`static/business.html`** - Guess the Business game interface
+- **`static/invention.html`** - Guess the Invention game interface
 - **`static/toolbar.js`** - Navigation toolbar functionality and active state management
 - **`static/script.js`** - General app utilities and shared functionality for all games
 - **`static/person.js`** - Famous Person game specific JavaScript logic and UI interactions
@@ -340,6 +389,7 @@ FirstAPI/
 - **`static/event.js`** - Historical Event game specific JavaScript logic and UI interactions
 - **`static/odd.js`** - Odd Situation Game specific JavaScript logic and UI interactions
 - **`static/business.js`** - Business guessing game specific JavaScript logic and UI interactions
+- **`static/invention.js`** - Invention guessing game specific JavaScript logic and UI interactions
 - **`static/`** - All frontend files organized in a dedicated directory
 
 ## API Endpoints
@@ -351,6 +401,7 @@ FirstAPI/
 - `GET /odd` - Serves the Odd Situation Game page
 - `GET /event` - Serves the Guess the Historical Event game page
 - `GET /business` - Serves the Guess the Business game page
+- `GET /invention` - Serves the Guess the Invention game page
 - `GET /api/health` - Health check endpoint
 - `GET /static/*` - Serves static files (CSS, JS, images, favicons)
 - `GET /favicon.ico` - Serves app favicon (ICO format)
@@ -386,6 +437,11 @@ FirstAPI/
 - `POST /api/submit-business-feedback` - Submits feedback for a business guess
 - `GET /api/business-session/{session_id}` - Gets business guessing session information
 
+### Guess the Invention Game
+- `POST /api/start-invention-guess` - Starts a new invention guessing session
+- `POST /api/submit-invention-feedback` - Submits feedback for an invention guess
+- `GET /api/invention-session/{session_id}` - Gets invention guessing session information
+
 ## Tips for Better Results
 
 - **Be Specific**: Provide unique details about the person
@@ -398,7 +454,19 @@ FirstAPI/
 
 ## Recent Updates
 
-### Key Figures Linking Enhancement (Latest)
+### Technology Linking System Enhancement (Latest)
+- 🔧 **Cross-Game Technology Links**: Added comprehensive technology linking system across all games
+- 🎯 **Person Game Technologies**: Technologies invented or improved by famous people are now clickable links to Invention Game
+- 🏙️ **City Game Technologies**: Notable technologies in cities (invented, improved, designed, manufactured, operated) are now clickable links to Invention Game
+- 📅 **Event Game Technologies**: Key technologies involved in historical events are now clickable links to Invention Game
+- 🏢 **Business Game Technologies**: Main technologies used by businesses are now clickable links to Invention Game
+- 🎨 **Visual Design**: Technology links use purple color (`#7c3aed`) with hover effects for easy identification
+- 🔄 **Auto-Search**: Clicking technology links automatically loads Invention Game and submits the technology name
+- 🧠 **Smart Detection**: Invention Game automatically detects incoming technology searches from all other games
+- 📱 **Responsive Design**: Technology links work perfectly on all devices and screen sizes
+- 🔗 **Seamless Navigation**: Users can now explore technology connections across all 6 games with automatic search functionality
+
+### Key Figures Linking Enhancement
 - 👥 **Event Game Key Figures**: Added clickable key figures functionality to the historical event guessing game
 - 🎯 **AI-Powered Figure Identification**: AI now identifies and displays key figures involved in historical events
 - 🔗 **Clickable Figure Links**: Key figures are displayed as clickable blue links that automatically search in Person Game
