@@ -266,6 +266,7 @@ class CityGame {
         const notablePeople = data.notable_people || [];
         const notableEvents = data.notable_events || [];
         const notableBusinesses = data.notable_businesses || [];
+        const notableTechnologies = data.notable_technologies || [];
         
         // Build administrative information
         let adminInfo = '';
@@ -286,7 +287,7 @@ class CityGame {
         if (autonomousCommunity) adminDivisions.push(`<strong>Autonomous Community:</strong> ${autonomousCommunity}`);
         if (otherAdminDivision) adminDivisions.push(`<strong>Other:</strong> ${otherAdminDivision}`);
         
-        if (adminDivisions.length > 0 || country || population || latitude || longitude || areaMi || areaKm || populationDensity || elevation || yearFounded || wikipediaUrl || (notableAttractions && notableAttractions.length > 0) || (notablePeople && notablePeople.length > 0) || (notableEvents && notableEvents.length > 0) || (notableBusinesses && notableBusinesses.length > 0)) {
+        if (adminDivisions.length > 0 || country || population || latitude || longitude || areaMi || areaKm || populationDensity || elevation || yearFounded || wikipediaUrl || (notableAttractions && notableAttractions.length > 0) || (notablePeople && notablePeople.length > 0) || (notableEvents && notableEvents.length > 0) || (notableBusinesses && notableBusinesses.length > 0) || (notableTechnologies && notableTechnologies.length > 0)) {
             adminInfo += '<div class="bio-section">';
             adminInfo += '<h4>City Information:</h4>';
             if (adminDivisions.length > 0) {
@@ -355,6 +356,14 @@ class CityGame {
                     `<span class="clickable-business" data-business="${business.trim()}">${business.trim()}</span>`
                 ).join(', ');
                 adminInfo += `<p><strong>Notable Businesses:</strong> ${clickableBusinesses}</p>`;
+            }
+            
+            // Add notable technologies
+            if (notableTechnologies && notableTechnologies.length > 0) {
+                const clickableTechnologies = notableTechnologies.map(technology => 
+                    `<a href="/invention" class="invention-link" data-invention="${technology.trim()}">${technology.trim()}</a>`
+                ).join(', ');
+                adminInfo += `<p><strong>Notable Technologies:</strong> ${clickableTechnologies}</p>`;
             }
             
             if (wikipediaUrl) adminInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
@@ -720,6 +729,21 @@ class CityGame {
                     localStorage.setItem('businessSearchFromCity', businessName);
                     // Navigate to the business game
                     window.location.href = '/business';
+                }
+            });
+        });
+
+        // Add event listeners to all invention links
+        const inventionLinks = document.querySelectorAll('.invention-link');
+        inventionLinks.forEach(linkElement => {
+            linkElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const inventionName = linkElement.getAttribute('data-invention');
+                if (inventionName) {
+                    // Store the invention name in localStorage for the invention game to use
+                    localStorage.setItem('inventionSearchFromCity', inventionName);
+                    // Navigate to the invention game
+                    window.location.href = '/invention';
                 }
             });
         });

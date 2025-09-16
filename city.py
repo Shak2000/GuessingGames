@@ -85,6 +85,7 @@ Please respond with a JSON object containing the following fields:
 - notable_people: An array of strings with names of notable residents of the city (past and present), or empty array [] if unknown
 - notable_events: An array of strings with names of notable historical events within the city, or empty array [] if unknown
 - notable_businesses: An array of strings with names of notable businesses founded or headquartered in the city, or empty array [] if unknown
+- notable_technologies: An array of strings with names of notable technologies there were invented or improved in the city, or have currently or historically been designed, manufactured, or operated in the city, or empty array [] if unknown
 - wikipedia_url: Wikipedia URL for the city (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct city
 - overview: A concise 50-75 word overview of the city's history, significance, and notable features
@@ -176,6 +177,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "notable_people": city_data.get('notable_people', []),
                     "notable_events": city_data.get('notable_events', []),
                     "notable_businesses": city_data.get('notable_businesses', []),
+                    "notable_technologies": city_data.get('notable_technologies', []),
                     "wikipedia_url": city_data.get('wikipedia_url'),
                     "reasoning": city_data.get('reasoning'),
                     "overview": city_data.get('overview'),
@@ -215,6 +217,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "notable_people": [],
                     "notable_events": [],
                     "notable_businesses": [],
+                    "notable_technologies": [],
                     "wikipedia_url": None,
                     "image_url": None,
                     "reasoning": f"Error parsing AI response: {str(e)}",
@@ -250,6 +253,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 "notable_people": [],
                 "notable_events": [],
                 "notable_businesses": [],
+                "notable_technologies": [],
                 "wikipedia_url": None,
                 "image": None,
                 "reasoning": f"Error making guess: {str(e)}",
