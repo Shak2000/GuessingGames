@@ -1303,6 +1303,58 @@ body {
     text-decoration: underline;
 }
 
+.clickable-person {
+    color: #7C3AED;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.clickable-person:hover {
+    color: #6D28D9;
+    text-decoration: underline;
+}
+
+.clickable-business {
+    color: #DC2626;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.clickable-business:hover {
+    color: #B91C1C;
+    text-decoration: underline;
+}
+
+.clickable-city {
+    color: #2563EB;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.clickable-city:hover {
+    color: #1D4ED8;
+    text-decoration: underline;
+}
+
+.clickable-event {
+    color: #EA580C;
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.clickable-event:hover {
+    color: #C2410C;
+    text-decoration: underline;
+}
+
 .invention-details {
     margin: 20px 0;
 }

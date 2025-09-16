@@ -768,33 +768,49 @@ class FamousPersonGame {
                 }, 500);
             }
         } else {
-            // Check if there's a person name stored in localStorage from the business game
-            const personFromBusiness = localStorage.getItem('personSearchFromBusiness');
+            // Check if there's a person name stored in localStorage from the invention game
+            const personFromInvention = localStorage.getItem('personSearchFromInvention');
             
-            if (personFromBusiness) {
+            if (personFromInvention) {
                 // Clear the stored value
-                localStorage.removeItem('personSearchFromBusiness');
+                localStorage.removeItem('personSearchFromInvention');
                 // Set the input field with the person name
                 if (this.userInput) {
-                    this.userInput.value = personFromBusiness;
+                    this.userInput.value = personFromInvention;
                     // Automatically start the search after a short delay to ensure everything is loaded
                     setTimeout(() => {
                         this.startNewGame();
                     }, 500);
                 }
             } else {
-                // Fallback: Check if there's a 'search' parameter in the URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const searchParam = urlParams.get('search');
+                // Check if there's a person name stored in localStorage from the business game
+                const personFromBusiness = localStorage.getItem('personSearchFromBusiness');
                 
-                if (searchParam) {
-                    // Set the input field with the search parameter
+                if (personFromBusiness) {
+                    // Clear the stored value
+                    localStorage.removeItem('personSearchFromBusiness');
+                    // Set the input field with the person name
                     if (this.userInput) {
-                        this.userInput.value = searchParam;
+                        this.userInput.value = personFromBusiness;
                         // Automatically start the search after a short delay to ensure everything is loaded
                         setTimeout(() => {
                             this.startNewGame();
                         }, 500);
+                    }
+                } else {
+                    // Fallback: Check if there's a 'search' parameter in the URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const searchParam = urlParams.get('search');
+                    
+                    if (searchParam) {
+                        // Set the input field with the search parameter
+                        if (this.userInput) {
+                            this.userInput.value = searchParam;
+                            // Automatically start the search after a short delay to ensure everything is loaded
+                            setTimeout(() => {
+                                this.startNewGame();
+                            }, 500);
+                        }
                     }
                 }
             }

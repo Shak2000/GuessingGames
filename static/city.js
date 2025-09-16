@@ -536,48 +536,64 @@ class CityGame {
                 }, 500);
             }
         } else {
-            // Check if there's a city name stored in localStorage from the event game
-            const cityFromEvent = localStorage.getItem('citySearchFromEvent');
+            // Check if there's a city name stored in localStorage from the invention game
+            const cityFromInvention = localStorage.getItem('citySearchFromInvention');
             
-            if (cityFromEvent) {
+            if (cityFromInvention) {
                 // Clear the stored value
-                localStorage.removeItem('citySearchFromEvent');
+                localStorage.removeItem('citySearchFromInvention');
                 // Set the input field with the city name
                 if (this.userInput) {
-                    this.userInput.value = cityFromEvent;
+                    this.userInput.value = cityFromInvention;
                     // Automatically start the search after a short delay to ensure everything is loaded
                     setTimeout(() => {
                         this.startNewGame();
                     }, 500);
                 }
             } else {
-                // Check if there's a city name stored in localStorage from the business game
-                const cityFromBusiness = localStorage.getItem('citySearchFromBusiness');
+                // Check if there's a city name stored in localStorage from the event game
+                const cityFromEvent = localStorage.getItem('citySearchFromEvent');
                 
-                if (cityFromBusiness) {
+                if (cityFromEvent) {
                     // Clear the stored value
-                    localStorage.removeItem('citySearchFromBusiness');
+                    localStorage.removeItem('citySearchFromEvent');
                     // Set the input field with the city name
                     if (this.userInput) {
-                        this.userInput.value = cityFromBusiness;
+                        this.userInput.value = cityFromEvent;
                         // Automatically start the search after a short delay to ensure everything is loaded
                         setTimeout(() => {
                             this.startNewGame();
                         }, 500);
                     }
                 } else {
-                    // Fallback: Check if there's a 'search' parameter in the URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const searchParam = urlParams.get('search');
+                    // Check if there's a city name stored in localStorage from the business game
+                    const cityFromBusiness = localStorage.getItem('citySearchFromBusiness');
                     
-                    if (searchParam) {
-                        // Set the input field with the search parameter
+                    if (cityFromBusiness) {
+                        // Clear the stored value
+                        localStorage.removeItem('citySearchFromBusiness');
+                        // Set the input field with the city name
                         if (this.userInput) {
-                            this.userInput.value = searchParam;
+                            this.userInput.value = cityFromBusiness;
                             // Automatically start the search after a short delay to ensure everything is loaded
                             setTimeout(() => {
                                 this.startNewGame();
                             }, 500);
+                        }
+                    } else {
+                        // Fallback: Check if there's a 'search' parameter in the URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const searchParam = urlParams.get('search');
+                        
+                        if (searchParam) {
+                            // Set the input field with the search parameter
+                            if (this.userInput) {
+                                this.userInput.value = searchParam;
+                                // Automatically start the search after a short delay to ensure everything is loaded
+                                setTimeout(() => {
+                                    this.startNewGame();
+                                }, 500);
+                            }
                         }
                     }
                 }

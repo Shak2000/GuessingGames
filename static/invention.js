@@ -7,6 +7,7 @@ class InventionGame {
         this.initializeElements();
         this.attachEventListeners();
         this.loadGoogleMapsScript();
+        this.checkForUrlParameters();
     }
 
     initializeElements() {
@@ -232,7 +233,12 @@ class InventionGame {
             let basicInfo = '';
             if (year) basicInfo += `<p><strong>Year Invented:</strong> ${year}</p>`;
             if (place) basicInfo += `<p><strong>Place Invented:</strong> ${place}</p>`;
-            if (inventors.length > 0) basicInfo += `<p><strong>Inventors:</strong> ${inventors.join(', ')}</p>`;
+            if (inventors.length > 0) {
+                const clickableInventors = inventors.map(inventor => 
+                    `<span class="clickable-person" data-person="${inventor.trim()}">${inventor.trim()}</span>`
+                ).join(', ');
+                basicInfo += `<p><strong>Inventors:</strong> ${clickableInventors}</p>`;
+            }
             if (wikipediaUrl) {
                 basicInfo += `<p><strong>Wikipedia:</strong> <a href="${wikipediaUrl}" target="_blank" rel="noopener noreferrer" class="wikipedia-link">Page</a></p>`;
             }
@@ -261,10 +267,30 @@ class InventionGame {
             
             // This Invention and the World
             let worldInfo = '';
-            if (businesses.length > 0) worldInfo += `<p><strong>Businesses:</strong> ${businesses.join(', ')}</p>`;
-            if (designHubs.length > 0) worldInfo += `<p><strong>Design Hubs:</strong> ${designHubs.join(', ')}</p>`;
-            if (manufacturingHubs.length > 0) worldInfo += `<p><strong>Manufacturing Hubs:</strong> ${manufacturingHubs.join(', ')}</p>`;
-            if (events.length > 0) worldInfo += `<p><strong>Historical Events:</strong> ${events.join(', ')}</p>`;
+            if (businesses.length > 0) {
+                const clickableBusinesses = businesses.map(business => 
+                    `<span class="clickable-business" data-business="${business.trim()}">${business.trim()}</span>`
+                ).join(', ');
+                worldInfo += `<p><strong>Businesses:</strong> ${clickableBusinesses}</p>`;
+            }
+            if (designHubs.length > 0) {
+                const clickableDesignHubs = designHubs.map(hub => 
+                    `<span class="clickable-city" data-city="${hub.trim()}">${hub.trim()}</span>`
+                ).join(', ');
+                worldInfo += `<p><strong>Design Hubs:</strong> ${clickableDesignHubs}</p>`;
+            }
+            if (manufacturingHubs.length > 0) {
+                const clickableManufacturingHubs = manufacturingHubs.map(hub => 
+                    `<span class="clickable-city" data-city="${hub.trim()}">${hub.trim()}</span>`
+                ).join(', ');
+                worldInfo += `<p><strong>Manufacturing Hubs:</strong> ${clickableManufacturingHubs}</p>`;
+            }
+            if (events.length > 0) {
+                const clickableEvents = events.map(event => 
+                    `<span class="clickable-event" data-event="${event.trim()}">${event.trim()}</span>`
+                ).join(', ');
+                worldInfo += `<p><strong>Historical Events:</strong> ${clickableEvents}</p>`;
+            }
             
             // Build the complete invention info with categories
             let inventionInfo = '';
@@ -421,6 +447,99 @@ class InventionGame {
                 }
             });
         });
+
+        // Add event listeners to all clickable person links
+        const clickablePersons = document.querySelectorAll('.clickable-person');
+        clickablePersons.forEach(personElement => {
+            personElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const personName = personElement.getAttribute('data-person');
+                if (personName) {
+                    // Store the person name in localStorage for the person game to use
+                    localStorage.setItem('personSearchFromInvention', personName);
+                    // Navigate to the person game
+                    window.location.href = '/person';
+                }
+            });
+        });
+
+        // Add event listeners to all clickable business links
+        const clickableBusinesses = document.querySelectorAll('.clickable-business');
+        clickableBusinesses.forEach(businessElement => {
+            businessElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const businessName = businessElement.getAttribute('data-business');
+                if (businessName) {
+                    // Store the business name in localStorage for the business game to use
+                    localStorage.setItem('businessSearchFromInvention', businessName);
+                    // Navigate to the business game
+                    window.location.href = '/business';
+                }
+            });
+        });
+
+        // Add event listeners to all clickable city links
+        const clickableCities = document.querySelectorAll('.clickable-city');
+        clickableCities.forEach(cityElement => {
+            cityElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cityName = cityElement.getAttribute('data-city');
+                if (cityName) {
+                    // Store the city name in localStorage for the city game to use
+                    localStorage.setItem('citySearchFromInvention', cityName);
+                    // Navigate to the city game
+                    window.location.href = '/city';
+                }
+            });
+        });
+
+        // Add event listeners to all clickable event links
+        const clickableEvents = document.querySelectorAll('.clickable-event');
+        clickableEvents.forEach(eventElement => {
+            eventElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const eventName = eventElement.getAttribute('data-event');
+                if (eventName) {
+                    // Store the event name in localStorage for the event game to use
+                    localStorage.setItem('eventSearchFromInvention', eventName);
+                    // Navigate to the event game
+                    window.location.href = '/event';
+                }
+            });
+        });
+    }
+
+    checkForUrlParameters() {
+        // Check if there's an invention name stored in localStorage from other games
+        const inventionFromPerson = localStorage.getItem('inventionSearchFromPerson');
+        const inventionFromBusiness = localStorage.getItem('inventionSearchFromBusiness');
+        const inventionFromCity = localStorage.getItem('inventionSearchFromCity');
+        const inventionFromEvent = localStorage.getItem('inventionSearchFromEvent');
+        
+        let inventionName = null;
+        
+        if (inventionFromPerson) {
+            inventionName = inventionFromPerson;
+            localStorage.removeItem('inventionSearchFromPerson');
+        } else if (inventionFromBusiness) {
+            inventionName = inventionFromBusiness;
+            localStorage.removeItem('inventionSearchFromBusiness');
+        } else if (inventionFromCity) {
+            inventionName = inventionFromCity;
+            localStorage.removeItem('inventionSearchFromCity');
+        } else if (inventionFromEvent) {
+            inventionName = inventionFromEvent;
+            localStorage.removeItem('inventionSearchFromEvent');
+        }
+        
+        if (inventionName && this.userInput) {
+            // Set the input field with the invention name
+            this.userInput.value = inventionName;
+            // Automatically start the search after a short delay to ensure everything is loaded
+            setTimeout(() => {
+                this.startNewGameFromButton();
+            }, 500);
+        }
     }
 
     initMap(inventionCoords, location = null) {

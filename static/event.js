@@ -451,33 +451,49 @@ class EventGame {
                 }, 500);
             }
         } else {
-            // Check if there's an event name stored in localStorage from the city game
-            const eventFromCity = localStorage.getItem('eventSearchFromCity');
+            // Check if there's an event name stored in localStorage from the invention game
+            const eventFromInvention = localStorage.getItem('eventSearchFromInvention');
             
-            if (eventFromCity) {
+            if (eventFromInvention) {
                 // Clear the stored value
-                localStorage.removeItem('eventSearchFromCity');
+                localStorage.removeItem('eventSearchFromInvention');
                 // Set the input field with the event name
                 if (this.userInput) {
-                    this.userInput.value = eventFromCity;
+                    this.userInput.value = eventFromInvention;
                     // Automatically start the search after a short delay to ensure everything is loaded
                     setTimeout(() => {
                         this.startNewSession();
                     }, 500);
                 }
             } else {
-                // Fallback: Check if there's a 'search' parameter in the URL
-                const urlParams = new URLSearchParams(window.location.search);
-                const searchParam = urlParams.get('search');
+                // Check if there's an event name stored in localStorage from the city game
+                const eventFromCity = localStorage.getItem('eventSearchFromCity');
                 
-                if (searchParam) {
-                    // Set the input field with the search parameter
+                if (eventFromCity) {
+                    // Clear the stored value
+                    localStorage.removeItem('eventSearchFromCity');
+                    // Set the input field with the event name
                     if (this.userInput) {
-                        this.userInput.value = searchParam;
+                        this.userInput.value = eventFromCity;
                         // Automatically start the search after a short delay to ensure everything is loaded
                         setTimeout(() => {
                             this.startNewSession();
                         }, 500);
+                    }
+                } else {
+                    // Fallback: Check if there's a 'search' parameter in the URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const searchParam = urlParams.get('search');
+                    
+                    if (searchParam) {
+                        // Set the input field with the search parameter
+                        if (this.userInput) {
+                            this.userInput.value = searchParam;
+                            // Automatically start the search after a short delay to ensure everything is loaded
+                            setTimeout(() => {
+                                this.startNewSession();
+                            }, 500);
+                        }
                     }
                 }
             }
