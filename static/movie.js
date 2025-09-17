@@ -160,7 +160,7 @@ class MovieGame {
 
         // Display reasoning
         if (guess.reasoning) {
-            this.guessTextReasoning.innerHTML = `<strong>My reasoning:</strong> ${guess.reasoning}`;
+            this.guessTextReasoning.innerHTML = `<div class="reasoning-box">${guess.reasoning}</div>`;
         }
 
         // Display detailed information
