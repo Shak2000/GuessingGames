@@ -168,6 +168,16 @@ class MovieGame {
         this.displayMovieDetails(guess);
     }
 
+    formatNumberWithCommas(value) {
+        // Ensure the value is a string and extract numbers to format them with commas
+        if (typeof value !== 'string') {
+            value = String(value);
+        }
+        return value.replace(/\d+/g, (match) => {
+            return parseInt(match).toLocaleString();
+        });
+    }
+
     displayMovieDetails(movie) {
         // Basic Information
         let basicInfo = '';
@@ -209,8 +219,8 @@ class MovieGame {
 
         // Financial Information
         let financial = '';
-        if (movie.budget) financial += `<p><strong>Budget:</strong> ${movie.budget}</p>`;
-        if (movie.box_office) financial += `<p><strong>Box Office:</strong> ${movie.box_office}</p>`;
+        if (movie.budget) financial += `<p><strong>Budget:</strong> ${this.formatNumberWithCommas(movie.budget)}</p>`;
+        if (movie.box_office) financial += `<p><strong>Box Office:</strong> ${this.formatNumberWithCommas(movie.box_office)}</p>`;
         
         if (financial) {
             this.financialContent.innerHTML = financial;
