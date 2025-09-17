@@ -216,14 +216,12 @@ class MovieGame {
             this.financialSection.classList.remove('hidden');
         }
 
-        // Release Information
+        // Release Dates
         let release = '';
         if (movie.release_dates && typeof movie.release_dates === 'object') {
-            release += '<p><strong>Release Dates:</strong></p><ul>';
             for (const [country, date] of Object.entries(movie.release_dates)) {
-                release += `<li><strong>${country}:</strong> ${date}</li>`;
+                release += `<p><strong>${country}:</strong> ${date}</p>`;
             }
-            release += '</ul>';
         }
         
         if (release) {
