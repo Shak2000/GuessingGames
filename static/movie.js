@@ -61,6 +61,7 @@ class MovieGame {
     }
 
     showVictorySection() {
+        this.hideAllSections();
         this.victorySection.classList.remove('hidden');
     }
 
