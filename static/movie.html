@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the Famous Person - Multi-Game App</title>
+    <title>Guess the Movie - Multi-Game App</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" href="/favicon.ico">
@@ -17,29 +17,29 @@
         <nav class="toolbar">
             <div class="toolbar-content">
                 <a href="/" class="toolbar-item">🏠 Home</a>
-                <a href="/person" class="toolbar-item active">🎭 Guess the Famous Person</a>
+                <a href="/person" class="toolbar-item">🎭 Guess the Famous Person</a>
                 <a href="/city" class="toolbar-item">🏙️ Guess the City</a>
                 <a href="/odd" class="toolbar-item">🎪 Odd Situation Game</a>
                 <a href="/event" class="toolbar-item">📅 Guess the Event</a>
                 <a href="/business" class="toolbar-item">🏢 Guess the Business</a>
                 <a href="/invention" class="toolbar-item">🔧 Guess the Invention</a>
-                <a href="/movie" class="toolbar-item">🎬 Guess the Movie</a>
+                <a href="/movie" class="toolbar-item active">🎬 Guess the Movie</a>
             </div>
         </nav>
 
         <header class="header">
-            <h1 class="title">🎭 Guess the Famous Person</h1>
-            <p class="subtitle">Enter information about a famous person and I'll try to guess who it is!</p>
+            <h1 class="title">🎬 Guess the Movie</h1>
+            <p class="subtitle">Enter information about a movie and I'll try to guess which movie it is!</p>
         </header>
 
         <main class="main-content">
             <div class="input-section">
                 <div class="input-group">
-                    <label for="userInput" class="input-label">Tell me about the famous person:</label>
+                    <label for="userInput" class="input-label">Tell me about the movie:</label>
                     <textarea 
                         id="userInput" 
                         class="input-textarea" 
-                        placeholder="e.g., 'This person was a famous scientist who developed the theory of relativity and won a Nobel Prize in Physics in 1921...'"
+                        placeholder="e.g., 'This movie is about a young wizard who discovers he's famous in the wizarding world. It's based on a book series and features a school for magic...'"
                         rows="4"
                     ></textarea>
                 </div>
@@ -49,28 +49,35 @@
             <div id="gameSection" class="game-section hidden">
                 <div class="guess-display">
                     <h3 class="guess-title">My Guess:</h3>
-                                    <div id="guessText" class="guess-text"></div>
-                                    <div id="guessTextOverview" class="guess-text overview-section"></div>
-                                    <div id="guessTextFamily" class="guess-text">
-                                        <div id="parentsSection" class="family-section hidden">
-                                            <h4>Parents</h4>
-                                            <p id="parentsList"></p>
-                                        </div>
-                                        <div id="siblingsSection" class="family-section hidden">
-                                            <h4>Siblings</h4>
-                                            <p id="siblingsList"></p>
-                                        </div>
-                                        <div id="spouseSection" class="family-section hidden">
-                                            <h4>Spouse</h4>
-                                            <p id="spouseList"></p>
-                                        </div>
-                                        <div id="childrenSection" class="family-section hidden">
-                                            <h4>Children</h4>
-                                            <p id="childrenList"></p>
-                                        </div>
-                                    </div>
-                <div id="guessTextReasoning" class="guess-text"></div>
-                <div id="map" class="map-container" style="display: none;"></div>
+                    <div id="guessText" class="guess-text"></div>
+                    <div id="guessTextOverview" class="guess-text overview-section"></div>
+                    <div id="movieDetails" class="movie-details">
+                        <div id="basicInfoSection" class="info-section hidden">
+                            <h4>Basic Information</h4>
+                            <div id="basicInfoContent"></div>
+                        </div>
+                        <div id="castCrewSection" class="info-section hidden">
+                            <h4>Cast & Crew</h4>
+                            <div id="castCrewContent"></div>
+                        </div>
+                        <div id="productionSection" class="info-section hidden">
+                            <h4>Production</h4>
+                            <div id="productionContent"></div>
+                        </div>
+                        <div id="financialSection" class="info-section hidden">
+                            <h4>Financial Information</h4>
+                            <div id="financialContent"></div>
+                        </div>
+                        <div id="releaseSection" class="info-section hidden">
+                            <h4>Release Information</h4>
+                            <div id="releaseContent"></div>
+                        </div>
+                        <div id="moreInfoSection" class="info-section hidden">
+                            <h4>More Information</h4>
+                            <div id="moreInfoContent"></div>
+                        </div>
+                    </div>
+                    <div id="guessTextReasoning" class="guess-text"></div>
                 </div>
                 
                 <div class="feedback-buttons">
@@ -106,6 +113,6 @@
         </footer>
     </div>
 
-    <script src="/static/person.js?v=6"></script>
+    <script src="/static/movie.js?v=1"></script>
 </body>
 </html>

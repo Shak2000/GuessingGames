@@ -10,6 +10,7 @@ from odd import odd_game
 from event import event_guesser
 from business import business_guesser
 from invention import invention_guesser
+from movie import movie_guesser
 
 app = FastAPI(title="Multi-Game App", version="1.0.0")
 
@@ -71,6 +72,13 @@ class InventionFeedback(BaseModel):
     session_id: int
     is_correct: bool
 
+class MovieInput(BaseModel):
+    text: str
+
+class MovieFeedback(BaseModel):
+    session_id: int
+    is_correct: bool
+
 @app.get("/")
 async def read_index():
     """Serve the home page."""
@@ -105,6 +113,11 @@ async def read_business():
 async def read_invention():
     """Serve the Guess the Invention game page."""
     return FileResponse("static/invention.html")
+
+@app.get("/movie")
+async def read_movie():
+    """Serve the Guess the Movie game page."""
+    return FileResponse("static/movie.html")
 
 @app.post("/api/start-guess")
 async def start_guess(user_input: UserInput):
@@ -322,6 +335,41 @@ async def get_invention_session(session_id: int):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting invention session: {str(e)}")
+
+# Movie Guessing Game API Routes
+@app.post("/api/start-movie-guess")
+async def start_movie_guess(user_input: MovieInput):
+    """Start a new movie guessing session."""
+    try:
+        if not user_input.text.strip():
+            raise HTTPException(status_code=400, detail="Input text cannot be empty")
+        
+        result = movie_guesser.start_new_session(user_input.text.strip())
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error starting movie guess: {str(e)}")
+
+@app.post("/api/submit-movie-feedback")
+async def submit_movie_feedback(feedback: MovieFeedback):
+    """Submit feedback for the current movie guess."""
+    try:
+        result = movie_guesser.submit_feedback(feedback.session_id, feedback.is_correct)
+        if 'error' in result:
+            raise HTTPException(status_code=400, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error submitting movie feedback: {str(e)}")
+
+@app.get("/api/movie-session/{session_id}")
+async def get_movie_session(session_id: int):
+    """Get movie guessing session information."""
+    try:
+        result = movie_guesser.get_session_status(session_id)
+        if 'error' in result:
+            raise HTTPException(status_code=404, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting movie session: {str(e)}")
 
 @app.get("/api/health")
 async def health_check():
