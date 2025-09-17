@@ -140,7 +140,7 @@ class MovieGame {
         }
 
         // Display main guess
-        this.guessText.innerHTML = `<strong>${guess.name}</strong>`;
+        this.guessText.innerHTML = `<div class="name-box">${guess.name}</div>`;
         
         // Display overview
         if (guess.overview) {
