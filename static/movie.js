@@ -139,13 +139,24 @@ class MovieGame {
             return;
         }
 
-        // Display main guess
-        this.guessText.innerHTML = `<div class="name-box">${guess.name}</div>`;
-        
-        // Display overview
+        // Display main guess and overview
+        let overviewInfo = '';
         if (guess.overview) {
-            this.guessTextOverview.innerHTML = `<strong>Overview:</strong> ${guess.overview}`;
+            overviewInfo = `
+                <div class="bio-section overview-section">
+                    <h4>Overview:</h4>
+                    <p>${guess.overview}</p>
+                </div>
+            `;
         }
+
+        this.guessText.innerHTML = `
+            <div class="name-box">${guess.name}</div>
+            ${overviewInfo}
+        `;
+        
+        // Hide the separate overview section since we're including it in the main content
+        this.guessTextOverview.style.display = 'none';
 
         // Display reasoning
         if (guess.reasoning) {
