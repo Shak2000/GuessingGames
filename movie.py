@@ -99,6 +99,13 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     text = text[:-3]
                 movie_data = json.loads(text.strip())
             
+            # If we have a Wikipedia URL, try to extract an image
+            if movie_data.get('wikipedia_url'):
+                image_url = self._extract_image_from_url(movie_data['wikipedia_url'])
+                movie_data['image_url'] = image_url if image_url != "N/A" else None
+            else:
+                movie_data['image_url'] = None
+            
             return movie_data
             
         except Exception as e:
@@ -151,6 +158,74 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             'guesses': self.current_session['guesses'],
             'incorrect_movies': self.current_session['incorrect_movies']
         }
+    
+    def _extract_image_from_url(self, url: str) -> str:
+        """Extract the best image URL from a given webpage URL."""
+        try:
+            # Add headers to mimic a real browser
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Try to find the main image (usually the first large image or infobox image)
+            image_url = None
+            
+            # For Wikipedia pages, look for infobox images first
+            if 'wikipedia.org' in url:
+                infobox = soup.find('table', class_='infobox')
+                if infobox:
+                    img = infobox.find('img')
+                    if img and img.get('src'):
+                        image_url = img.get('src')
+                        # Convert to full URL if it's a relative path
+                        if image_url.startswith('//'):
+                            image_url = 'https:' + image_url
+                        elif image_url.startswith('/'):
+                            image_url = urljoin(url, image_url)
+                        return image_url
+            
+            # Look for the first large image in the content
+            images = soup.find_all('img')
+            for img in images:
+                src = img.get('src')
+                if src:
+                    # Skip small images, icons, and decorative elements
+                    width = img.get('width')
+                    height = img.get('height')
+                    
+                    # Check if it's a reasonable size for a movie poster/image
+                    if width and height:
+                        try:
+                            w, h = int(width), int(height)
+                            if w >= 150 and h >= 150:  # Minimum size threshold for movie images
+                                image_url = src
+                                break
+                        except ValueError:
+                            continue
+                    
+                    # If no size attributes, check the src for common patterns
+                    if not image_url and any(keyword in src.lower() for keyword in ['poster', 'movie', 'film', 'image', 'jpg', 'jpeg', 'png']):
+                        image_url = src
+                        break
+            
+            if image_url:
+                # Convert to full URL if it's a relative path
+                if image_url.startswith('//'):
+                    image_url = 'https:' + image_url
+                elif image_url.startswith('/'):
+                    image_url = urljoin(url, image_url)
+                return image_url
+            
+            return "N/A"
+            
+        except Exception as e:
+            print(f"Error extracting image from {url}: {str(e)}")
+            return "N/A"
 
 # Create a global instance
 movie_guesser = MovieGuesser()

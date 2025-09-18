@@ -9,6 +9,10 @@ class MovieGame {
         this.guessText = document.getElementById('guessText');
         this.guessTextOverview = document.getElementById('guessTextOverview');
         this.guessTextReasoning = document.getElementById('guessTextReasoning');
+        
+        // Movie image elements
+        this.movieImageContainer = document.getElementById('movieImageContainer');
+        this.movieImage = document.getElementById('movieImage');
         this.correctBtn = document.getElementById('correctBtn');
         this.incorrectBtn = document.getElementById('incorrectBtn');
         this.newGameBtn = document.getElementById('newGameBtn');
@@ -138,6 +142,23 @@ class MovieGame {
         if (guess.error) {
             this.showError(guess.error);
             return;
+        }
+
+        // Display movie image if available
+        if (guess.image_url) {
+            // Use a CORS proxy for Wikipedia images
+            let proxyUrl = '';
+            if (guess.image_url.includes('upload.wikimedia.org')) {
+                // Use images.weserv.nl as a CORS proxy for Wikipedia images
+                proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(guess.image_url)}&w=300&h=400&fit=cover`;
+            } else {
+                proxyUrl = guess.image_url;
+            }
+            
+            this.movieImage.src = proxyUrl;
+            this.movieImageContainer.style.display = 'block';
+        } else {
+            this.movieImageContainer.style.display = 'none';
         }
 
         // Display main guess and overview
