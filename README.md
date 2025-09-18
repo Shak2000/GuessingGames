@@ -100,6 +100,8 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🎬 **Cast & Crew Information**: Detailed information about directors, actors, writers, cinematographers, editors, and composers
 - 🏢 **Production Details**: Production companies and distributors with clickable links to Business Game ✨ **NEW**
 - 🏙️ **Real-World Connections**: Cities where movies take place with clickable links to City Game ✨ **NEW**
+- 🗺️ **Interactive Movie Maps**: Google Maps integration showing all cities where the movie takes place with red "M" markers ✨ **NEW**
+- 📍 **Multiple Movie Locations**: Displays all cities from the cities field on the map with distinct markers ✨ **NEW**
 - 📅 **Historical Events**: Real-world events featured in movies with clickable links to Event Game ✨ **NEW**
 - 👥 **Real-World People**: Historical figures appearing in movies with clickable links to Person Game
 - 💰 **Financial Information**: Budget and box office data when available
@@ -347,15 +349,17 @@ The application will be available at `http://localhost:8000`
    - **Financial Information**: Budget and box office data when available
    - **Release Information**: Detailed release dates by country
    - **Real-World Connections**: Cities where movies take place with clickable links to City Game ✨ **NEW**
+   - **Interactive Movie Map**: Google Maps showing all cities where the movie takes place with red "M" markers ✨ **NEW**
    - **Historical Events**: Real-world events featured in movies with clickable links to Event Game ✨ **NEW**
    - **Real-World People**: Historical figures appearing in movies with clickable links to Person Game
    - **Wikipedia Link**: Direct link to the movie's Wikipedia page
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
-6. **Explore Related Content**: Click any production company, distributor, city, event, or person to automatically search in the respective game
-7. **Victory**: When the AI guesses correctly, you'll see a victory message!
-8. **New Game**: Start fresh anytime by entering new information
+6. **Explore Movie Locations**: View all cities where the movie takes place on the interactive map ✨ **NEW**
+7. **Explore Related Content**: Click any production company, distributor, city, event, or person to automatically search in the respective game
+8. **Victory**: When the AI guesses correctly, you'll see a victory message!
+9. **New Game**: Start fresh anytime by entering new information
 
 ### Guess the Invention Game
 1. **Enter Information**: Type information about an invention or technology in the text area
@@ -532,9 +536,10 @@ FirstAPI/
   - 🟢 **Green "I" markers**: Cities where inventions were invented  
   - 🟣 **Purple "D" markers**: Design hubs where inventions are designed
   - 🟠 **Orange "M" markers**: Manufacturing hubs where inventions are manufactured
+- 🎬 **Movie Game Location Maps**: Movie game now displays all cities where movies take place with red "M" markers ✨ **NEW**
 - 🎯 **Smart Map Fitting**: Maps automatically adjust bounds to show all relevant locations
 - 📍 **Visual Distinction**: Each location type has unique colors and letters for easy identification
-- 🌍 **Global Perspective**: Users can now see the complete geographical impact of events and inventions
+- 🌍 **Global Perspective**: Users can now see the complete geographical impact of events, inventions, and movies
 - 🔄 **Backward Compatibility**: Single location fallback maintained for existing functionality
 - 📱 **Responsive Design**: Multi-location maps work perfectly on all devices and screen sizes
 
