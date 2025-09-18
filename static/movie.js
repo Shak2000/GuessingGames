@@ -227,6 +227,14 @@ class MovieGame {
         ).join(', ');
     }
 
+    formatClickableEventList(events) {
+        if (!events || events.length === 0) return '';
+        
+        return events.map(event => 
+            `<span class="clickable-event" data-event="${event.trim()}">${event.trim()}</span>`
+        ).join(', ');
+    }
+
     displayMovieDetails(movie) {
         // Basic Information
         let basicInfo = '';
@@ -309,7 +317,7 @@ class MovieGame {
             inspiration += `<p><strong>Real-World Cities:</strong> ${this.formatClickableCityList(movie.cities)}</p>`;
         }
         if (movie.events && movie.events.length > 0) {
-            inspiration += `<p><strong>Real-World Events:</strong> ${movie.events.join(', ')}</p>`;
+            inspiration += `<p><strong>Real-World Events:</strong> ${this.formatClickableEventList(movie.events)}</p>`;
         }
         
         if (inspiration) {
@@ -317,10 +325,11 @@ class MovieGame {
             this.inspirationSection.classList.remove('hidden');
         }
 
-        // Set up clickable person, business, and city links
+        // Set up clickable person, business, city, and event links
         this.setupClickablePersonLinks();
         this.setupClickableBusinessLinks();
         this.setupClickableCityLinks();
+        this.setupClickableEventLinks();
     }
 
     setupClickablePersonLinks() {
@@ -368,6 +377,23 @@ class MovieGame {
                     localStorage.setItem('citySearchFromMovie', cityName);
                     // Navigate to the city game
                     window.location.href = '/city';
+                }
+            });
+        });
+    }
+
+    setupClickableEventLinks() {
+        // Add event listeners to all clickable event links
+        const clickableEvents = document.querySelectorAll('.clickable-event');
+        clickableEvents.forEach(eventElement => {
+            eventElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const eventName = eventElement.getAttribute('data-event');
+                if (eventName) {
+                    // Store the event name in localStorage for the event game to use
+                    localStorage.setItem('eventSearchFromMovie', eventName);
+                    // Navigate to the event game
+                    window.location.href = '/event';
                 }
             });
         });

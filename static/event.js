@@ -489,18 +489,34 @@ class EventGame {
                         }, 500);
                     }
                 } else {
-                    // Fallback: Check if there's a 'search' parameter in the URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const searchParam = urlParams.get('search');
+                    // Check if there's an event name stored in localStorage from the movie game
+                    const eventFromMovie = localStorage.getItem('eventSearchFromMovie');
                     
-                    if (searchParam) {
-                        // Set the input field with the search parameter
+                    if (eventFromMovie) {
+                        // Clear the stored value
+                        localStorage.removeItem('eventSearchFromMovie');
+                        // Set the input field with the event name
                         if (this.userInput) {
-                            this.userInput.value = searchParam;
+                            this.userInput.value = eventFromMovie;
                             // Automatically start the search after a short delay to ensure everything is loaded
                             setTimeout(() => {
                                 this.startNewSession();
                             }, 500);
+                        }
+                    } else {
+                        // Fallback: Check if there's a 'search' parameter in the URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const searchParam = urlParams.get('search');
+                        
+                        if (searchParam) {
+                            // Set the input field with the search parameter
+                            if (this.userInput) {
+                                this.userInput.value = searchParam;
+                                // Automatically start the search after a short delay to ensure everything is loaded
+                                setTimeout(() => {
+                                    this.startNewSession();
+                                }, 500);
+                            }
                         }
                     }
                 }
