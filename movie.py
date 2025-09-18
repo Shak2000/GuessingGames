@@ -60,6 +60,7 @@ class MovieGuesser:
 
 Please respond with a JSON object containing the following fields:
 - name: The movie title
+- genre: An array of the movie's genres
 - directed_by: An array of director names
 - screenplay_by: An array of screenwriter names
 - story_by: An array of story writer names (if different from screenplay, otherwise empty array)
