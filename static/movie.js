@@ -203,6 +203,14 @@ class MovieGame {
         });
     }
 
+    formatClickablePersonList(persons) {
+        if (!persons || persons.length === 0) return '';
+        
+        return persons.map(person => 
+            `<span class="clickable-person" data-person="${person.trim()}">${person.trim()}</span>`
+        ).join(', ');
+    }
+
     displayMovieDetails(movie) {
         // Basic Information
         let basicInfo = '';
@@ -218,13 +226,13 @@ class MovieGame {
 
         // Cast & Crew
         let castCrew = '';
-        if (movie.starring && movie.starring.length > 0) castCrew += `<p><strong>Starring:</strong> ${movie.starring.join(', ')}</p>`;
-        if (movie.directed_by && movie.directed_by.length > 0) castCrew += `<p><strong>Directed by:</strong> ${movie.directed_by.join(', ')}</p>`;
-        if (movie.screenplay_by && movie.screenplay_by.length > 0) castCrew += `<p><strong>Screenplay by:</strong> ${movie.screenplay_by.join(', ')}</p>`;
-        if (movie.story_by && movie.story_by.length > 0) castCrew += `<p><strong>Story by:</strong> ${movie.story_by.join(', ')}</p>`;
-        if (movie.cinematography && movie.cinematography.length > 0) castCrew += `<p><strong>Cinematography:</strong> ${movie.cinematography.join(', ')}</p>`;
-        if (movie.edited_by && movie.edited_by.length > 0) castCrew += `<p><strong>Edited by:</strong> ${movie.edited_by.join(', ')}</p>`;
-        if (movie.music_by && movie.music_by.length > 0) castCrew += `<p><strong>Music by:</strong> ${movie.music_by.join(', ')}</p>`;
+        if (movie.starring && movie.starring.length > 0) castCrew += `<p><strong>Starring:</strong> ${this.formatClickablePersonList(movie.starring)}</p>`;
+        if (movie.directed_by && movie.directed_by.length > 0) castCrew += `<p><strong>Directed by:</strong> ${this.formatClickablePersonList(movie.directed_by)}</p>`;
+        if (movie.screenplay_by && movie.screenplay_by.length > 0) castCrew += `<p><strong>Screenplay by:</strong> ${this.formatClickablePersonList(movie.screenplay_by)}</p>`;
+        if (movie.story_by && movie.story_by.length > 0) castCrew += `<p><strong>Story by:</strong> ${this.formatClickablePersonList(movie.story_by)}</p>`;
+        if (movie.cinematography && movie.cinematography.length > 0) castCrew += `<p><strong>Cinematography:</strong> ${this.formatClickablePersonList(movie.cinematography)}</p>`;
+        if (movie.edited_by && movie.edited_by.length > 0) castCrew += `<p><strong>Edited by:</strong> ${this.formatClickablePersonList(movie.edited_by)}</p>`;
+        if (movie.music_by && movie.music_by.length > 0) castCrew += `<p><strong>Music by:</strong> ${this.formatClickablePersonList(movie.music_by)}</p>`;
         
         if (castCrew) {
             this.castCrewContent.innerHTML = castCrew;
@@ -233,7 +241,7 @@ class MovieGame {
 
         // Production
         let production = '';
-        if (movie.produced_by && movie.produced_by.length > 0) production += `<p><strong>Produced by:</strong> ${movie.produced_by.join(', ')}</p>`;
+        if (movie.produced_by && movie.produced_by.length > 0) production += `<p><strong>Produced by:</strong> ${this.formatClickablePersonList(movie.produced_by)}</p>`;
         if (movie.production_company && movie.production_company.length > 0) production += `<p><strong>Production Company:</strong> ${movie.production_company.join(', ')}</p>`;
         if (movie.distributed_by && movie.distributed_by.length > 0) production += `<p><strong>Distributed by:</strong> ${movie.distributed_by.join(', ')}</p>`;
         
@@ -279,7 +287,7 @@ class MovieGame {
         // Inspiration
         let inspiration = '';
         if (movie.people && movie.people.length > 0) {
-            inspiration += `<p><strong>Real-World People:</strong> ${movie.people.join(', ')}</p>`;
+            inspiration += `<p><strong>Real-World People:</strong> ${this.formatClickablePersonList(movie.people)}</p>`;
         }
         if (movie.cities && movie.cities.length > 0) {
             inspiration += `<p><strong>Real-World Cities:</strong> ${movie.cities.join(', ')}</p>`;
@@ -292,6 +300,25 @@ class MovieGame {
             this.inspirationContent.innerHTML = inspiration;
             this.inspirationSection.classList.remove('hidden');
         }
+
+        // Set up clickable person links
+        this.setupClickablePersonLinks();
+    }
+
+    setupClickablePersonLinks() {
+        // Add event listeners to all clickable person links
+        const clickablePersons = document.querySelectorAll('.clickable-person');
+        clickablePersons.forEach(personElement => {
+            personElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const personName = personElement.getAttribute('data-person');
+                
+                // Navigate to person game with pre-filled name
+                if (personName) {
+                    window.location.href = `/person?search=${encodeURIComponent(personName)}`;
+                }
+            });
+        });
     }
 
     async submitFeedback(isCorrect) {
