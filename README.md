@@ -51,10 +51,10 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 💭 **Detailed Explanations**: Each guess includes both the event name and reasoning
 - 📝 **Comprehensive Event Data**: Complete JSON information including dates, locations, key figures, causes, developments, and results
 - 👥 **Key Figures**: AI identifies and displays key figures involved in historical events as clickable links ✨ **NEW**
-- 🏙️ **Key Cities**: AI identifies and displays key cities involved in historical events as clickable links
+- 🏙️ **Multiple Key Cities**: AI identifies and displays all key cities involved in historical events with distinct map markers ✨ **NEW**
 - 🔧 **Key Technologies**: Displays technologies involved in historical events with clickable links to Invention Game ✨ **NEW**
 - 📸 **Enhanced AI Image Generation**: Uses Gemini 2.5 Flash Image Preview with complete event context for historically accurate visual representations
-- 🗺️ **Interactive Maps**: Google Maps integration showing event locations with custom markers
+- 🗺️ **Multi-City Interactive Maps**: Google Maps integration showing all key cities with custom blue "C" markers ✨ **NEW**
 - 🏛️ **Rich Context**: Event overview, key figures, causes, developments, and outcomes
 - 🔗 **Wikipedia Integration**: Direct links to event Wikipedia pages with automatic image extraction
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
@@ -116,7 +116,11 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 💭 **Detailed Explanations**: Each guess includes both the invention name and reasoning
 - 📝 **Comprehensive Technology Data**: Complete JSON information including inventor details, patent information, development history, and impact
 - 📸 **Automatic Image Extraction**: Beautiful Soup extracts invention images from Wikipedia pages
-- 🗺️ **Interactive Maps**: Google Maps integration showing invention development locations
+- 🗺️ **Multi-Location Interactive Maps**: Google Maps integration showing all invention-related locations with distinct markers ✨ **NEW**
+- 🏭 **Multiple Places Invented**: Shows all places where the invention was invented with red "P" markers ✨ **NEW**
+- 🏙️ **Invention Cities**: Displays cities where the invention was invented with green "I" markers ✨ **NEW**
+- 🎨 **Design Hubs**: Shows cities where the invention is designed with purple "D" markers ✨ **NEW**
+- 🏭 **Manufacturing Hubs**: Displays cities where the invention is manufactured with orange "M" markers ✨ **NEW**
 - 👨‍🔬 **Inventor Information**: Details about inventors, developers, and key contributors
 - 🏢 **Company Connections**: Links to businesses and organizations involved in development
 - 🔗 **Wikipedia Integration**: Direct links to invention Wikipedia pages with automatic image extraction
@@ -286,15 +290,16 @@ The application will be available at `http://localhost:8000`
    - **Comprehensive Event Data**: Complete information including start/end dates, location, key figures, causes, developments, and results
    - **Key Figures**: Clickable blue links to people involved in the event ✨ **NEW**
    - **Key Cities**: Clickable green links to cities involved in the event
-   - **Interactive Map**: Google Maps showing the event location with custom markers
+   - **Multi-City Interactive Map**: Google Maps showing all key cities with distinct blue "C" markers ✨ **NEW**
    - **Wikipedia Link**: Direct link to the event's Wikipedia page with automatic image extraction
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
 6. **Explore Key Figures**: Click any key figure name to automatically search for that person in the Person Game
 7. **Explore Key Cities**: Click any key city name to automatically search for that city in the City Game
-8. **Victory**: When the AI guesses correctly, you'll see a victory message!
-9. **New Game**: Start fresh anytime by entering new information
+8. **View Multiple Locations**: The map automatically shows all key cities involved in the event with distinct markers ✨ **NEW**
+9. **Victory**: When the AI guesses correctly, you'll see a victory message!
+10. **New Game**: Start fresh anytime by entering new information
 
 ### Odd Situation Game
 1. **Start Game**: Click "Start New Game" to begin
@@ -360,15 +365,22 @@ The application will be available at `http://localhost:8000`
    - **Name Box**: The invention's name in a blue gradient box
    - **Overview Box**: A concise 50-75 word summary of the invention's significance and impact
    - **Comprehensive Technology Data**: Complete information including inventor details, patent information, development history, and impact
-   - **Interactive Map**: Google Maps showing invention development locations
+   - **Places Invented**: Shows all places where the invention was invented ✨ **NEW**
+   - **Multi-Location Interactive Map**: Google Maps showing all invention-related locations with distinct markers ✨ **NEW**
+   - **Visual Location Types**: 
+     - 🔴 **Red "P" markers**: Places where the invention was invented
+     - 🟢 **Green "I" markers**: Cities where the invention was invented
+     - 🟣 **Purple "D" markers**: Design hubs where the invention is designed
+     - 🟠 **Orange "M" markers**: Manufacturing hubs where the invention is manufactured
    - **Inventor Information**: Details about inventors, developers, and key contributors
    - **Company Connections**: Links to businesses and organizations involved in development
    - **Wikipedia Link**: Direct link to the invention's Wikipedia page
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
-6. **Victory**: When the AI guesses correctly, you'll see a victory message!
-7. **New Game**: Start fresh anytime by entering new information
+6. **Explore Global Footprint**: View the complete geographical footprint of the invention across all locations ✨ **NEW**
+7. **Victory**: When the AI guesses correctly, you'll see a victory message!
+8. **New Game**: Start fresh anytime by entering new information
 
 ## File Structure
 
@@ -513,7 +525,20 @@ FirstAPI/
 
 ## Recent Updates
 
-### Movie Game Cross-Game Linking Enhancement (Latest)
+### Multiple Location Mapping Enhancement (Latest)
+- 🗺️ **Event Game Multi-City Maps**: Historical event game now displays all key cities involved in events with distinct blue "C" markers
+- 🏭 **Invention Game Multi-Location Maps**: Invention game now shows comprehensive geographical footprint with four distinct marker types:
+  - 🔴 **Red "P" markers**: Places where inventions were invented
+  - 🟢 **Green "I" markers**: Cities where inventions were invented  
+  - 🟣 **Purple "D" markers**: Design hubs where inventions are designed
+  - 🟠 **Orange "M" markers**: Manufacturing hubs where inventions are manufactured
+- 🎯 **Smart Map Fitting**: Maps automatically adjust bounds to show all relevant locations
+- 📍 **Visual Distinction**: Each location type has unique colors and letters for easy identification
+- 🌍 **Global Perspective**: Users can now see the complete geographical impact of events and inventions
+- 🔄 **Backward Compatibility**: Single location fallback maintained for existing functionality
+- 📱 **Responsive Design**: Multi-location maps work perfectly on all devices and screen sizes
+
+### Movie Game Cross-Game Linking Enhancement
 - 🎬 **Movie Game Integration**: Added comprehensive cross-game linking functionality to the movie-guessing game
 - 🏢 **Business Links**: Production companies and distributors are now clickable green links that automatically search in Business Game
 - 🏙️ **City Links**: Real-world cities where movies take place are now clickable green links that automatically search in City Game
