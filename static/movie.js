@@ -219,6 +219,14 @@ class MovieGame {
         ).join(', ');
     }
 
+    formatClickableCityList(cities) {
+        if (!cities || cities.length === 0) return '';
+        
+        return cities.map(city => 
+            `<span class="clickable-city" data-city="${city.trim()}">${city.trim()}</span>`
+        ).join(', ');
+    }
+
     displayMovieDetails(movie) {
         // Basic Information
         let basicInfo = '';
@@ -298,7 +306,7 @@ class MovieGame {
             inspiration += `<p><strong>Real-World People:</strong> ${this.formatClickablePersonList(movie.people)}</p>`;
         }
         if (movie.cities && movie.cities.length > 0) {
-            inspiration += `<p><strong>Real-World Cities:</strong> ${movie.cities.join(', ')}</p>`;
+            inspiration += `<p><strong>Real-World Cities:</strong> ${this.formatClickableCityList(movie.cities)}</p>`;
         }
         if (movie.events && movie.events.length > 0) {
             inspiration += `<p><strong>Real-World Events:</strong> ${movie.events.join(', ')}</p>`;
@@ -309,9 +317,10 @@ class MovieGame {
             this.inspirationSection.classList.remove('hidden');
         }
 
-        // Set up clickable person and business links
+        // Set up clickable person, business, and city links
         this.setupClickablePersonLinks();
         this.setupClickableBusinessLinks();
+        this.setupClickableCityLinks();
     }
 
     setupClickablePersonLinks() {
@@ -342,6 +351,23 @@ class MovieGame {
                     localStorage.setItem('businessSearchFromMovie', businessName);
                     // Navigate to the business game
                     window.location.href = '/business';
+                }
+            });
+        });
+    }
+
+    setupClickableCityLinks() {
+        // Add event listeners to all clickable city links
+        const clickableCities = document.querySelectorAll('.clickable-city');
+        clickableCities.forEach(cityElement => {
+            cityElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cityName = cityElement.getAttribute('data-city');
+                if (cityName) {
+                    // Store the city name in localStorage for the city game to use
+                    localStorage.setItem('citySearchFromMovie', cityName);
+                    // Navigate to the city game
+                    window.location.href = '/city';
                 }
             });
         });
