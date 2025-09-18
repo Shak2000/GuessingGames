@@ -47,9 +47,11 @@ class MovieGame {
         
         // Allow Enter key to submit
         this.userInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' && e.ctrlKey) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // Prevent default new line behavior
                 this.startNewGameFromButton();
             }
+            // Shift+Enter allows default behavior (new line)
         });
     }
 
