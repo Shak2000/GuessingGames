@@ -75,6 +75,9 @@ Please respond with a JSON object containing the following fields:
 - language: An array of languages the movie is in
 - budget: The movie's budget (if known, otherwise null)
 - box_office: The movie's box office gross (if known, otherwise null)
+- people: An array of real-world people who appear as characters in the movie, or empty array [] if unknown
+- cities: An array of real-world cities where the movie takes place, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
+- events: An array of real-world events where the movie takes place, or empty array [] if unknown
 - wikipedia_url: Wikipedia URL for the movie (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct movie
 - overview: A concise 50-75 word overview of the movie's plot, significance, and notable features

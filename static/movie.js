@@ -32,6 +32,8 @@ class MovieGame {
         this.releaseContent = document.getElementById('releaseContent');
         this.moreInfoSection = document.getElementById('moreInfoSection');
         this.moreInfoContent = document.getElementById('moreInfoContent');
+        this.inspirationSection = document.getElementById('inspirationSection');
+        this.inspirationContent = document.getElementById('inspirationContent');
         
         this.currentSessionId = null;
         
@@ -272,6 +274,23 @@ class MovieGame {
         if (moreInfo) {
             this.moreInfoContent.innerHTML = moreInfo;
             this.moreInfoSection.classList.remove('hidden');
+        }
+
+        // Inspiration
+        let inspiration = '';
+        if (movie.people && movie.people.length > 0) {
+            inspiration += `<p><strong>Real-World People:</strong> ${movie.people.join(', ')}</p>`;
+        }
+        if (movie.cities && movie.cities.length > 0) {
+            inspiration += `<p><strong>Real-World Cities:</strong> ${movie.cities.join(', ')}</p>`;
+        }
+        if (movie.events && movie.events.length > 0) {
+            inspiration += `<p><strong>Real-World Events:</strong> ${movie.events.join(', ')}</p>`;
+        }
+        
+        if (inspiration) {
+            this.inspirationContent.innerHTML = inspiration;
+            this.inspirationSection.classList.remove('hidden');
         }
     }
 
