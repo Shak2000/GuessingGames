@@ -233,6 +233,9 @@ class InventionGame {
             let basicInfo = '';
             if (year) basicInfo += `<p><strong>Year Invented:</strong> ${year}</p>`;
             if (place) basicInfo += `<p><strong>Place Invented:</strong> ${place}</p>`;
+            if (guess.places_invented && guess.places_invented.length > 0) {
+                basicInfo += `<p><strong>Places Invented:</strong> ${guess.places_invented.join(', ')}</p>`;
+            }
             if (inventors.length > 0) {
                 const clickableInventors = inventors.map(inventor => 
                     `<span class="clickable-person" data-person="${inventor.trim()}">${inventor.trim()}</span>`
@@ -361,13 +364,10 @@ class InventionGame {
             // Initialize map if coordinates are available
             const coordinates = guess.coordinates;
             const city = guess.city;
-            if (coordinates && coordinates !== null) {
+            const placesCoordinates = guess.places_coordinates || [];
+            const citiesCoordinates = guess.cities_coordinates || [];
+            if ((placesCoordinates && placesCoordinates.length > 0) || (citiesCoordinates && citiesCoordinates.length > 0) || (coordinates && coordinates !== null)) {
                 try {
-                    const inventionCoords = {
-                        lat: coordinates.lat,
-                        lng: coordinates.lng
-                    };
-                    
                     // Show the map container
                     if (this.mapEl) {
                         this.mapEl.style.display = 'block';
@@ -378,8 +378,16 @@ class InventionGame {
                         this.mapEl.style.border = '1px solid #bae6fd';
                     }
                     
-                    // Initialize the map with city context (preferred) or place fallback
-                    this.initMap(inventionCoords, city || place);
+                    // Initialize the map with multiple locations or fallback to single location
+                    if (placesCoordinates.length > 0 || citiesCoordinates.length > 0) {
+                        this.initMapWithMultipleLocations(placesCoordinates, citiesCoordinates, place);
+                    } else if (coordinates && coordinates !== null) {
+                        const inventionCoords = {
+                            lat: coordinates.lat,
+                            lng: coordinates.lng
+                        };
+                        this.initMap(inventionCoords, city || place);
+                    }
                 } catch (e) {
                     // Error parsing coordinates
                     console.error('Error initializing map:', e);
@@ -623,6 +631,137 @@ class InventionGame {
                 `)
             }
         });
+    }
+
+    initMapWithMultipleLocations(placesCoordinates, citiesCoordinates, location = null) {
+        console.log('initMapWithMultipleLocations called with places:', placesCoordinates, 'cities:', citiesCoordinates);
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
+            if (this.mapEl) {
+                this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
+            }
+            return;
+        }
+
+        if (!this.mapEl) {
+            return;
+        }
+
+        // Determine appropriate zoom level based on location type
+        let zoomLevel = 10; // Default zoom for cities
+        
+        if (location) {
+            const locationLower = location.toLowerCase();
+            
+            // Check for continents
+            if (locationLower.includes('continent') || 
+                locationLower.includes('north america') || 
+                locationLower.includes('south america') || 
+                locationLower.includes('europe') || 
+                locationLower.includes('asia') || 
+                locationLower.includes('africa') || 
+                locationLower.includes('australia') || 
+                locationLower.includes('antarctica')) {
+                zoomLevel = 3;
+            }
+            // Check for countries
+            else if (locationLower.includes('country') || 
+                     locationLower.includes('nation') || 
+                     locationLower.includes('united states') || 
+                     locationLower.includes('canada') || 
+                     locationLower.includes('china') || 
+                     locationLower.includes('russia') || 
+                     locationLower.includes('brazil') || 
+                     locationLower.includes('australia') || 
+                     locationLower.includes('india')) {
+                zoomLevel = 5;
+            }
+            // Check for states/provinces/regions
+            else if (locationLower.includes('state') || 
+                     locationLower.includes('province') || 
+                     locationLower.includes('region') || 
+                     locationLower.includes('territory') || 
+                     locationLower.includes('county')) {
+                zoomLevel = 7;
+            }
+            // Default to city level
+            else {
+                zoomLevel = 10;
+            }
+        }
+
+        // Combine all locations
+        const allLocations = [...placesCoordinates, ...citiesCoordinates];
+        
+        // Calculate center point from all location coordinates
+        const bounds = new google.maps.LatLngBounds();
+        let centerLat = 0, centerLng = 0;
+        
+        allLocations.forEach(locationData => {
+            const coords = locationData.coordinates;
+            bounds.extend(new google.maps.LatLng(coords.lat, coords.lng));
+            centerLat += coords.lat;
+            centerLng += coords.lng;
+        });
+        
+        centerLat /= allLocations.length;
+        centerLng /= allLocations.length;
+
+        const mapOptions = {
+            zoom: zoomLevel,
+            center: { lat: centerLat, lng: centerLng },
+            mapTypeId: 'terrain'
+        };
+        this.map = new google.maps.Map(this.mapEl, mapOptions);
+
+        // Add markers for each place invented
+        placesCoordinates.forEach((placeData, index) => {
+            const coords = placeData.coordinates;
+            const placeName = placeData.place;
+            
+            const markerTitle = `Place Invented: ${placeName}`;
+            const placeMarker = new google.maps.Marker({
+                position: coords,
+                map: this.map,
+                title: markerTitle,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#DC2626" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">P</text>
+                        </svg>
+                    `)
+                }
+            });
+        });
+
+        // Add markers for each city
+        citiesCoordinates.forEach((cityData, index) => {
+            const coords = cityData.coordinates;
+            const cityName = cityData.city;
+            
+            const markerTitle = `City: ${cityName}`;
+            const cityMarker = new google.maps.Marker({
+                position: coords,
+                map: this.map,
+                title: markerTitle,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#3B82F6" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">C</text>
+                        </svg>
+                    `)
+                }
+            });
+        });
+
+        // Fit map to show all markers if there are multiple locations
+        if (allLocations.length > 1) {
+            this.map.fitBounds(bounds);
+        }
     }
 
     showGameSection() {

@@ -56,7 +56,7 @@ class InventionGuesser:
         Return the information as a JSON object with the following keys:
         - 'name': The invention's name
         - 'year_invented': The year the invention was invented, or null if unknown
-        - 'place_invented': The place where the invention was invented, or null if unknown
+        - 'places_invented': An array of strings with places where the invention was invented, or empty array [] if unknown
         - 'inventors': An array of strings with inventor names, or empty array [] if unknown
         - 'materials_used': An array of strings with materials used in the invention, or empty array [] if unknown
         - 'previous_inventions': An array of strings with names of previous inventions it relied on, or empty array [] if unknown
@@ -71,7 +71,7 @@ class InventionGuesser:
         - 'wikipedia_url': Wikipedia URL for this invention, or null if not found
         - 'reasoning': Brief explanation of why you think this is the correct invention based on the information provided
         - 'overview': A brief overview of the invention in 50 to 75 words.
-        - 'city': A modern-day city that is located in, at, or near the place where the invention was invented (if known, otherwise null), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
+        - 'cities': An array of modern-day cities located in, at, or near the place where the invention was invented (if known, otherwise null), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
         
         Information: {context}{exclusion_text}
         
@@ -149,14 +149,38 @@ class InventionGuesser:
             if wikipedia_url and wikipedia_url.lower() != 'n/a':
                 wikipedia_image_url = self._extract_wikimedia_image(wikipedia_url)
             
-            # Get coordinates for the city if available (preferred for map centering)
-            coordinates = None
-            city = data.get('city')
-            if city:
-                coordinates = self._get_location_coordinates(city)
-            elif place_invented:
-                # Fallback to place_invented if city is not available
-                coordinates = self._get_location_coordinates(place_invented)
+                # Get coordinates for all places invented
+                places_coordinates = []
+                places_invented = data.get('places_invented', [])
+                if places_invented:
+                    for place in places_invented:
+                        coords = self._get_location_coordinates(place)
+                        if coords:
+                            places_coordinates.append({
+                                'place': place,
+                                'coordinates': coords
+                            })
+                
+                # Get coordinates for all cities
+                cities_coordinates = []
+                cities = data.get('cities', [])
+                if cities:
+                    for city in cities:
+                        coords = self._get_location_coordinates(city)
+                        if coords:
+                            cities_coordinates.append({
+                                'city': city,
+                                'coordinates': coords
+                            })
+                
+                # Fallback to single location if no multiple locations found
+                coordinates = None
+                city = data.get('city')
+                if not places_coordinates and not cities_coordinates:
+                    if city:
+                        coordinates = self._get_location_coordinates(city)
+                    elif place_invented:
+                        coordinates = self._get_location_coordinates(place_invented)
             
             # Build the final response as JSON
             final_response = {
@@ -164,6 +188,7 @@ class InventionGuesser:
                 "overview": overview,
                 "year_invented": year_invented,
                 "place_invented": place_invented,
+                "places_invented": places_invented,
                 "inventors": inventors,
                 "materials_used": materials_used,
                 "previous_inventions": previous_inventions,
@@ -180,7 +205,10 @@ class InventionGuesser:
                 "image_url": generated_image_url,
                 "wikipedia_image_url": wikipedia_image_url,
                 "city": city,
-                "coordinates": coordinates
+                "cities": cities,
+                "coordinates": coordinates,
+                "places_coordinates": places_coordinates,
+                "cities_coordinates": cities_coordinates
             }
 
             return final_response
