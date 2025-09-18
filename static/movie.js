@@ -211,6 +211,14 @@ class MovieGame {
         ).join(', ');
     }
 
+    formatClickableBusinessList(businesses) {
+        if (!businesses || businesses.length === 0) return '';
+        
+        return businesses.map(business => 
+            `<span class="clickable-business" data-business="${business.trim()}">${business.trim()}</span>`
+        ).join(', ');
+    }
+
     displayMovieDetails(movie) {
         // Basic Information
         let basicInfo = '';
@@ -242,8 +250,8 @@ class MovieGame {
         // Production
         let production = '';
         if (movie.produced_by && movie.produced_by.length > 0) production += `<p><strong>Produced by:</strong> ${this.formatClickablePersonList(movie.produced_by)}</p>`;
-        if (movie.production_company && movie.production_company.length > 0) production += `<p><strong>Production Company:</strong> ${movie.production_company.join(', ')}</p>`;
-        if (movie.distributed_by && movie.distributed_by.length > 0) production += `<p><strong>Distributed by:</strong> ${movie.distributed_by.join(', ')}</p>`;
+        if (movie.production_company && movie.production_company.length > 0) production += `<p><strong>Production Company:</strong> ${this.formatClickableBusinessList(movie.production_company)}</p>`;
+        if (movie.distributed_by && movie.distributed_by.length > 0) production += `<p><strong>Distributed by:</strong> ${this.formatClickableBusinessList(movie.distributed_by)}</p>`;
         
         if (production) {
             this.productionContent.innerHTML = production;
@@ -301,8 +309,9 @@ class MovieGame {
             this.inspirationSection.classList.remove('hidden');
         }
 
-        // Set up clickable person links
+        // Set up clickable person and business links
         this.setupClickablePersonLinks();
+        this.setupClickableBusinessLinks();
     }
 
     setupClickablePersonLinks() {
@@ -316,6 +325,23 @@ class MovieGame {
                 // Navigate to person game with pre-filled name
                 if (personName) {
                     window.location.href = `/person?search=${encodeURIComponent(personName)}`;
+                }
+            });
+        });
+    }
+
+    setupClickableBusinessLinks() {
+        // Add event listeners to all clickable business links
+        const clickableBusinesses = document.querySelectorAll('.clickable-business');
+        clickableBusinesses.forEach(businessElement => {
+            businessElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const businessName = businessElement.getAttribute('data-business');
+                if (businessName) {
+                    // Store the business name in localStorage for the business game to use
+                    localStorage.setItem('businessSearchFromMovie', businessName);
+                    // Navigate to the business game
+                    window.location.href = '/business';
                 }
             });
         });

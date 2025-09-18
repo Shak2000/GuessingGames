@@ -699,18 +699,34 @@ class BusinessGame {
                         }, 500);
                     }
                 } else {
-                    // Fallback: Check if there's a 'search' parameter in the URL
-                    const urlParams = new URLSearchParams(window.location.search);
-                    const searchParam = urlParams.get('search');
+                    // Check if there's a business name stored in localStorage from the movie game
+                    const businessFromMovie = localStorage.getItem('businessSearchFromMovie');
                     
-                    if (searchParam) {
-                        // Set the input field with the search parameter
+                    if (businessFromMovie) {
+                        // Clear the stored value
+                        localStorage.removeItem('businessSearchFromMovie');
+                        // Set the input field with the business name
                         if (this.userInput) {
-                            this.userInput.value = searchParam;
+                            this.userInput.value = businessFromMovie;
                             // Automatically start the search after a short delay to ensure everything is loaded
                             setTimeout(() => {
                                 this.startNewGame();
                             }, 500);
+                        }
+                    } else {
+                        // Fallback: Check if there's a 'search' parameter in the URL
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const searchParam = urlParams.get('search');
+                        
+                        if (searchParam) {
+                            // Set the input field with the search parameter
+                            if (this.userInput) {
+                                this.userInput.value = searchParam;
+                                // Automatically start the search after a short delay to ensure everything is loaded
+                                setTimeout(() => {
+                                    this.startNewGame();
+                                }, 500);
+                            }
                         }
                     }
                 }
