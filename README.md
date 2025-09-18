@@ -5,7 +5,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 ## Features
 
 ### Platform Features
-- 🎮 **Multi-Game Platform**: Choose from 6 interactive games in one unified platform
+- 🎮 **Multi-Game Platform**: Choose from 7 interactive games in one unified platform
 - 🧭 **Easy Navigation**: Seamless navigation between games with persistent toolbar
 - 🔗 **Cross-Game Linking**: Clickable links between related content across all games
 - 🎨 **Modern UI**: Beautiful, responsive design with smooth animations and consistent styling
@@ -90,6 +90,25 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
 - 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
 
+### Guess the Movie Game
+- 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent movie identification
+- 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
+- 🔄 **Learning System**: AI learns from incorrect guesses to make better subsequent attempts
+- 💭 **Detailed Explanations**: Each guess includes both the movie name and reasoning
+- 📝 **Comprehensive Movie Data**: Complete JSON information including cast, crew, production details, financial data, and release information
+- 📸 **Automatic Image Extraction**: Beautiful Soup extracts movie images from Wikipedia pages
+- 🎬 **Cast & Crew Information**: Detailed information about directors, actors, writers, cinematographers, editors, and composers
+- 🏢 **Production Details**: Production companies and distributors with clickable links to Business Game ✨ **NEW**
+- 🏙️ **Real-World Connections**: Cities where movies take place with clickable links to City Game ✨ **NEW**
+- 📅 **Historical Events**: Real-world events featured in movies with clickable links to Event Game ✨ **NEW**
+- 👥 **Real-World People**: Historical figures appearing in movies with clickable links to Person Game
+- 💰 **Financial Information**: Budget and box office data when available
+- 📅 **Release Information**: Detailed release dates by country
+- 🔗 **Wikipedia Integration**: Direct links to movie Wikipedia pages with automatic image extraction
+- ⚡ **Real-time**: Fast API responses with loading indicators and button states
+- 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
+- 📋 **JSON Format**: Structured data exchange between frontend and backend for reliable parsing
+
 ### Guess the Invention Game
 - 🤖 **AI-Powered Guessing**: Uses Google Gemini 2.5 Flash Lite API for intelligent invention/technology identification
 - 🎯 **Interactive Feedback**: Users can mark guesses as correct or incorrect
@@ -138,6 +157,12 @@ The platform features an innovative cross-game linking system that allows seamle
 - **People**: Click founders/CEOs to search in Person Game
 - **Cities**: Click headquarters locations to search in City Game
 - **Technologies**: Click main technologies to search in Invention Game ✨ **NEW**
+
+#### **From Movie Game:**
+- **People**: Click cast, crew, and real-world people to search in Person Game
+- **Businesses**: Click production companies and distributors to search in Business Game ✨ **NEW**
+- **Cities**: Click real-world cities where movies take place to search in City Game ✨ **NEW**
+- **Events**: Click real-world events featured in movies to search in Event Game ✨ **NEW**
 
 ### 🎨 **Visual Design**
 - **People Links**: Blue color (`#2563eb`) with hover effects
@@ -305,6 +330,28 @@ The application will be available at `http://localhost:8000`
 7. **Victory**: When the AI guesses correctly, you'll see a victory message!
 8. **New Game**: Start fresh anytime by entering new information
 
+### Guess the Movie Game
+1. **Enter Information**: Type information about a movie in the text area
+2. **Submit**: Click "Submit Information" or press Ctrl+Enter
+3. **Review Guess**: The AI will display its guess with:
+   - **Movie Image**: Automatically extracted from Wikipedia (if available)
+   - **Name Box**: The movie's name in a blue gradient box
+   - **Overview Box**: A concise 50-75 word summary of the movie's plot and significance
+   - **Cast & Crew Information**: Detailed information about directors, actors, writers, cinematographers, editors, and composers
+   - **Production Details**: Production companies and distributors with clickable links to Business Game ✨ **NEW**
+   - **Financial Information**: Budget and box office data when available
+   - **Release Information**: Detailed release dates by country
+   - **Real-World Connections**: Cities where movies take place with clickable links to City Game ✨ **NEW**
+   - **Historical Events**: Real-world events featured in movies with clickable links to Event Game ✨ **NEW**
+   - **Real-World People**: Historical figures appearing in movies with clickable links to Person Game
+   - **Wikipedia Link**: Direct link to the movie's Wikipedia page
+   - **Explanation Box**: The AI's reasoning in a gray box below
+4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
+5. **Continue**: If incorrect, the AI will make another guess with improved context
+6. **Explore Related Content**: Click any production company, distributor, city, event, or person to automatically search in the respective game
+7. **Victory**: When the AI guesses correctly, you'll see a victory message!
+8. **New Game**: Start fresh anytime by entering new information
+
 ### Guess the Invention Game
 1. **Enter Information**: Type information about an invention or technology in the text area
 2. **Submit**: Click "Submit Information" or press Ctrl+Enter
@@ -333,6 +380,7 @@ FirstAPI/
 ├── event.py             # Guess the Historical Event game logic with enhanced AI image generation
 ├── odd.py               # Odd Situation Game logic with AI-generated scenarios
 ├── business.py          # Guess the Business game logic with Gemini AI integration
+├── movie.py             # Guess the Movie game logic with Gemini AI integration
 ├── invention.py         # Guess the Invention game logic with Gemini AI integration
 ├── config.py            # API key configuration
 ├── requirements.txt     # Python dependencies
@@ -348,6 +396,7 @@ FirstAPI/
     ├── event.html      # Guess the Historical Event game interface
     ├── odd.html        # Odd Situation Game interface
     ├── business.html   # Guess the Business game interface
+    ├── movie.html      # Guess the Movie game interface
     ├── invention.html  # Guess the Invention game interface
     ├── styles.css      # Modern styling and responsive design
     ├── script.js       # General app utilities and shared functionality
@@ -357,6 +406,7 @@ FirstAPI/
     ├── event.js        # Historical Event game specific JavaScript logic
     ├── odd.js          # Odd Situation Game specific JavaScript logic
     ├── business.js     # Business guessing game specific JavaScript logic
+    ├── movie.js        # Movie guessing game specific JavaScript logic
     ├── invention.js    # Invention guessing game specific JavaScript logic
     ├── favicon.ico     # App favicon (ICO format)
     └── favicon.png     # App favicon (PNG format)
@@ -369,6 +419,7 @@ FirstAPI/
 - **`event.py`** - Guess the Historical Event game logic with enhanced AI image generation using complete event context
 - **`odd.py`** - Odd Situation Game logic with AI-generated scenarios, random outfit/setting combinations, and session management
 - **`business.py`** - Guess the Business game logic with Gemini AI integration, comprehensive business data, financial information, and session management
+- **`movie.py`** - Guess the Movie game logic with Gemini AI integration, comprehensive movie data, cast/crew information, production details, and session management
 - **`invention.py`** - Guess the Invention game logic with Gemini AI integration, comprehensive technology data, inventor information, and session management
 - **`config.py`** - API key configuration (excluded from version control)
 - **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
@@ -381,6 +432,7 @@ FirstAPI/
 - **`static/event.html`** - Guess the Historical Event game interface
 - **`static/odd.html`** - Odd Situation Game interface
 - **`static/business.html`** - Guess the Business game interface
+- **`static/movie.html`** - Guess the Movie game interface
 - **`static/invention.html`** - Guess the Invention game interface
 - **`static/toolbar.js`** - Navigation toolbar functionality and active state management
 - **`static/script.js`** - General app utilities and shared functionality for all games
@@ -389,6 +441,7 @@ FirstAPI/
 - **`static/event.js`** - Historical Event game specific JavaScript logic and UI interactions
 - **`static/odd.js`** - Odd Situation Game specific JavaScript logic and UI interactions
 - **`static/business.js`** - Business guessing game specific JavaScript logic and UI interactions
+- **`static/movie.js`** - Movie guessing game specific JavaScript logic and UI interactions
 - **`static/invention.js`** - Invention guessing game specific JavaScript logic and UI interactions
 - **`static/`** - All frontend files organized in a dedicated directory
 
@@ -401,6 +454,7 @@ FirstAPI/
 - `GET /odd` - Serves the Odd Situation Game page
 - `GET /event` - Serves the Guess the Historical Event game page
 - `GET /business` - Serves the Guess the Business game page
+- `GET /movie` - Serves the Guess the Movie game page
 - `GET /invention` - Serves the Guess the Invention game page
 - `GET /api/health` - Health check endpoint
 - `GET /static/*` - Serves static files (CSS, JS, images, favicons)
@@ -437,6 +491,11 @@ FirstAPI/
 - `POST /api/submit-business-feedback` - Submits feedback for a business guess
 - `GET /api/business-session/{session_id}` - Gets business guessing session information
 
+### Guess the Movie Game
+- `POST /api/start-movie-guess` - Starts a new movie guessing session
+- `POST /api/submit-movie-feedback` - Submits feedback for a movie guess
+- `GET /api/movie-session/{session_id}` - Gets movie guessing session information
+
 ### Guess the Invention Game
 - `POST /api/start-invention-guess` - Starts a new invention guessing session
 - `POST /api/submit-invention-feedback` - Submits feedback for an invention guess
@@ -454,7 +513,19 @@ FirstAPI/
 
 ## Recent Updates
 
-### Technology Linking System Enhancement (Latest)
+### Movie Game Cross-Game Linking Enhancement (Latest)
+- 🎬 **Movie Game Integration**: Added comprehensive cross-game linking functionality to the movie-guessing game
+- 🏢 **Business Links**: Production companies and distributors are now clickable green links that automatically search in Business Game
+- 🏙️ **City Links**: Real-world cities where movies take place are now clickable green links that automatically search in City Game
+- 📅 **Event Links**: Real-world events featured in movies are now clickable red links that automatically search in Event Game
+- 👥 **Person Links**: Cast, crew, and real-world people are clickable blue links that automatically search in Person Game
+- 🎨 **Visual Design**: Consistent color-coded linking system (green for businesses/cities, red for events, blue for people)
+- 🔄 **Seamless Navigation**: Users can now explore movie-related content across all 7 games with automatic search functionality
+- 📱 **Responsive Design**: Movie cross-game links work perfectly on all devices and screen sizes
+- 🧠 **Smart Detection**: Target games automatically detect incoming searches from movie game and populate input fields
+- 🔗 **Complete Integration**: Movie game now has full cross-game linking with all other games in the platform
+
+### Technology Linking System Enhancement
 - 🔧 **Cross-Game Technology Links**: Added comprehensive technology linking system across all games
 - 🎯 **Person Game Technologies**: Technologies invented or improved by famous people are now clickable links to Invention Game
 - 🏙️ **City Game Technologies**: Notable technologies in cities (invented, improved, designed, manufactured, operated) are now clickable links to Invention Game
