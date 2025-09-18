@@ -64,7 +64,6 @@ Please respond with a JSON object containing the following fields:
 - wikipedia_url: Wikipedia URL for the event (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct event
 - overview: A concise 50-75 word overview of the event's significance and key details
-- city: A modern-day city that is located near the geographic center of the event (if known, otherwise null), entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States")
 
 Make sure to return ONLY valid JSON. Do not include any text before or after the JSON object."""
 
@@ -108,18 +107,28 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 if event_data.get('wikipedia_url') and event_data['wikipedia_url'].lower() != 'n/a':
                     wikipedia_image_url = self._extract_image_from_url(event_data['wikipedia_url'])
                 
-                # Get coordinates for the city if available (preferred for map centering)
+                # Get coordinates for all key cities
+                city_coordinates = []
+                if event_data.get('key_cities'):
+                    for city in event_data['key_cities']:
+                        coords = self._get_location_coordinates(city)
+                        if coords:
+                            city_coordinates.append({
+                                'city': city,
+                                'coordinates': coords
+                            })
+                
+                # Fallback to single location if no key cities or no coordinates found
                 coordinates = None
-                if event_data.get('city'):
-                    coordinates = self._get_location_coordinates(event_data['city'])
-                elif event_data.get('location'):
-                    # Fallback to location if city is not available
-                    coordinates = self._get_location_coordinates(event_data['location'])
+                if not city_coordinates:
+                    if event_data.get('location'):
+                        coordinates = self._get_location_coordinates(event_data['location'])
                 
                 # Add images and coordinates to the response
                 event_data['image_url'] = generated_image_url
                 event_data['wikipedia_image_url'] = wikipedia_image_url
                 event_data['coordinates'] = coordinates
+                event_data['city_coordinates'] = city_coordinates
                 
                 # Ensure key_technologies is included in the response
                 if 'key_technologies' not in event_data:
@@ -150,7 +159,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     'image_url': "https://via.placeholder.com/400x400/EF4444/FFFFFF?text=Parse+Error",
                     'wikipedia_image_url': None,
                     'coordinates': None,
-                    'city': None
+                    'city_coordinates': []
                 }
                 
         except Exception as e:
@@ -170,7 +179,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 'overview': 'An error occurred while trying to identify the event.',
                 'image_url': None,
                 'coordinates': None,
-                'city': None
+                'city_coordinates': []
             }
     
     def _get_wikipedia_image(self, wikipedia_url: str) -> Optional[str]:

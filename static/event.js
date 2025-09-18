@@ -182,6 +182,7 @@ class EventGame {
         const generatedImageUrl = data.image_url;
         const wikipediaImageUrl = data.wikipedia_image_url;
         const coordinates = data.coordinates;
+        const cityCoordinates = data.city_coordinates || [];
         const reasoning = data.reasoning || '';
         const overview = data.overview || '';
         
@@ -263,13 +264,8 @@ class EventGame {
         this.setupClickableLinks();
         
         // Initialize map if coordinates are available
-        if (coordinates && coordinates !== null) {
+        if ((cityCoordinates && cityCoordinates.length > 0) || (coordinates && coordinates !== null)) {
             try {
-                const eventCoords = {
-                    lat: coordinates.lat,
-                    lng: coordinates.lng
-                };
-                
                 // Show the map container
                 if (this.mapEl) {
                     this.mapEl.style.display = 'block';
@@ -280,8 +276,16 @@ class EventGame {
                     this.mapEl.style.border = '1px solid #bae6fd';
                 }
                 
-                // Initialize the map with city context (preferred) or location fallback
-                this.initMap(eventCoords, city || location);
+                // Initialize the map with multiple cities or fallback to single location
+                if (cityCoordinates && cityCoordinates.length > 0) {
+                    this.initMapWithMultipleCities(cityCoordinates, location);
+                } else if (coordinates && coordinates !== null) {
+                    const eventCoords = {
+                        lat: coordinates.lat,
+                        lng: coordinates.lng
+                    };
+                    this.initMap(eventCoords, city || location);
+                }
             } catch (e) {
                 // Error parsing coordinates
                 console.error('Error initializing map:', e);
@@ -399,6 +403,113 @@ class EventGame {
                 `)
             }
         });
+    }
+    
+    initMapWithMultipleCities(cityCoordinates, location = null) {
+        console.log('initMapWithMultipleCities called with cities:', cityCoordinates);
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
+            if (this.mapEl) {
+                this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
+            }
+            return;
+        }
+
+        if (!this.mapEl) {
+            return;
+        }
+
+        // Determine appropriate zoom level based on number of cities and location type
+        let zoomLevel = 10; // Default zoom for cities
+        
+        if (location) {
+            const locationLower = location.toLowerCase();
+            
+            // Check for continents
+            if (locationLower.includes('continent') || 
+                locationLower.includes('north america') || 
+                locationLower.includes('south america') || 
+                locationLower.includes('europe') || 
+                locationLower.includes('asia') || 
+                locationLower.includes('africa') || 
+                locationLower.includes('australia') || 
+                locationLower.includes('antarctica')) {
+                zoomLevel = 3;
+            }
+            // Check for countries
+            else if (locationLower.includes('country') || 
+                     locationLower.includes('nation') || 
+                     locationLower.includes('united states') || 
+                     locationLower.includes('canada') || 
+                     locationLower.includes('china') || 
+                     locationLower.includes('russia') || 
+                     locationLower.includes('brazil') || 
+                     locationLower.includes('australia') || 
+                     locationLower.includes('india')) {
+                zoomLevel = 5;
+            }
+            // Check for states/provinces/regions
+            else if (locationLower.includes('state') || 
+                     locationLower.includes('province') || 
+                     locationLower.includes('region') || 
+                     locationLower.includes('territory') || 
+                     locationLower.includes('county')) {
+                zoomLevel = 7;
+            }
+            // Default to city level
+            else {
+                zoomLevel = 10;
+            }
+        }
+
+        // Calculate center point from all city coordinates
+        const bounds = new google.maps.LatLngBounds();
+        let centerLat = 0, centerLng = 0;
+        
+        cityCoordinates.forEach(cityData => {
+            const coords = cityData.coordinates;
+            bounds.extend(new google.maps.LatLng(coords.lat, coords.lng));
+            centerLat += coords.lat;
+            centerLng += coords.lng;
+        });
+        
+        centerLat /= cityCoordinates.length;
+        centerLng /= cityCoordinates.length;
+
+        const mapOptions = {
+            zoom: zoomLevel,
+            center: { lat: centerLat, lng: centerLng },
+            mapTypeId: 'terrain'
+        };
+        this.map = new google.maps.Map(this.mapEl, mapOptions);
+
+        // Add markers for each city
+        cityCoordinates.forEach((cityData, index) => {
+            const coords = cityData.coordinates;
+            const cityName = cityData.city;
+            
+            const markerTitle = `Key City: ${cityName}`;
+            const cityMarker = new google.maps.Marker({
+                position: coords,
+                map: this.map,
+                title: markerTitle,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#3B82F6" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">C</text>
+                        </svg>
+                    `)
+                }
+            });
+        });
+
+        // Fit map to show all markers if there are multiple cities
+        if (cityCoordinates.length > 1) {
+            this.map.fitBounds(bounds);
+        }
     }
     
     showGameSection() {
