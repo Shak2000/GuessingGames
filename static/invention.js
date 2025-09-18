@@ -366,7 +366,9 @@ class InventionGame {
             const city = guess.city;
             const placesCoordinates = guess.places_coordinates || [];
             const citiesCoordinates = guess.cities_coordinates || [];
-            if ((placesCoordinates && placesCoordinates.length > 0) || (citiesCoordinates && citiesCoordinates.length > 0) || (coordinates && coordinates !== null)) {
+            const designHubsCoordinates = guess.design_hubs_coordinates || [];
+            const manufacturingHubsCoordinates = guess.manufacturing_hubs_coordinates || [];
+            if ((placesCoordinates && placesCoordinates.length > 0) || (citiesCoordinates && citiesCoordinates.length > 0) || (designHubsCoordinates && designHubsCoordinates.length > 0) || (manufacturingHubsCoordinates && manufacturingHubsCoordinates.length > 0) || (coordinates && coordinates !== null)) {
                 try {
                     // Show the map container
                     if (this.mapEl) {
@@ -379,8 +381,8 @@ class InventionGame {
                     }
                     
                     // Initialize the map with multiple locations or fallback to single location
-                    if (placesCoordinates.length > 0 || citiesCoordinates.length > 0) {
-                        this.initMapWithMultipleLocations(placesCoordinates, citiesCoordinates, place);
+                    if (placesCoordinates.length > 0 || citiesCoordinates.length > 0 || designHubsCoordinates.length > 0 || manufacturingHubsCoordinates.length > 0) {
+                        this.initMapWithMultipleLocations(placesCoordinates, citiesCoordinates, designHubsCoordinates, manufacturingHubsCoordinates, place);
                     } else if (coordinates && coordinates !== null) {
                         const inventionCoords = {
                             lat: coordinates.lat,
@@ -633,8 +635,8 @@ class InventionGame {
         });
     }
 
-    initMapWithMultipleLocations(placesCoordinates, citiesCoordinates, location = null) {
-        console.log('initMapWithMultipleLocations called with places:', placesCoordinates, 'cities:', citiesCoordinates);
+    initMapWithMultipleLocations(placesCoordinates, citiesCoordinates, designHubsCoordinates, manufacturingHubsCoordinates, location = null) {
+        console.log('initMapWithMultipleLocations called with places:', placesCoordinates, 'cities:', citiesCoordinates, 'design hubs:', designHubsCoordinates, 'manufacturing hubs:', manufacturingHubsCoordinates);
         console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
         
         if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
@@ -693,7 +695,7 @@ class InventionGame {
         }
 
         // Combine all locations
-        const allLocations = [...placesCoordinates, ...citiesCoordinates];
+        const allLocations = [...placesCoordinates, ...citiesCoordinates, ...designHubsCoordinates, ...manufacturingHubsCoordinates];
         
         // Calculate center point from all location coordinates
         const bounds = new google.maps.LatLngBounds();
@@ -737,12 +739,12 @@ class InventionGame {
             });
         });
 
-        // Add markers for each city
+        // Add markers for each city (invention cities)
         citiesCoordinates.forEach((cityData, index) => {
             const coords = cityData.coordinates;
             const cityName = cityData.city;
             
-            const markerTitle = `City: ${cityName}`;
+            const markerTitle = `Invention City: ${cityName}`;
             const cityMarker = new google.maps.Marker({
                 position: coords,
                 map: this.map,
@@ -750,8 +752,50 @@ class InventionGame {
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="10" fill="#3B82F6" stroke="white" stroke-width="2"/>
-                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">C</text>
+                            <circle cx="12" cy="12" r="10" fill="#059669" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">I</text>
+                        </svg>
+                    `)
+                }
+            });
+        });
+
+        // Add markers for each design hub
+        designHubsCoordinates.forEach((hubData, index) => {
+            const coords = hubData.coordinates;
+            const hubName = hubData.city;
+            
+            const markerTitle = `Design Hub: ${hubName}`;
+            const designHubMarker = new google.maps.Marker({
+                position: coords,
+                map: this.map,
+                title: markerTitle,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#7C3AED" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">D</text>
+                        </svg>
+                    `)
+                }
+            });
+        });
+
+        // Add markers for each manufacturing hub
+        manufacturingHubsCoordinates.forEach((hubData, index) => {
+            const coords = hubData.coordinates;
+            const hubName = hubData.city;
+            
+            const markerTitle = `Manufacturing Hub: ${hubName}`;
+            const manufacturingHubMarker = new google.maps.Marker({
+                position: coords,
+                map: this.map,
+                title: markerTitle,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#EA580C" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">M</text>
                         </svg>
                     `)
                 }

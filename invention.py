@@ -170,13 +170,40 @@ class InventionGuesser:
                         if coords:
                             cities_coordinates.append({
                                 'city': city,
-                                'coordinates': coords
+                                'coordinates': coords,
+                                'type': 'invention_city'
+                            })
+                
+                # Get coordinates for design hubs
+                design_hubs_coordinates = []
+                design_hubs = data.get('design_hubs', [])
+                if design_hubs:
+                    for hub in design_hubs:
+                        coords = self._get_location_coordinates(hub)
+                        if coords:
+                            design_hubs_coordinates.append({
+                                'city': hub,
+                                'coordinates': coords,
+                                'type': 'design_hub'
+                            })
+                
+                # Get coordinates for manufacturing hubs
+                manufacturing_hubs_coordinates = []
+                manufacturing_hubs = data.get('manufacturing_hubs', [])
+                if manufacturing_hubs:
+                    for hub in manufacturing_hubs:
+                        coords = self._get_location_coordinates(hub)
+                        if coords:
+                            manufacturing_hubs_coordinates.append({
+                                'city': hub,
+                                'coordinates': coords,
+                                'type': 'manufacturing_hub'
                             })
                 
                 # Fallback to single location if no multiple locations found
                 coordinates = None
                 city = data.get('city')
-                if not places_coordinates and not cities_coordinates:
+                if not places_coordinates and not cities_coordinates and not design_hubs_coordinates and not manufacturing_hubs_coordinates:
                     if city:
                         coordinates = self._get_location_coordinates(city)
                     elif place_invented:
@@ -208,7 +235,9 @@ class InventionGuesser:
                 "cities": cities,
                 "coordinates": coordinates,
                 "places_coordinates": places_coordinates,
-                "cities_coordinates": cities_coordinates
+                "cities_coordinates": cities_coordinates,
+                "design_hubs_coordinates": design_hubs_coordinates,
+                "manufacturing_hubs_coordinates": manufacturing_hubs_coordinates
             }
 
             return final_response
