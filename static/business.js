@@ -255,11 +255,11 @@ class BusinessGame {
         if (this.shouldDisplay(guess.ticker)) {
             financialInfo += `<p><strong>Ticker:</strong> ${guess.ticker}</p>`;
         }
-        if (this.shouldDisplay(guess.revenue)) financialInfo += `<p><strong>Revenue:</strong> ${this.formatNumberWithCommas(guess.revenue)}</p>`;
-        if (this.shouldDisplay(guess.operating_income)) financialInfo += `<p><strong>Operating Income:</strong> ${this.formatNumberWithCommas(guess.operating_income)}</p>`;
-        if (this.shouldDisplay(guess.net_income)) financialInfo += `<p><strong>Net Income:</strong> ${this.formatNumberWithCommas(guess.net_income)}</p>`;
-        if (this.shouldDisplay(guess.total_assets)) financialInfo += `<p><strong>Total Assets:</strong> ${this.formatNumberWithCommas(guess.total_assets)}</p>`;
-        if (this.shouldDisplay(guess.total_equity)) financialInfo += `<p><strong>Total Equity:</strong> ${this.formatNumberWithCommas(guess.total_equity)}</p>`;
+        if (this.shouldDisplay(guess.revenue)) financialInfo += `<p><strong>Revenue:</strong> ${this.formatCurrencyWithCommas(guess.revenue)}</p>`;
+        if (this.shouldDisplay(guess.operating_income)) financialInfo += `<p><strong>Operating Income:</strong> ${this.formatCurrencyWithCommas(guess.operating_income)}</p>`;
+        if (this.shouldDisplay(guess.net_income)) financialInfo += `<p><strong>Net Income:</strong> ${this.formatCurrencyWithCommas(guess.net_income)}</p>`;
+        if (this.shouldDisplay(guess.total_assets)) financialInfo += `<p><strong>Total Assets:</strong> ${this.formatCurrencyWithCommas(guess.total_assets)}</p>`;
+        if (this.shouldDisplay(guess.total_equity)) financialInfo += `<p><strong>Total Equity:</strong> ${this.formatCurrencyWithCommas(guess.total_equity)}</p>`;
         if (this.shouldDisplay(guess.owner)) {
             financialInfo += `<p><strong>Owner:</strong> ${guess.owner}`;
             if (this.shouldDisplay(guess.owner_equity_percentage)) {
@@ -600,6 +600,11 @@ class BusinessGame {
     formatNumberWithCommas(number) {
         if (!number || isNaN(number)) return number;
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+    formatCurrencyWithCommas(number) {
+        if (!number || isNaN(number)) return number;
+        return '$' + number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
     formatListWithSpaces(list) {

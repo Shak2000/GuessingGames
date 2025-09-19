@@ -314,8 +314,8 @@ class MovieGame {
 
         // Financial Information
         let financial = '';
-        if (movie.budget) financial += `<p><strong>Budget:</strong> ${this.formatNumberWithCommas(movie.budget)}</p>`;
-        if (movie.box_office) financial += `<p><strong>Box Office:</strong> ${this.formatNumberWithCommas(movie.box_office)}</p>`;
+        if (movie.budget) financial += `<p><strong>Budget:</strong> $${this.formatNumberWithCommas(movie.budget)}</p>`;
+        if (movie.box_office) financial += `<p><strong>Box Office:</strong> $${this.formatNumberWithCommas(movie.box_office)}</p>`;
         
         if (financial) {
             this.financialContent.innerHTML = financial;
