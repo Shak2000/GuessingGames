@@ -317,6 +317,9 @@ class BusinessGame {
         if (this.shouldDisplay(guess.website)) {
             moreInfoContent += `<p><strong>Website:</strong> <a href="${guess.website}" target="_blank">Visit Website</a></p>`;
         }
+        if (this.shouldDisplay(guess.ticker)) {
+            moreInfoContent += `<p><strong>Yahoo Finance:</strong> <a href="https://finance.yahoo.com/quote/${guess.ticker}" target="_blank">View Stock Information</a></p>`;
+        }
         if (this.shouldDisplay(guess.wikipedia_url)) {
             moreInfoContent += `<p><strong>Wikipedia:</strong> <a href="${guess.wikipedia_url}" target="_blank">View Wikipedia Page</a></p>`;
         }

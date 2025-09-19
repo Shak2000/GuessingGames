@@ -92,6 +92,7 @@ Please respond with a JSON object containing the following fields:
 - number_of_employees: Number of employees (if known, otherwise null)
 - parent: The parent company (if any, otherwise null)
 - website: The company's website URL (if known, otherwise null)
+- yahoo_finance_url: Yahoo Finance URL for the business (if available, otherwise null)
 - wikipedia_url: Wikipedia URL for the business (if available, otherwise null)
 - overview: A concise 50-75 word overview of the business's history, significance, and notable features
 - reasoning: Your reasoning for why you think this is the correct business
