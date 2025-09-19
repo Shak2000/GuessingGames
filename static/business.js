@@ -322,7 +322,9 @@ class BusinessGame {
         if (this.shouldDisplay(guess.ticker)) {
             // Handle ticker as array or string
             const tickerValue = Array.isArray(guess.ticker) ? guess.ticker[0] : guess.ticker;
-            moreInfoContent += `<p><strong>Yahoo Finance:</strong> <a href="https://finance.yahoo.com/quote/${tickerValue}" target="_blank">View Stock Information</a></p>`;
+            // Replace . with - for Business Insider URL
+            const tickerFormatted = tickerValue.replace('.', '-');
+            moreInfoContent += `<p><strong>Business Insider:</strong> <a href="https://markets.businessinsider.com/stocks/${tickerFormatted}-stock" target="_blank">View Stock Information</a></p>`;
         }
         if (this.shouldDisplay(guess.wikipedia_url)) {
             moreInfoContent += `<p><strong>Wikipedia:</strong> <a href="${guess.wikipedia_url}" target="_blank">View Wikipedia Page</a></p>`;
