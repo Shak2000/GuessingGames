@@ -10,6 +10,7 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin, urlparse
 import googlemaps
+import re
 from config import GEMINI_API_KEY, GOOGLE_MAPS_API_KEY
 
 class BusinessGuesser:
@@ -62,7 +63,7 @@ Please respond with a JSON object containing the following fields:
 - name: The business name
 - type: The business type (public, private, subsidiary, etc.)
 - stock_exchange: The stock exchange where the company is listed (if public, otherwise "N/A")
-- ticker: The stock ticker symbol (if public, otherwise "N/A")
+- ticker: An array of the company's stock ticker symbols (if public, otherwise empty array)
 - industry: An array of industries the business operates in
 - predecessors: An array of predecessor companies (if any, otherwise empty array)
 - previous_names: An array of previous company names (if any, otherwise empty array)
@@ -82,11 +83,6 @@ Please respond with a JSON object containing the following fields:
 - services: An array of main services (if any, otherwise empty array)
 - technologies: An array of main technologies (if any, otherwise empty array), specifically the type rather than brand name (e.g., smartphone, not iPhone)
 - subsidiaries: An array of subsidiary companies (if any, otherwise empty array)
-- revenue: Annual revenue (if known, otherwise null)
-- operating_income: Annual operating income (if known, otherwise null)
-- net_income: Annual net income (if known, otherwise null)
-- total_assets: Total assets (if known, otherwise null)
-- total_equity: Total equity (if known, otherwise null)
 - owner: The owner of the company (if known, otherwise null)
 - owner_equity_percentage: The owner's equity percentage (if owner known, otherwise null)
 - number_of_employees: Number of employees (if known, otherwise null)
@@ -159,6 +155,21 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     if headquarters_coords:
                         coordinates['headquarters'] = headquarters_coords
                 
+                # Get financial data from Macrotrends for publicly traded companies
+                ticker = business_data.get('ticker')
+                company_name = business_data.get('name')
+                macrotrends_data = {}
+                if ticker and company_name:
+                    # Check if ticker is valid (not empty)
+                    is_valid_ticker = False
+                    if isinstance(ticker, list):
+                        is_valid_ticker = len(ticker) > 0
+                    elif isinstance(ticker, str):
+                        is_valid_ticker = len(ticker.strip()) > 0
+                    
+                    if is_valid_ticker:
+                        macrotrends_data = self._scrape_macrotrends_financial_data(ticker, company_name)
+                
                 # Build the final response as JSON (matching other games structure)
                 final_response = {
                     "name": business_data.get('name'),
@@ -184,11 +195,11 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "services": business_data.get('services', []),
                     "technologies": business_data.get('technologies', []),
                     "subsidiaries": business_data.get('subsidiaries', []),
-                    "revenue": business_data.get('revenue'),
-                    "operating_income": business_data.get('operating_income'),
-                    "net_income": business_data.get('net_income'),
-                    "total_assets": business_data.get('total_assets'),
-                    "total_equity": business_data.get('total_equity'),
+                    "revenue": macrotrends_data.get('revenue'),
+                    "operating_income": macrotrends_data.get('operating_income'),
+                    "net_income": macrotrends_data.get('net_income'),
+                    "total_assets": macrotrends_data.get('total_assets'),
+                    "total_equity": macrotrends_data.get('total_equity'),
                     "owner": business_data.get('owner'),
                     "owner_equity_percentage": business_data.get('owner_equity_percentage'),
                     "number_of_employees": business_data.get('number_of_employees'),
@@ -407,6 +418,126 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             
         except Exception as e:
             print(f"Error getting coordinates for {place_name}: {str(e)}")
+            return None
+    
+    def _scrape_macrotrends_financial_data(self, ticker, company_name: str) -> Dict[str, Optional[str]]:
+        """Scrape financial data from Macrotrends for a given ticker and company name."""
+        # Handle ticker as either string or array
+        if isinstance(ticker, list):
+            if not ticker or len(ticker) == 0:
+                return {
+                    'revenue': None,
+                    'operating_income': None,
+                    'net_income': None,
+                    'total_assets': None,
+                    'total_equity': None
+                }
+            # Use the first ticker for financial data
+            ticker = ticker[0]
+        
+        if not ticker or len(ticker.strip()) == 0:
+            return {
+                'revenue': None,
+                'operating_income': None,
+                'net_income': None,
+                'total_assets': None,
+                'total_equity': None
+            }
+        
+        # Convert company name to URL format (spaces to dashes, lowercase)
+        name_formatted = company_name.lower().replace(' ', '-').replace('.', '').replace(',', '')
+        
+        financial_data = {
+            'revenue': None,
+            'operating_income': None,
+            'net_income': None,
+            'total_assets': None,
+            'total_equity': None
+        }
+        
+        # URLs for different financial metrics
+        urls = {
+            'revenue': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/revenue",
+            'operating_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/operating-income",
+            'net_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/net-income",
+            'total_assets': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-assets",
+            'total_equity': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-share-holder-equity"
+        }
+        
+        for metric, url in urls.items():
+            try:
+                headers = {
+                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+                }
+                response = requests.get(url, headers=headers, timeout=10)
+                response.raise_for_status()
+                
+                soup = BeautifulSoup(response.content, 'html.parser')
+                
+                # Look for the financial data in various possible locations
+                value = self._extract_financial_value(soup, metric)
+                if value:
+                    financial_data[metric] = value
+                    
+            except Exception as e:
+                print(f"Error scraping {metric} for {ticker}: {str(e)}")
+                continue
+        
+        return financial_data
+    
+    def _extract_financial_value(self, soup: BeautifulSoup, metric: str) -> Optional[str]:
+        """Extract financial value from Macrotrends page."""
+        try:
+            # Look for different patterns that might contain the financial data
+            
+            # Pattern 1: Look for text containing "for the twelve months ending" or "for the quarter ending"
+            time_periods = {
+                'revenue': 'for the twelve months ending',
+                'operating_income': 'for the twelve months ending', 
+                'net_income': 'for the twelve months ending',
+                'total_assets': 'for the quarter ending',
+                'total_equity': 'for the quarter ending'
+            }
+            
+            time_period = time_periods.get(metric, 'for the twelve months ending')
+            
+            # Find elements containing the time period text
+            elements = soup.find_all(text=re.compile(time_period, re.IGNORECASE))
+            
+            for element in elements:
+                # Look for the parent element and then search for financial values
+                parent = element.parent
+                if parent:
+                    # Look for text containing $ and B or M
+                    financial_text = parent.find(text=re.compile(r'\$[\d,]+\.?\d*[BM]'))
+                    if financial_text:
+                        return financial_text.strip()
+                    
+                    # Also check siblings
+                    for sibling in parent.find_next_siblings():
+                        financial_text = sibling.find(text=re.compile(r'\$[\d,]+\.?\d*[BM]'))
+                        if financial_text:
+                            return financial_text.strip()
+            
+            # Pattern 2: Look for any element containing financial data pattern
+            financial_elements = soup.find_all(text=re.compile(r'\$[\d,]+\.?\d*[BM]'))
+            if financial_elements:
+                # Return the first match
+                return financial_elements[0].strip()
+            
+            # Pattern 3: Look for specific table cells or divs that might contain the data
+            tables = soup.find_all('table')
+            for table in tables:
+                cells = table.find_all(['td', 'th'])
+                for cell in cells:
+                    text = cell.get_text().strip()
+                    if re.search(r'\$[\d,]+\.?\d*[BM]', text):
+                        return text
+            
+            return None
+            
+        except Exception as e:
+            print(f"Error extracting financial value for {metric}: {str(e)}")
             return None
 
 # Create a global instance for the API to use

@@ -253,7 +253,9 @@ class BusinessGame {
             financialInfo += `<p><strong>Stock Exchange:</strong> ${guess.stock_exchange}</p>`;
         }
         if (this.shouldDisplay(guess.ticker)) {
-            financialInfo += `<p><strong>Ticker:</strong> ${guess.ticker}</p>`;
+            // Format ticker list with spaces after commas
+            const tickerDisplay = Array.isArray(guess.ticker) ? guess.ticker.join(', ') : guess.ticker;
+            financialInfo += `<p><strong>Ticker:</strong> ${tickerDisplay}</p>`;
         }
         if (this.shouldDisplay(guess.revenue)) financialInfo += `<p><strong>Revenue:</strong> ${this.formatCurrencyWithCommas(guess.revenue)}</p>`;
         if (this.shouldDisplay(guess.operating_income)) financialInfo += `<p><strong>Operating Income:</strong> ${this.formatCurrencyWithCommas(guess.operating_income)}</p>`;
@@ -318,7 +320,9 @@ class BusinessGame {
             moreInfoContent += `<p><strong>Website:</strong> <a href="${guess.website}" target="_blank">Visit Website</a></p>`;
         }
         if (this.shouldDisplay(guess.ticker)) {
-            moreInfoContent += `<p><strong>Yahoo Finance:</strong> <a href="https://finance.yahoo.com/quote/${guess.ticker}" target="_blank">View Stock Information</a></p>`;
+            // Handle ticker as array or string
+            const tickerValue = Array.isArray(guess.ticker) ? guess.ticker[0] : guess.ticker;
+            moreInfoContent += `<p><strong>Yahoo Finance:</strong> <a href="https://finance.yahoo.com/quote/${tickerValue}" target="_blank">View Stock Information</a></p>`;
         }
         if (this.shouldDisplay(guess.wikipedia_url)) {
             moreInfoContent += `<p><strong>Wikipedia:</strong> <a href="${guess.wikipedia_url}" target="_blank">View Wikipedia Page</a></p>`;
