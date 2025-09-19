@@ -81,10 +81,12 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 📝 **Comprehensive Business Data**: Complete JSON information including founding details, financial data, leadership, products/services, and company history
 - 📸 **Automatic Logo Extraction**: Beautiful Soup extracts business logos from Wikipedia pages
 - 🗺️ **Interactive Maps**: Google Maps integration showing business headquarters and locations
-- 💰 **Financial Information**: Revenue, market cap, employee count, and other business metrics when available
+- 💰 **Real-time Financial Data**: Automatically scrapes financial information from Macrotrends including revenue, operating income, net income, total assets, and total equity ✨ **NEW**
+- 📊 **Multiple Stock Support**: Handles companies with multiple stock classes (e.g., Berkshire Hathaway BRK.A, BRK.B) ✨ **NEW**
+- 🔗 **Business Insider Integration**: Direct links to Business Insider stock pages for market data ✨ **NEW**
 - 👔 **Leadership Details**: CEO, founders, and key executives information
 - 🏢 **Company Overview**: Industry, products/services, and business model descriptions
-- 🔧 **Technologies**: Displays main technologies used by the business with clickable links to Invention Game ✨ **NEW**
+- 🔧 **Technologies**: Displays main technologies used by the business with clickable links to Invention Game
 - 🔗 **Wikipedia Integration**: Direct links to business Wikipedia pages with automatic image extraction
 - ⚡ **Real-time**: Fast API responses with loading indicators and button states
 - 🔧 **Clean Architecture**: Proper FastAPI static file serving and organized project structure
@@ -326,16 +328,18 @@ The application will be available at `http://localhost:8000`
    - **Overview Box**: A concise 50-75 word summary of the business's history and significance
    - **Comprehensive Business Data**: Complete information including founding details, financial data, leadership, products/services, and company history
    - **Interactive Map**: Google Maps showing business headquarters and locations
-   - **Financial Information**: Revenue, market cap, employee count, and other business metrics when available
+   - **Financial Information**: Real-time financial data scraped from Macrotrends including revenue, operating income, net income, total assets, and total equity ✨ **NEW**
    - **Leadership Details**: CEO, founders, and key executives information
-   - **Technologies**: Main technologies used by the business with clickable links to Invention Game ✨ **NEW**
-   - **Wikipedia Link**: Direct link to the business's Wikipedia page
+   - **Technologies**: Main technologies used by the business with clickable links to Invention Game
+   - **More Information Links**: Website, Business Insider stock page, and Wikipedia page ✨ **NEW**
    - **Explanation Box**: The AI's reasoning in a gray box below
 4. **Provide Feedback**: Click "Correct" if the guess is right, or "Incorrect" if it's wrong
 5. **Continue**: If incorrect, the AI will make another guess with improved context
 6. **Explore Technologies**: Click any technology link to automatically search in the Invention Game
-7. **Victory**: When the AI guesses correctly, you'll see a victory message!
-8. **New Game**: Start fresh anytime by entering new information
+7. **Access Financial Data**: Financial information is automatically sourced from Macrotrends for publicly traded companies ✨ **NEW**
+8. **Multiple Stock Support**: Companies with multiple stock classes (like Berkshire Hathaway) are fully supported ✨ **NEW**
+9. **Victory**: When the AI guesses correctly, you'll see a victory message!
+10. **New Game**: Start fresh anytime by entering new information
 
 ### Guess the Movie Game
 1. **Enter Information**: Type information about a movie in the text area
