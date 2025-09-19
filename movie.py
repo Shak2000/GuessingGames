@@ -60,6 +60,7 @@ class MovieGuesser:
 
 Please respond with a JSON object containing the following fields:
 - name: The movie title
+- mpaa_rating: The movie's MPAA rating (G, PG, PG-13, R, NC-17, Not Rated)
 - genre: An array of the movie's genres
 - directed_by: An array of director names
 - screenplay_by: An array of screenwriter names
@@ -81,6 +82,8 @@ Please respond with a JSON object containing the following fields:
 - people: An array of real-world people who appear as characters in the movie, or empty array [] if unknown
 - cities: An array of real-world cities where the movie takes place, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
 - events: An array of real-world events where the movie takes place, or empty array [] if unknown
+- imdb_url: IMDB URL for the movie (if available, otherwise null)
+- rotten_tomatoes_url: Rotten Tomatoes URL for the movie (if available, otherwise null)
 - wikipedia_url: Wikipedia URL for the movie (if available, otherwise null)
 - reasoning: Your reasoning for why you think this is the correct movie
 - overview: A concise 50-75 word overview of the movie's plot, significance, and notable features

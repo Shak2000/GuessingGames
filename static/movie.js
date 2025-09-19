@@ -275,6 +275,7 @@ class MovieGame {
     displayMovieDetails(movie) {
         // Basic Information
         let basicInfo = '';
+        if (movie.mpaa_rating) basicInfo += `<p><strong>MPAA Rating:</strong> ${movie.mpaa_rating}</p>`;
         if (movie.genre && movie.genre.length > 0) basicInfo += `<p><strong>Genre:</strong> ${movie.genre.join(', ')}</p>`;
         if (movie.running_time) basicInfo += `<p><strong>Running Time:</strong> ${movie.running_time} minutes</p>`;
         if (movie.country && movie.country.length > 0) basicInfo += `<p><strong>Country:</strong> ${movie.country.join(', ')}</p>`;
@@ -337,6 +338,12 @@ class MovieGame {
 
         // More Information
         let moreInfo = '';
+        if (movie.imdb_url) {
+            moreInfo += `<p><strong>IMDb:</strong> <a href="${movie.imdb_url}" target="_blank" rel="noopener noreferrer">View on IMDb</a></p>`;
+        }
+        if (movie.rotten_tomatoes_url) {
+            moreInfo += `<p><strong>Rotten Tomatoes:</strong> <a href="${movie.rotten_tomatoes_url}" target="_blank" rel="noopener noreferrer">View on Rotten Tomatoes</a></p>`;
+        }
         if (movie.wikipedia_url) {
             moreInfo += `<p><strong>Wikipedia:</strong> <a href="${movie.wikipedia_url}" target="_blank" rel="noopener noreferrer">View on Wikipedia</a></p>`;
         }
