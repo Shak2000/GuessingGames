@@ -200,6 +200,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "net_income": macrotrends_data.get('net_income'),
                     "total_assets": macrotrends_data.get('total_assets'),
                     "total_equity": macrotrends_data.get('total_equity'),
+                    "market_cap": macrotrends_data.get('market_cap'),
                     "owner": business_data.get('owner'),
                     "owner_equity_percentage": business_data.get('owner_equity_percentage'),
                     "number_of_employees": business_data.get('number_of_employees'),
@@ -240,6 +241,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "net_income": None,
                     "total_assets": None,
                     "total_equity": None,
+                    "market_cap": None,
                     "owner": None,
                     "owner_equity_percentage": None,
                     "number_of_employees": None,
@@ -276,6 +278,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 "net_income": None,
                 "total_assets": None,
                 "total_equity": None,
+                "market_cap": None,
                 "owner": None,
                 "owner_equity_percentage": None,
                 "number_of_employees": None,
@@ -430,7 +433,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     'operating_income': None,
                     'net_income': None,
                     'total_assets': None,
-                    'total_equity': None
+                    'total_equity': None,
+                    'market_cap': None
                 }
             # Use the first ticker for financial data
             ticker = ticker[0]
@@ -441,7 +445,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 'operating_income': None,
                 'net_income': None,
                 'total_assets': None,
-                'total_equity': None
+                'total_equity': None,
+                'market_cap': None
             }
         
         # Convert company name to URL format (spaces to dashes, lowercase)
@@ -452,7 +457,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             'operating_income': None,
             'net_income': None,
             'total_assets': None,
-            'total_equity': None
+            'total_equity': None,
+            'market_cap': None
         }
         
         # URLs for different financial metrics
@@ -461,7 +467,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             'operating_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/operating-income",
             'net_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/net-income",
             'total_assets': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-assets",
-            'total_equity': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-share-holder-equity"
+            'total_equity': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-share-holder-equity",
+            'market_cap': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/market-cap"
         }
         
         for metric, url in urls.items():
@@ -496,7 +503,8 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 'operating_income': 'for the twelve months ending', 
                 'net_income': 'for the twelve months ending',
                 'total_assets': 'for the quarter ending',
-                'total_equity': 'for the quarter ending'
+                'total_equity': 'for the quarter ending',
+                'market_cap': 'market cap as of'
             }
             
             time_period = time_periods.get(metric, 'for the twelve months ending')
