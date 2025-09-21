@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Multi-Game App</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="stylesheet" href="/static/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="/static/toolbar.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Toolbar -->
+        <nav class="toolbar">
+            <div class="toolbar-content">
+                <a href="/" class="toolbar-item">🏠 Home</a>
+                <a href="/person" class="toolbar-item">🎭 Guess the Famous Person</a>
+                <a href="/city" class="toolbar-item">🏙️ Guess the City</a>
+                <a href="/odd" class="toolbar-item">🎪 Odd Situation Game</a>
+                <a href="/event" class="toolbar-item">📅 Guess the Event</a>
+                <a href="/business" class="toolbar-item">🏢 Guess the Business</a>
+                <a href="/invention" class="toolbar-item">🔧 Guess the Invention</a>
+                <a href="/movie" class="toolbar-item">🎬 Guess the Movie</a>
+                <a href="/settings" class="toolbar-item active">⚙️ Settings</a>
+            </div>
+        </nav>
+
+        <header class="header">
+            <h1 class="title">⚙️ Settings</h1>
+            <p class="subtitle">Customize your voice preferences for text-to-speech</p>
+        </header>
+
+        <main class="main-content">
+            <div class="settings-container">
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <h2 class="settings-title">🎤 Voice Settings</h2>
+                        <p class="settings-description">Choose your preferred voice for Gemini TTS</p>
+                    </div>
+                    
+                    <div class="settings-card-content">
+                        <form id="settings-form" class="settings-form">
+                            <div class="form-group">
+                                <label for="voice-select" class="form-label">Select Voice:</label>
+                                <select id="voice-select" name="voice" class="form-select" required>
+                                    <option value="">-- Choose a voice --</option>
+                                    <!-- Voice options will be populated by JavaScript -->
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="sample-text" class="form-label">Sample Text (for testing):</label>
+                                <input type="text" id="sample-text" name="sample-text" class="form-input" 
+                                       value="Hello! This is how I sound with the selected voice." 
+                                       placeholder="Enter text to test the voice">
+                            </div>
+                            
+                            <div class="form-actions">
+                                <button type="button" id="test-voice-btn" class="btn btn-secondary" disabled>
+                                    🔊 Test Voice
+                                </button>
+                                <button type="submit" id="save-settings-btn" class="btn btn-primary" disabled>
+                                    💾 Save Settings
+                                </button>
+                            </div>
+                        </form>
+                        
+                        <div id="status-message" class="status-message" style="display: none;"></div>
+                        
+                        <div class="current-settings">
+                            <h3>Current Settings:</h3>
+                            <p>Voice: <span id="current-voice">Not set</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-info">
+                    <h3>About Voice Settings</h3>
+                    <p>The voice you select will be used for text-to-speech functionality across all games in the Multi-Game App. You can test different voices before saving your preference.</p>
+                    
+                    <h4>Available Voices</h4>
+                    <p>We use Google's Gemini 2.5 Flash Preview TTS, which offers a variety of high-quality voices including:</p>
+                    <ul>
+                        <li><strong>Female voices:</strong> Achernar, Aoede, Autonoe, Callirrhoe, Sulafat, Vindemiatrix, Zephyr</li>
+                        <li><strong>Male voices:</strong> Achird, Algenib, Algieba, Alnilam, Charon, Umbriel, Zubenelgenubi</li>
+                        <li><strong>And many more...</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Multi-Game Platform - Powered by AI</p>
+        </footer>
+    </div>
+    
+    <script src="/static/settings.js"></script>
+</body>
+</html>

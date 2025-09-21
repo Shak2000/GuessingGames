@@ -1428,3 +1428,213 @@ body {
 .wiki-link:hover {
     text-decoration: underline;
 }
+
+/* Settings Page Styles */
+.settings-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.settings-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 30px;
+}
+
+.settings-card-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.settings-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.settings-description {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.settings-card-content {
+    padding: 30px;
+}
+
+.settings-form {
+    margin-bottom: 30px;
+}
+
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #4f46e5;
+    font-size: 1rem;
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: white;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 25px;
+}
+
+.form-actions .btn {
+    flex: 1;
+}
+
+.status-message {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+}
+
+.status-message.success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.status-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+
+.current-settings {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.current-settings h3 {
+    color: #4f46e5;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.current-settings p {
+    margin: 0;
+    color: #64748b;
+}
+
+.current-settings span {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.settings-info {
+    background: #f8fafc;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.settings-info h3 {
+    color: #4f46e5;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.settings-info h4 {
+    color: #4f46e5;
+    margin: 20px 0 10px 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.settings-info p {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    color: #475569;
+}
+
+.settings-info ul {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.settings-info li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+    color: #475569;
+}
+
+/* Responsive adjustments for settings */
+@media (max-width: 768px) {
+    .settings-container {
+        max-width: 100%;
+    }
+    
+    .settings-card-header {
+        padding: 20px;
+    }
+    
+    .settings-title {
+        font-size: 1.5rem;
+    }
+    
+    .settings-card-content {
+        padding: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+    
+    .settings-info {
+        padding: 20px;
+    }
+}

@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
@@ -11,8 +11,95 @@ from event import event_guesser
 from business import business_guesser
 from invention import invention_guesser
 from movie import movie_guesser
+from settings import settings_manager
 
 app = FastAPI(title="Multi-Game App", version="1.0.0")
+
+# TTS Helper Functions
+async def generate_tts_audio(text: str, voice: str, prompt: str = "Say the following in a natural way") -> bytes:
+    """
+    Generate TTS audio using Gemini TTS.
+    
+    Args:
+        text: Text to synthesize
+        voice: Voice name to use
+        prompt: Prompt for controlling speech style
+        
+    Returns:
+        Audio content as bytes
+        
+    Raises:
+        HTTPException: If TTS generation fails
+    """
+    try:
+        from google.cloud import texttospeech
+    except ImportError:
+        raise HTTPException(
+            status_code=500, 
+            detail="Google Cloud Text-to-Speech library not installed. Run: pip install google-cloud-texttospeech>=2.29.0"
+        )
+    
+    # Validate voice
+    if not settings_manager.is_valid_voice(voice):
+        raise HTTPException(status_code=400, detail=f"Invalid voice: {voice}")
+    
+    # Initialize client
+    try:
+        client = texttospeech.TextToSpeechClient()
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to initialize Google Cloud TTS client. Please ensure your credentials are set up correctly. Error: {str(e)}"
+        )
+    
+    # Set up synthesis input
+    synthesis_input = texttospeech.SynthesisInput(
+        text=text,
+        prompt=prompt
+    )
+    
+    # Configure voice parameters
+    voice_params = texttospeech.VoiceSelectionParams(
+        language_code="en-US",
+        name=voice,
+        model_name="gemini-2.5-flash-preview-tts"
+    )
+    
+    # Configure audio output
+    audio_config = texttospeech.AudioConfig(
+        audio_encoding=texttospeech.AudioEncoding.MP3
+    )
+    
+    # Perform synthesis
+    try:
+        response = client.synthesize_speech(
+            input=synthesis_input,
+            voice=voice_params,
+            audio_config=audio_config
+        )
+        return response.audio_content
+    except Exception as e:
+        error_message = str(e)
+        if "PERMISSION_DENIED" in error_message:
+            raise HTTPException(
+                status_code=403,
+                detail="Permission denied. Please ensure your Google Cloud project has the Text-to-Speech API enabled and you have the required permissions."
+            )
+        elif "NOT_FOUND" in error_message:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Voice '{voice}' not found or not available in the Gemini TTS model."
+            )
+        elif "INVALID_ARGUMENT" in error_message:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid request parameters. Please check the voice name and text content."
+            )
+        else:
+            raise HTTPException(
+                status_code=500,
+                detail=f"Text-to-Speech synthesis failed: {error_message}"
+            )
 
 # Mount static files
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -79,6 +166,18 @@ class MovieFeedback(BaseModel):
     session_id: int
     is_correct: bool
 
+class VoiceSettings(BaseModel):
+    voice: str
+
+class VoiceTestRequest(BaseModel):
+    voice: str
+    text: str
+
+class TTSRequest(BaseModel):
+    voice: str
+    text: str
+    prompt: Optional[str] = "Say the following in a natural way"
+
 @app.get("/")
 async def read_index():
     """Serve the home page."""
@@ -118,6 +217,11 @@ async def read_invention():
 async def read_movie():
     """Serve the Guess the Movie game page."""
     return FileResponse("static/movie.html")
+
+@app.get("/settings")
+async def read_settings():
+    """Serve the Settings page."""
+    return FileResponse("static/settings.html")
 
 @app.post("/api/start-guess")
 async def start_guess(user_input: UserInput):
@@ -370,6 +474,116 @@ async def get_movie_session(session_id: int):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting movie session: {str(e)}")
+
+# Settings API Routes
+@app.get("/api/get-settings")
+async def get_user_settings(request: Request, response: Response):
+    """Get current user settings."""
+    try:
+        # Get user ID from request
+        user_id = settings_manager.get_user_id_from_request(request)
+        
+        # Set user ID cookie if not exists
+        if not request.cookies.get('user_id'):
+            response.set_cookie(key="user_id", value=user_id, max_age=30*24*60*60)  # 30 days
+        
+        # Load user settings
+        user_settings = settings_manager.load_user_settings(user_id)
+        
+        return {
+            "voice": user_settings.get("voice"),
+            "language_code": user_settings.get("language_code"),
+            "available_voices": settings_manager.get_available_voices()
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting settings: {str(e)}")
+
+@app.post("/api/save-settings")
+async def save_user_settings(voice_settings: VoiceSettings, request: Request, response: Response):
+    """Save user voice settings."""
+    try:
+        # Validate voice
+        if not settings_manager.is_valid_voice(voice_settings.voice):
+            raise HTTPException(status_code=400, detail=f"Invalid voice: {voice_settings.voice}")
+        
+        # Get user ID from request
+        user_id = settings_manager.get_user_id_from_request(request)
+        
+        # Set user ID cookie if not exists
+        if not request.cookies.get('user_id'):
+            response.set_cookie(key="user_id", value=user_id, max_age=30*24*60*60)  # 30 days
+        
+        # Update voice setting
+        success = settings_manager.update_voice_setting(user_id, voice_settings.voice)
+        
+        if success:
+            return {"message": "Settings saved successfully", "voice": voice_settings.voice}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to save settings")
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error saving settings: {str(e)}")
+
+@app.post("/api/test-voice")
+async def test_voice(voice_test: VoiceTestRequest, request: Request):
+    """Test a voice by generating sample audio using Gemini TTS."""
+    try:
+        # Create a friendly prompt for testing
+        prompt = "Say the following in a friendly and natural way"
+        
+        # Generate audio using the helper function
+        audio_content = await generate_tts_audio(
+            text=voice_test.text,
+            voice=voice_test.voice,
+            prompt=prompt
+        )
+        
+        # Return the audio content
+        return Response(
+            content=audio_content,
+            media_type="audio/mpeg",
+            headers={
+                "Content-Disposition": f"inline; filename={voice_test.voice}_test.mp3",
+                "Cache-Control": "no-cache"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error during voice testing: {str(e)}")
+
+@app.post("/api/generate-tts")
+async def generate_tts(tts_request: TTSRequest, request: Request):
+    """Generate TTS audio with custom prompt using Gemini TTS."""
+    try:
+        # Get user ID for voice preference if not specified
+        user_id = settings_manager.get_user_id_from_request(request)
+        voice = tts_request.voice or settings_manager.get_user_voice(user_id)
+        
+        # Generate audio using the helper function
+        audio_content = await generate_tts_audio(
+            text=tts_request.text,
+            voice=voice,
+            prompt=tts_request.prompt
+        )
+        
+        # Return the audio content
+        return Response(
+            content=audio_content,
+            media_type="audio/mpeg",
+            headers={
+                "Content-Disposition": f"inline; filename=tts_output.mp3",
+                "Cache-Control": "no-cache"
+            }
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Unexpected error during TTS generation: {str(e)}")
 
 @app.get("/api/health")
 async def health_check():
