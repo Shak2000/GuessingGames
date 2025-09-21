@@ -391,12 +391,21 @@ class BusinessGame {
         let markerCount = 0;
         let coordsAreIdentical = false;
 
+        // Get city information for tooltips
+        const cityInfo = this.getCityInfoFromGuess();
+
+        // Track which markers are present
+        this.markersPresent = {
+            founding: false,
+            headquarters: false
+        };
+
         // Add founding city marker
         if (coordinates.founding) {
             const foundingMarker = new google.maps.Marker({
                 position: coordinates.founding,
                 map: this.map,
-                title: `Founded in`,
+                title: `Founded: ${cityInfo.founding || 'Unknown location'}`,
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -408,6 +417,7 @@ class BusinessGame {
             });
             bounds.extend(foundingMarker.getPosition());
             markerCount++;
+            this.markersPresent.founding = true;
         }
 
         // Add headquarters marker
@@ -415,7 +425,7 @@ class BusinessGame {
             const headquartersMarker = new google.maps.Marker({
                 position: coordinates.headquarters,
                 map: this.map,
-                title: `Headquarters`,
+                title: `Headquarters: ${cityInfo.headquarters || 'Unknown location'}`,
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -427,6 +437,7 @@ class BusinessGame {
             });
             bounds.extend(headquartersMarker.getPosition());
             markerCount++;
+            this.markersPresent.headquarters = true;
         }
 
         // Check if coordinates are identical (same city)
@@ -444,6 +455,9 @@ class BusinessGame {
                 coordsAreIdentical = true;
             }
         }
+
+        // Add legend after all markers are processed
+        this.addMapLegend();
 
         if (markerCount > 0) {
             this.mapEl.style.display = 'block';
@@ -969,6 +983,92 @@ class BusinessGame {
                 voiceBtn.title = 'Read overview aloud';
             }, 3000);
         }
+    }
+
+    getCityInfoFromGuess() {
+        // Extract city information from the currently displayed guess
+        const cityInfo = {
+            founding: null,
+            headquarters: null
+        };
+
+        // Look for city information in the basic info section
+        const basicInfoSection = document.getElementById('basicInfoContent');
+        if (basicInfoSection) {
+            const content = basicInfoSection.innerHTML;
+            
+            // Extract founding city
+            const foundingMatch = content.match(/<strong>Founded in:<\/strong>\s*<span[^>]*data-city="([^"]*)"[^>]*>([^<]*)<\/span>/);
+            if (foundingMatch) {
+                cityInfo.founding = foundingMatch[1];
+            }
+            
+            // Extract headquarters city
+            const headquartersMatch = content.match(/<strong>Headquarters:<\/strong>\s*<span[^>]*data-city="([^"]*)"[^>]*>([^<]*)<\/span>/);
+            if (headquartersMatch) {
+                cityInfo.headquarters = headquartersMatch[1];
+            }
+        }
+
+        return cityInfo;
+    }
+
+    addMapLegend() {
+        if (!this.map || !this.markersPresent) return;
+
+        // Only show legend items for markers that are actually present
+        let legendItems = [];
+
+        if (this.markersPresent.founding) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #10B981; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">F</span>
+                    </div>
+                    <span>Founded</span>
+                </div>
+            `);
+        }
+
+        if (this.markersPresent.headquarters) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #3B82F6; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">H</span>
+                    </div>
+                    <span>Headquarters</span>
+                </div>
+            `);
+        }
+
+        // Only create legend if there are markers present
+        if (legendItems.length === 0) return;
+
+        // Create legend element
+        const legend = document.createElement('div');
+        legend.style.backgroundColor = 'white';
+        legend.style.border = '2px solid #999';
+        legend.style.borderRadius = '8px';
+        legend.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        legend.style.cursor = 'pointer';
+        legend.style.marginBottom = '22px';
+        legend.style.marginRight = '10px';
+        legend.style.textAlign = 'center';
+        legend.style.padding = '8px';
+        legend.style.fontFamily = 'Roboto,Arial,sans-serif';
+        legend.style.fontSize = '13px';
+        legend.style.fontWeight = '300';
+        legend.style.lineHeight = '1.2';
+
+        legend.innerHTML = `
+            <div style="margin-bottom: 6px; font-weight: bold;">Map Legend</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                ${legendItems.join('')}
+            </div>
+        `;
+
+        // Add legend to map controls
+        this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
     }
 }
 

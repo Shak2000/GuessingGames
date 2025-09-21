@@ -626,6 +626,14 @@ class InventionGame {
         };
         this.map = new google.maps.Map(this.mapEl, mapOptions);
 
+        // Track which markers are present
+        this.markersPresent = {
+            placesInvented: false,
+            inventionCities: true, // This is the invention location
+            designHubs: false,
+            manufacturingHubs: false
+        };
+
         // Add marker for the invention location
         const markerTitle = location ? `Invention Location: ${location}` : 'Invention Location';
         const inventionMarker = new google.maps.Marker({
@@ -641,6 +649,9 @@ class InventionGame {
                 `)
             }
         });
+
+        // Add legend
+        this.addMapLegend();
     }
 
     initMapWithMultipleLocations(placesCoordinates, citiesCoordinates, designHubsCoordinates, manufacturingHubsCoordinates, location = null) {
@@ -726,89 +737,112 @@ class InventionGame {
         };
         this.map = new google.maps.Map(this.mapEl, mapOptions);
 
+        // Track which markers are present
+        this.markersPresent = {
+            placesInvented: false,
+            inventionCities: false,
+            designHubs: false,
+            manufacturingHubs: false
+        };
+
         // Add markers for each place invented
-        placesCoordinates.forEach((placeData, index) => {
-            const coords = placeData.coordinates;
-            const placeName = placeData.place;
-            
-            const markerTitle = `Place Invented: ${placeName}`;
-            const placeMarker = new google.maps.Marker({
-                position: coords,
-                map: this.map,
-                title: markerTitle,
-                icon: {
-                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="10" fill="#DC2626" stroke="white" stroke-width="2"/>
-                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">P</text>
-                        </svg>
-                    `)
-                }
+        if (placesCoordinates.length > 0) {
+            this.markersPresent.placesInvented = true;
+            placesCoordinates.forEach((placeData, index) => {
+                const coords = placeData.coordinates;
+                const placeName = placeData.place;
+                
+                const markerTitle = `Place Invented: ${placeName}`;
+                const placeMarker = new google.maps.Marker({
+                    position: coords,
+                    map: this.map,
+                    title: markerTitle,
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" fill="#DC2626" stroke="white" stroke-width="2"/>
+                                <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">P</text>
+                            </svg>
+                        `)
+                    }
+                });
             });
-        });
+        }
 
         // Add markers for each city (invention cities)
-        citiesCoordinates.forEach((cityData, index) => {
-            const coords = cityData.coordinates;
-            const cityName = cityData.city;
-            
-            const markerTitle = `Invention City: ${cityName}`;
-            const cityMarker = new google.maps.Marker({
-                position: coords,
-                map: this.map,
-                title: markerTitle,
-                icon: {
-                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="10" fill="#059669" stroke="white" stroke-width="2"/>
-                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">I</text>
-                        </svg>
-                    `)
-                }
+        if (citiesCoordinates.length > 0) {
+            this.markersPresent.inventionCities = true;
+            citiesCoordinates.forEach((cityData, index) => {
+                const coords = cityData.coordinates;
+                const cityName = cityData.city;
+                
+                const markerTitle = `Invention City: ${cityName}`;
+                const cityMarker = new google.maps.Marker({
+                    position: coords,
+                    map: this.map,
+                    title: markerTitle,
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" fill="#059669" stroke="white" stroke-width="2"/>
+                                <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">I</text>
+                            </svg>
+                        `)
+                    }
+                });
             });
-        });
+        }
 
         // Add markers for each design hub
-        designHubsCoordinates.forEach((hubData, index) => {
-            const coords = hubData.coordinates;
-            const hubName = hubData.city;
-            
-            const markerTitle = `Design Hub: ${hubName}`;
-            const designHubMarker = new google.maps.Marker({
-                position: coords,
-                map: this.map,
-                title: markerTitle,
-                icon: {
-                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="10" fill="#7C3AED" stroke="white" stroke-width="2"/>
-                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">D</text>
-                        </svg>
-                    `)
-                }
+        if (designHubsCoordinates.length > 0) {
+            this.markersPresent.designHubs = true;
+            designHubsCoordinates.forEach((hubData, index) => {
+                const coords = hubData.coordinates;
+                const hubName = hubData.city;
+                
+                const markerTitle = `Design Hub: ${hubName}`;
+                const designHubMarker = new google.maps.Marker({
+                    position: coords,
+                    map: this.map,
+                    title: markerTitle,
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" fill="#7C3AED" stroke="white" stroke-width="2"/>
+                                <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">D</text>
+                            </svg>
+                        `)
+                    }
+                });
             });
-        });
+        }
 
         // Add markers for each manufacturing hub
-        manufacturingHubsCoordinates.forEach((hubData, index) => {
-            const coords = hubData.coordinates;
-            const hubName = hubData.city;
-            
-            const markerTitle = `Manufacturing Hub: ${hubName}`;
-            const manufacturingHubMarker = new google.maps.Marker({
-                position: coords,
-                map: this.map,
-                title: markerTitle,
-                icon: {
-                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="12" cy="12" r="10" fill="#EA580C" stroke="white" stroke-width="2"/>
-                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">M</text>
-                        </svg>
-                    `)
-                }
+        if (manufacturingHubsCoordinates.length > 0) {
+            this.markersPresent.manufacturingHubs = true;
+            manufacturingHubsCoordinates.forEach((hubData, index) => {
+                const coords = hubData.coordinates;
+                const hubName = hubData.city;
+                
+                const markerTitle = `Manufacturing Hub: ${hubName}`;
+                const manufacturingHubMarker = new google.maps.Marker({
+                    position: coords,
+                    map: this.map,
+                    title: markerTitle,
+                    icon: {
+                        url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="12" r="10" fill="#EA580C" stroke="white" stroke-width="2"/>
+                                <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">M</text>
+                            </svg>
+                        `)
+                    }
+                });
             });
-        });
+        }
+
+        // Add legend after all markers are processed
+        this.addMapLegend();
 
         // Fit map to show all markers if there are multiple locations
         if (allLocations.length > 1) {
@@ -1029,6 +1063,86 @@ class InventionGame {
                 voiceBtn.title = 'Read overview aloud';
             }, 3000);
         }
+    }
+
+    addMapLegend() {
+        if (!this.map || !this.markersPresent) return;
+
+        // Only show legend items for markers that are actually present
+        let legendItems = [];
+
+        if (this.markersPresent.placesInvented) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #DC2626; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">P</span>
+                    </div>
+                    <span>Place Invented</span>
+                </div>
+            `);
+        }
+
+        if (this.markersPresent.inventionCities) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #059669; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">I</span>
+                    </div>
+                    <span>Invention City</span>
+                </div>
+            `);
+        }
+
+        if (this.markersPresent.designHubs) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #7C3AED; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">D</span>
+                    </div>
+                    <span>Design Hub</span>
+                </div>
+            `);
+        }
+
+        if (this.markersPresent.manufacturingHubs) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #EA580C; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">M</span>
+                    </div>
+                    <span>Manufacturing Hub</span>
+                </div>
+            `);
+        }
+
+        // Only create legend if there are markers present
+        if (legendItems.length === 0) return;
+
+        // Create legend element
+        const legend = document.createElement('div');
+        legend.style.backgroundColor = 'white';
+        legend.style.border = '2px solid #999';
+        legend.style.borderRadius = '8px';
+        legend.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        legend.style.cursor = 'pointer';
+        legend.style.marginBottom = '22px';
+        legend.style.marginRight = '10px';
+        legend.style.textAlign = 'center';
+        legend.style.padding = '8px';
+        legend.style.fontFamily = 'Roboto,Arial,sans-serif';
+        legend.style.fontSize = '13px';
+        legend.style.fontWeight = '300';
+        legend.style.lineHeight = '1.2';
+
+        legend.innerHTML = `
+            <div style="margin-bottom: 6px; font-weight: bold;">Map Legend</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                ${legendItems.join('')}
+            </div>
+        `;
+
+        // Add legend to map controls
+        this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
     }
 }
 
