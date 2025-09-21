@@ -1617,7 +1617,7 @@ body {
 }
 
 .voice-btn {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
     border: none;
     border-radius: 8px;
     color: white;
@@ -1625,8 +1625,8 @@ body {
     font-size: 1rem;
     padding: 8px 12px;
     transition: all 0.3s ease;
-    min-width: 40px;
-    height: 40px;
+    min-width: 60px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
