@@ -572,11 +572,22 @@ class FamousPersonGame {
         let markerCount = 0;
         let coordsAreIdentical = false;
 
+        // Store city information for tooltips
+        const cityInfo = this.getCityInfoFromGuess();
+
+        // Track which markers are present
+        this.markersPresent = {
+            birth: false,
+            death: false,
+            residence: false,
+            burial: false
+        };
+
         if (birthCoords) {
             const birthMarker = new google.maps.Marker({
                 position: birthCoords,
                 map: this.map,
-                title: `Birth Place`,
+                title: `Birth: ${cityInfo.birth || 'Unknown location'}`,
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -586,15 +597,17 @@ class FamousPersonGame {
                     `)
                 }
             });
+
             bounds.extend(birthMarker.getPosition());
             markerCount++;
+            this.markersPresent.birth = true;
         }
 
         if (deathCoords) {
             const deathMarker = new google.maps.Marker({
                 position: deathCoords,
                 map: this.map,
-                title: `Death Place`,
+                title: `Death: ${cityInfo.death || 'Unknown location'}`,
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -604,15 +617,17 @@ class FamousPersonGame {
                     `)
                 }
             });
+
             bounds.extend(deathMarker.getPosition());
             markerCount++;
+            this.markersPresent.death = true;
         }
 
         if (residenceCoords) {
             const residenceMarker = new google.maps.Marker({
                 position: residenceCoords,
                 map: this.map,
-                title: `Residence`,
+                title: `Residence: ${cityInfo.residence || 'Unknown location'}`,
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -622,15 +637,17 @@ class FamousPersonGame {
                     `)
                 }
             });
+
             bounds.extend(residenceMarker.getPosition());
             markerCount++;
+            this.markersPresent.residence = true;
         }
 
         if (burialCoords) {
             const burialMarker = new google.maps.Marker({
                 position: burialCoords,
                 map: this.map,
-                title: `Burial Place`,
+                title: `Burial: ${cityInfo.burial || 'Unknown location'}`,
                 icon: {
                     url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -640,8 +657,10 @@ class FamousPersonGame {
                     `)
                 }
             });
+
             bounds.extend(burialMarker.getPosition());
             markerCount++;
+            this.markersPresent.burial = true;
         }
 
         // Check for the edge case of two identical coordinates
@@ -650,6 +669,9 @@ class FamousPersonGame {
             birthCoords.lng === deathCoords.lng) {
             coordsAreIdentical = true;
         }
+
+        // Add legend after all markers are processed
+        this.addMapLegend();
 
         if (markerCount > 1 && !coordsAreIdentical) {
             // If there are two distinct markers, fit them all
@@ -662,6 +684,128 @@ class FamousPersonGame {
         // If markerCount is 0, do nothing.
     }
     
+    getCityInfoFromGuess() {
+        // Extract city information from the currently displayed guess
+        const cityInfo = {
+            birth: null,
+            death: null,
+            residence: null,
+            burial: null
+        };
+
+        // Look for city information in the bio section
+        const bioSections = document.querySelectorAll('.bio-section');
+        bioSections.forEach(section => {
+            const content = section.innerHTML;
+            
+            // Extract birthplace
+            const birthMatch = content.match(/<strong>Birthplace:<\/strong>\s*<a[^>]*data-city="([^"]*)"[^>]*>([^<]*)<\/a>/);
+            if (birthMatch) {
+                cityInfo.birth = birthMatch[1];
+            }
+            
+            // Extract place of death
+            const deathMatch = content.match(/<strong>Place of Death:<\/strong>\s*<a[^>]*data-city="([^"]*)"[^>]*>([^<]*)<\/a>/);
+            if (deathMatch) {
+                cityInfo.death = deathMatch[1];
+            }
+            
+            // Extract place of residence
+            const residenceMatch = content.match(/<strong>Place of Residence:<\/strong>\s*<a[^>]*data-city="([^"]*)"[^>]*>([^<]*)<\/a>/);
+            if (residenceMatch) {
+                cityInfo.residence = residenceMatch[1];
+            }
+            
+            // Extract place of burial
+            const burialMatch = content.match(/<strong>Place of Burial:<\/strong>\s*<a[^>]*data-city="([^"]*)"[^>]*>([^<]*)<\/a>/);
+            if (burialMatch) {
+                cityInfo.burial = burialMatch[1];
+            }
+        });
+
+        return cityInfo;
+    }
+
+    addMapLegend() {
+        if (!this.map || !this.markersPresent) return;
+
+        // Only show legend items for markers that are actually present
+        let legendItems = [];
+
+        if (this.markersPresent.birth) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #10B981; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">B</span>
+                    </div>
+                    <span>Birth</span>
+                </div>
+            `);
+        }
+
+        if (this.markersPresent.death) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #EF4444; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">D</span>
+                    </div>
+                    <span>Death</span>
+                </div>
+            `);
+        }
+
+        if (this.markersPresent.residence) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #3B82F6; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">R</span>
+                    </div>
+                    <span>Residence</span>
+                </div>
+            `);
+        }
+
+        if (this.markersPresent.burial) {
+            legendItems.push(`
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 16px; height: 16px; background-color: #8B5CF6; border-radius: 50%; border: 2px solid white; position: relative;">
+                        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 9px; font-weight: bold;">✝</span>
+                    </div>
+                    <span>Burial</span>
+                </div>
+            `);
+        }
+
+        // Only create legend if there are markers present
+        if (legendItems.length === 0) return;
+
+        // Create legend element
+        const legend = document.createElement('div');
+        legend.style.backgroundColor = 'white';
+        legend.style.border = '2px solid #999';
+        legend.style.borderRadius = '8px';
+        legend.style.boxShadow = '0 2px 6px rgba(0,0,0,0.3)';
+        legend.style.cursor = 'pointer';
+        legend.style.marginBottom = '22px';
+        legend.style.marginRight = '10px';
+        legend.style.textAlign = 'center';
+        legend.style.padding = '8px';
+        legend.style.fontFamily = 'Roboto,Arial,sans-serif';
+        legend.style.fontSize = '13px';
+        legend.style.fontWeight = '300';
+        legend.style.lineHeight = '1.2';
+
+        legend.innerHTML = `
+            <div style="margin-bottom: 6px; font-weight: bold;">Map Legend</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+                ${legendItems.join('')}
+            </div>
+        `;
+
+        // Add legend to map controls
+        this.map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+    }
+
     calculateDistance(lat1, lon1, lat2, lon2) {
         const R = 6371; // Radius of the Earth in kilometers
         const dLat = (lat2 - lat1) * Math.PI / 180;

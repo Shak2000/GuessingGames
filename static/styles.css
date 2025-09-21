@@ -1701,3 +1701,23 @@ body {
         align-self: flex-end;
     }
 }
+
+/* Map tooltip styles */
+.map-tooltip {
+    min-width: 150px;
+    padding: 8px 12px;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    color: #333;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.map-tooltip strong {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    color: #1f2937;
+}
