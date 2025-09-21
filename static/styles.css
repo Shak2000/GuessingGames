@@ -1608,6 +1608,58 @@ body {
     color: #475569;
 }
 
+/* Voice Button Styles */
+.overview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.voice-btn {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 8px 12px;
+    transition: all 0.3s ease;
+    min-width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.voice-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+}
+
+.voice-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.voice-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.overview-voice-btn {
+    margin-left: 10px;
+    font-size: 0.9rem;
+    padding: 6px 10px;
+    min-width: 36px;
+    height: 36px;
+}
+
+.overview-text {
+    margin: 0;
+    line-height: 1.6;
+}
+
 /* Responsive adjustments for settings */
 @media (max-width: 768px) {
     .settings-container {
@@ -1636,5 +1688,16 @@ body {
     
     .settings-info {
         padding: 20px;
+    }
+    
+    .overview-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+    
+    .overview-voice-btn {
+        margin-left: 0;
+        align-self: flex-end;
     }
 }

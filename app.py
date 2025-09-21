@@ -174,7 +174,7 @@ class VoiceTestRequest(BaseModel):
     text: str
 
 class TTSRequest(BaseModel):
-    voice: str
+    voice: Optional[str] = None
     text: str
     prompt: Optional[str] = "Say the following in a natural way"
 
@@ -559,15 +559,25 @@ async def test_voice(voice_test: VoiceTestRequest, request: Request):
 async def generate_tts(tts_request: TTSRequest, request: Request):
     """Generate TTS audio with custom prompt using Gemini TTS."""
     try:
+        # Validate text input
+        if not tts_request.text or not tts_request.text.strip():
+            raise HTTPException(status_code=400, detail="Text is required and cannot be empty")
+        
         # Get user ID for voice preference if not specified
         user_id = settings_manager.get_user_id_from_request(request)
         voice = tts_request.voice or settings_manager.get_user_voice(user_id)
         
+        # Ensure we have a valid voice
+        if not voice:
+            voice = "Zephyr"  # Default fallback voice
+        
+        print(f"TTS Request: voice={voice}, text_length={len(tts_request.text)}, prompt={tts_request.prompt}")
+        
         # Generate audio using the helper function
         audio_content = await generate_tts_audio(
-            text=tts_request.text,
+            text=tts_request.text.strip(),
             voice=voice,
-            prompt=tts_request.prompt
+            prompt=tts_request.prompt or "Say the following in a natural way"
         )
         
         # Return the audio content
@@ -583,6 +593,7 @@ async def generate_tts(tts_request: TTSRequest, request: Request):
     except HTTPException:
         raise
     except Exception as e:
+        print(f"TTS Generation Error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Unexpected error during TTS generation: {str(e)}")
 
 @app.get("/api/health")

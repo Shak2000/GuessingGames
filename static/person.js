@@ -393,10 +393,16 @@ class FamousPersonGame {
         // Build overview section
         let overviewInfo = '';
         if (overview && overview.trim() !== '') {
+            // Store overview text in a data attribute to avoid escaping issues
             overviewInfo = `
                 <div class="bio-section overview-section">
-                    <h4>Overview:</h4>
-                    <p>${overview}</p>
+                    <div class="overview-header">
+                        <h4>Overview:</h4>
+                        <button class="voice-btn overview-voice-btn" data-overview-text="${overview.replace(/"/g, '&quot;')}" title="Read overview aloud">
+                            🔊
+                        </button>
+                    </div>
+                    <p class="overview-text">${overview}</p>
                 </div>
             `;
         }
@@ -421,6 +427,9 @@ class FamousPersonGame {
         
         // Add event listeners for clickable parent names
         this.setupClickableNames();
+        
+        // Add event listener for voice button
+        this.setupVoiceButton();
         
         // Add event listeners for city links
         this.setupCityLinks();
@@ -716,6 +725,153 @@ class FamousPersonGame {
                 }
             });
         });
+    }
+
+    setupVoiceButton() {
+        // Add event listener to the overview voice button
+        const voiceBtn = document.querySelector('.overview-voice-btn');
+        if (voiceBtn) {
+            voiceBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // Try to get text from data attribute first
+                let overviewText = voiceBtn.getAttribute('data-overview-text');
+                
+                // If that fails, try to get text from the overview text element
+                if (!overviewText) {
+                    const overviewTextElement = document.querySelector('.overview-text');
+                    overviewText = overviewTextElement ? overviewTextElement.textContent : null;
+                }
+                
+                console.log('Voice button clicked, overview text:', overviewText);
+                
+                if (overviewText && overviewText.trim()) {
+                    this.readOverview(overviewText);
+                } else {
+                    console.error('No overview text found');
+                    this.showVoiceError('No overview text available');
+                }
+            });
+        }
+    }
+
+    async readOverview(overviewText) {
+        try {
+            console.log('ReadOverview called with text:', overviewText);
+            
+            // Find the overview voice button and disable it
+            const voiceBtn = document.querySelector('.overview-voice-btn');
+            if (voiceBtn) {
+                voiceBtn.disabled = true;
+                voiceBtn.textContent = '🔄';
+                voiceBtn.title = 'Reading overview...';
+            }
+
+            // Validate input
+            if (!overviewText || typeof overviewText !== 'string') {
+                throw new Error('Invalid overview text provided');
+            }
+
+            // Clean the overview text (remove HTML entities, extra spaces, etc.)
+            const cleanText = overviewText
+                .replace(/&nbsp;/g, ' ')
+                .replace(/&amp;/g, '&')
+                .replace(/&lt;/g, '<')
+                .replace(/&gt;/g, '>')
+                .replace(/&quot;/g, '"')
+                .replace(/&#39;/g, "'")
+                .replace(/\s+/g, ' ')
+                .trim();
+
+            console.log('Cleaned text:', cleanText);
+            console.log('Text length:', cleanText.length);
+
+            // Validate cleaned text
+            if (!cleanText || cleanText.length === 0) {
+                throw new Error('Overview text is empty after cleaning');
+            }
+
+            // Prepare request data
+            const requestData = {
+                text: cleanText,
+                prompt: "Read this biographical overview in a clear and informative way"
+            };
+            
+            console.log('Sending TTS request:', requestData);
+
+            // Make TTS request using user's saved voice
+            const response = await fetch('/api/generate-tts', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (response.ok) {
+                const contentType = response.headers.get('content-type');
+                
+                if (contentType && contentType.includes('audio')) {
+                    // Handle audio response
+                    const audioBlob = await response.blob();
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    const audio = new Audio(audioUrl);
+                    
+                    // Handle audio events
+                    audio.onended = () => {
+                        URL.revokeObjectURL(audioUrl);
+                        this.resetVoiceButton();
+                    };
+                    
+                    audio.onerror = () => {
+                        URL.revokeObjectURL(audioUrl);
+                        this.resetVoiceButton();
+                        this.showVoiceError('Error playing audio');
+                    };
+                    
+                    // Play the audio
+                    await audio.play();
+                } else {
+                    // Handle non-audio response
+                    this.resetVoiceButton();
+                    this.showVoiceError('TTS not properly configured');
+                }
+            } else {
+                console.error('TTS request failed with status:', response.status);
+                this.resetVoiceButton();
+                const errorData = await response.json().catch(() => ({ detail: 'Unknown error' }));
+                console.error('Error response data:', errorData);
+                this.showVoiceError(errorData.detail || 'Failed to generate audio');
+            }
+        } catch (error) {
+            console.error('Error reading overview:', error);
+            this.resetVoiceButton();
+            this.showVoiceError(`Error reading overview: ${error.message}`);
+        }
+    }
+
+    resetVoiceButton() {
+        const voiceBtn = document.querySelector('.overview-voice-btn');
+        if (voiceBtn) {
+            voiceBtn.disabled = false;
+            voiceBtn.textContent = '🔊';
+            voiceBtn.title = 'Read overview aloud';
+        }
+    }
+
+    showVoiceError(message) {
+        // Show a temporary error message
+        const voiceBtn = document.querySelector('.overview-voice-btn');
+        if (voiceBtn) {
+            const originalText = voiceBtn.textContent;
+            voiceBtn.textContent = '❌';
+            voiceBtn.title = message;
+            
+            setTimeout(() => {
+                voiceBtn.textContent = originalText;
+                voiceBtn.title = 'Read overview aloud';
+            }, 3000);
+        }
     }
 
     setupCityLinks() {
@@ -1030,6 +1186,9 @@ class FamousPersonGame {
             
             // Add event listeners for clickable names (in case any were added)
             this.setupClickableNames();
+            
+            // Add event listener for voice button
+            this.setupVoiceButton();
             
             // Add event listeners for city links
             this.setupCityLinks();
