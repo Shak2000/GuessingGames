@@ -1030,6 +1030,15 @@ body {
     margin: 0 auto;
 }
 
+.image-credit {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: center;
+    margin-top: 8px;
+    font-style: italic;
+    opacity: 0.8;
+}
+
 .event-image-container {
     text-align: center;
     margin: 20px 0;
