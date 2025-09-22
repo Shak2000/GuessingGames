@@ -471,13 +471,13 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             'total_equity': None
         }
         
-        # URLs for different financial metrics (excluding market cap which comes from Business Insider)
+        # URLs for different financial metrics in priority order: net income, total equity, revenue, total assets, operating income
         urls = {
-            'revenue': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/revenue",
-            'operating_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/operating-income",
             'net_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/net-income",
+            'total_equity': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-share-holder-equity",
+            'revenue': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/revenue",
             'total_assets': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-assets",
-            'total_equity': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-share-holder-equity"
+            'operating_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/operating-income"
         }
         
         for metric, url in urls.items():
