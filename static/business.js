@@ -265,7 +265,8 @@ class BusinessGame {
             const tickerDisplay = Array.isArray(guess.ticker) ? guess.ticker.join(', ') : guess.ticker;
             financialInfo += `<p><strong>Ticker:</strong> ${tickerDisplay}</p>`;
         }
-        if (this.shouldDisplay(guess.market_cap)) financialInfo += `<p><strong>Market Cap:</strong> ${this.formatCurrencyWithCommas(guess.market_cap)}</p>`;
+        if (this.shouldDisplay(guess.stock_price)) financialInfo += `<p><strong>Stock Price:</strong> ${guess.stock_price}</p>`;
+        if (this.shouldDisplay(guess.market_cap)) financialInfo += `<p><strong>Market Cap:</strong> ${guess.market_cap}</p>`;
         if (this.shouldDisplay(guess.revenue)) financialInfo += `<p><strong>Revenue:</strong> ${this.formatCurrencyWithCommas(guess.revenue)}</p>`;
         if (this.shouldDisplay(guess.operating_income)) financialInfo += `<p><strong>Operating Income:</strong> ${this.formatCurrencyWithCommas(guess.operating_income)}</p>`;
         if (this.shouldDisplay(guess.net_income)) financialInfo += `<p><strong>Net Income:</strong> ${this.formatCurrencyWithCommas(guess.net_income)}</p>`;

@@ -88,7 +88,7 @@ Please respond with a JSON object containing the following fields:
 - number_of_employees: Number of employees (if known, otherwise null)
 - parent: The parent company (if any, otherwise null)
 - website: The company's website URL (if known, otherwise null)
-- business_insider_markets: markets.businessinsider.com URL for the business (if available, otherwise null)
+- business_insider_markets: markets.businessinsider.com URL for the business (if available, otherwise null) - used for stock price data
 - wikipedia_url: Wikipedia URL for the business (if available, otherwise null)
 - overview: A concise 50-75 word overview of the business's history, significance, and notable features
 - reasoning: Your reasoning for why you think this is the correct business
@@ -155,10 +155,12 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     if headquarters_coords:
                         coordinates['headquarters'] = headquarters_coords
                 
-                # Get financial data from Macrotrends for publicly traded companies
+                # Get financial data from Business Insider (stock price), CNBC (market cap), and Macrotrends for publicly traded companies
                 ticker = business_data.get('ticker')
                 company_name = business_data.get('name')
                 macrotrends_data = {}
+                business_insider_data = {}
+                cnbc_market_cap = None
                 if ticker and company_name:
                     # Check if ticker is valid (not empty)
                     is_valid_ticker = False
@@ -168,6 +170,14 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                         is_valid_ticker = len(ticker.strip()) > 0
                     
                     if is_valid_ticker:
+                        # Get stock price from Business Insider
+                        first_ticker = ticker[0] if isinstance(ticker, list) else ticker
+                        business_insider_data = self._scrape_business_insider_data(first_ticker)
+                        
+                        # Get market cap from CNBC
+                        cnbc_market_cap = self._scrape_cnbc_market_cap(first_ticker)
+                        
+                        # Get other financial data from Macrotrends
                         macrotrends_data = self._scrape_macrotrends_financial_data(ticker, company_name)
                 
                 # Build the final response as JSON (matching other games structure)
@@ -195,12 +205,13 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "services": business_data.get('services', []),
                     "technologies": business_data.get('technologies', []),
                     "subsidiaries": business_data.get('subsidiaries', []),
+                    "stock_price": business_insider_data.get('stock_price'),
+                    "market_cap": cnbc_market_cap,
                     "revenue": macrotrends_data.get('revenue'),
                     "operating_income": macrotrends_data.get('operating_income'),
                     "net_income": macrotrends_data.get('net_income'),
                     "total_assets": macrotrends_data.get('total_assets'),
                     "total_equity": macrotrends_data.get('total_equity'),
-                    "market_cap": macrotrends_data.get('market_cap'),
                     "owner": business_data.get('owner'),
                     "owner_equity_percentage": business_data.get('owner_equity_percentage'),
                     "number_of_employees": business_data.get('number_of_employees'),
@@ -236,12 +247,13 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     "services": [],
                     "technologies": [],
                     "subsidiaries": [],
+                    "stock_price": None,
+                    "market_cap": None,
                     "revenue": None,
                     "operating_income": None,
                     "net_income": None,
                     "total_assets": None,
                     "total_equity": None,
-                    "market_cap": None,
                     "owner": None,
                     "owner_equity_percentage": None,
                     "number_of_employees": None,
@@ -273,12 +285,13 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 "services": [],
                 "technologies": [],
                 "subsidiaries": [],
+                "stock_price": None,
+                "market_cap": None,
                 "revenue": None,
                 "operating_income": None,
                 "net_income": None,
                 "total_assets": None,
                 "total_equity": None,
-                "market_cap": None,
                 "owner": None,
                 "owner_equity_percentage": None,
                 "number_of_employees": None,
@@ -433,8 +446,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     'operating_income': None,
                     'net_income': None,
                     'total_assets': None,
-                    'total_equity': None,
-                    'market_cap': None
+                    'total_equity': None
                 }
             # Use the first ticker for financial data
             ticker = ticker[0]
@@ -445,8 +457,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 'operating_income': None,
                 'net_income': None,
                 'total_assets': None,
-                'total_equity': None,
-                'market_cap': None
+                'total_equity': None
             }
         
         # Convert company name to URL format (spaces to dashes, lowercase)
@@ -457,18 +468,16 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
             'operating_income': None,
             'net_income': None,
             'total_assets': None,
-            'total_equity': None,
-            'market_cap': None
+            'total_equity': None
         }
         
-        # URLs for different financial metrics
+        # URLs for different financial metrics (excluding market cap which comes from Business Insider)
         urls = {
             'revenue': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/revenue",
             'operating_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/operating-income",
             'net_income': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/net-income",
             'total_assets': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-assets",
-            'total_equity': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-share-holder-equity",
-            'market_cap': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/market-cap"
+            'total_equity': f"https://macrotrends.net/stocks/charts/{ticker}/{name_formatted}/total-share-holder-equity"
         }
         
         for metric, url in urls.items():
@@ -492,6 +501,121 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
         
         return financial_data
     
+    def _scrape_cnbc_market_cap(self, ticker: str) -> Optional[str]:
+        """Scrape market cap from CNBC."""
+        if not ticker or len(ticker.strip()) == 0:
+            return None
+        
+        # Convert ticker to uppercase for CNBC URL
+        ticker_upper = ticker.upper()
+        url = f"https://www.cnbc.com/quotes/{ticker_upper}"
+        
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Look for market cap data using the specific CNBC HTML structure
+            market_cap = None
+            
+            # Method 1: Look for the specific CNBC structure: <li class="Summary-stat">
+            summary_stats = soup.find_all('li', class_='Summary-stat')
+            for stat in summary_stats:
+                # Look for the Market Cap label
+                label = stat.find('span', class_='Summary-label')
+                if label and 'Market Cap' in label.get_text():
+                    # Get the corresponding value
+                    value = stat.find('span', class_='Summary-value')
+                    if value:
+                        market_cap_text = value.get_text().strip()
+                        # Add $ prefix if not already present
+                        if market_cap_text and not market_cap_text.startswith('$'):
+                            market_cap = f"${market_cap_text}"
+                        else:
+                            market_cap = market_cap_text
+                        print(f"Found market cap via CNBC Summary-stat structure: {market_cap}")
+                        break
+            
+            # Method 2: Fallback - Look for any span with "Market Cap" text and find nearby Summary-value
+            if not market_cap:
+                market_cap_labels = soup.find_all('span', string=re.compile(r'Market Cap', re.IGNORECASE))
+                for label in market_cap_labels:
+                    # Look for Summary-value span in the same parent or nearby
+                    parent = label.parent
+                    if parent:
+                        value_span = parent.find('span', class_='Summary-value')
+                        if value_span:
+                            market_cap_text = value_span.get_text().strip()
+                            if market_cap_text and not market_cap_text.startswith('$'):
+                                market_cap = f"${market_cap_text}"
+                            else:
+                                market_cap = market_cap_text
+                            print(f"Found market cap via Summary-value fallback: {market_cap}")
+                            break
+            
+            # Method 3: General fallback - Look for text containing "Market Cap" and extract nearby values
+            if not market_cap:
+                page_text = soup.get_text()
+                market_cap_pattern = re.search(r'Market Cap[^:]*:?\s*\$?([0-9,.]+[BTMK]?)', page_text, re.IGNORECASE)
+                if market_cap_pattern:
+                    market_cap_value = market_cap_pattern.group(1)
+                    print(f"Found market cap via text search on CNBC: {market_cap_value}")
+                    market_cap = f"${market_cap_value}" if not market_cap_value.startswith('$') else market_cap_value
+            
+            print(f"CNBC market cap scraping result for {ticker}: {market_cap}")
+            return market_cap
+            
+        except Exception as e:
+            print(f"Error scraping CNBC market cap for {ticker}: {str(e)}")
+            return None
+
+    def _scrape_business_insider_data(self, ticker: str) -> Dict[str, Optional[str]]:
+        """Scrape stock price from Business Insider (market cap now comes from CNBC)."""
+        if not ticker or len(ticker.strip()) == 0:
+            return {'stock_price': None}
+        
+        # Convert ticker to lowercase for Business Insider URL
+        ticker_lower = ticker.lower()
+        url = f"https://markets.businessinsider.com/stocks/{ticker_lower}-stock"
+        
+        try:
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            response = requests.get(url, headers=headers, timeout=10)
+            response.raise_for_status()
+            
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Extract stock price from span with class "price-section__current-value"
+            stock_price = None
+            price_span = soup.find('span', class_='price-section__current-value')
+            if price_span:
+                stock_price_text = price_span.get_text().strip()
+                # Add $ prefix if not already present
+                if stock_price_text and not stock_price_text.startswith('$'):
+                    stock_price = f"${stock_price_text}"
+                else:
+                    stock_price = stock_price_text
+            
+            # Note: Market cap is now sourced from CNBC, not Business Insider
+            
+            # Debug output
+            print(f"Business Insider scraping results for {ticker}:")
+            print(f"  Stock Price: {stock_price}")
+            
+            return {
+                'stock_price': stock_price
+            }
+            
+        except Exception as e:
+            print(f"Error scraping Business Insider data for {ticker}: {str(e)}")
+            return {'stock_price': None}
+
     def _extract_financial_value(self, soup: BeautifulSoup, metric: str) -> Optional[str]:
         """Extract financial value from Macrotrends page."""
         try:
@@ -503,8 +627,7 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 'operating_income': 'for the twelve months ending', 
                 'net_income': 'for the twelve months ending',
                 'total_assets': 'for the quarter ending',
-                'total_equity': 'for the quarter ending',
-                'market_cap': 'market cap as of'
+                'total_equity': 'for the quarter ending'
             }
             
             time_period = time_periods.get(metric, 'for the twelve months ending')
