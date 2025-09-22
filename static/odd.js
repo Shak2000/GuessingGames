@@ -114,7 +114,7 @@ class OddSituationGame {
             this.guessCount++;
             
             if (data.correct) {
-                this.showCorrectFeedback();
+                this.showCorrectFeedback(data);
             } else {
                 this.showIncorrectFeedback();
             }
@@ -163,13 +163,28 @@ class OddSituationGame {
         }
     }
     
-    showCorrectFeedback() {
-        this.feedbackText.innerHTML = `
+    showCorrectFeedback(data) {
+        let feedbackHtml = `
             <div class="feedback-correct">
                 <h3>🎉 Correct!</h3>
                 <p>Great job! You guessed it right!</p>
-            </div>
         `;
+        
+        // If we have detailed information (outfit and setting), show it
+        if (data && data.outfit && data.setting) {
+            feedbackHtml += `
+                <div class="answer-details" style="margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 8px;">
+                    <h4>${data.correct_person}</h4>
+                    <p><strong>Outfit:</strong> ${data.outfit}</p>
+                    <p><strong>Setting:</strong> ${data.setting}</p>
+                    <p class="full-situation" style="font-style: italic; margin-top: 10px;">${data.full_situation}</p>
+                </div>
+            `;
+        }
+        
+        feedbackHtml += `</div>`;
+        
+        this.feedbackText.innerHTML = feedbackHtml;
         this.feedbackSection.classList.remove('hidden');
         this.revealBtn.style.display = 'none';
         this.guessInput.disabled = true;

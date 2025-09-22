@@ -105,6 +105,17 @@ class OddSituationGame:
         
         if is_correct:
             self.current_session['correct'] = True
+            # For correct answers, also reveal the outfit and setting
+            return {
+                'session_id': session_id,
+                'correct': is_correct,
+                'game_over': is_correct,
+                'total_guesses': len(self.current_session['guesses']),
+                'correct_person': self.current_session['person'],
+                'outfit': self.current_session['outfit'],
+                'setting': self.current_session['setting'],
+                'full_situation': f"{self.current_session['person']} wearing {self.current_session['outfit']} {self.current_session['setting']}"
+            }
         
         return {
             'session_id': session_id,

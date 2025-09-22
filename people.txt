@@ -1,4 +1,5 @@
 Elon Musk
+Jeff Bezos
 Barack Obama
 Kamala Harris
 Keanu Reeves
@@ -8,7 +9,6 @@ Michael Jackson
 Michelle Obama
 Benjamin Franklin
 Hillary Clinton
-Christopher Columbus
 Nicholas Cage
 Donald Trump
 Martin Luther King Jr.
