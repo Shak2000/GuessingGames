@@ -283,6 +283,9 @@ class MovieGame {
     displayMovieDetails(movie) {
         // Basic Information
         let basicInfo = '';
+        // Add ratings at the top of basic information
+        if (movie.imdb_rating) basicInfo += `<p><strong>IMDb Rating:</strong> ${movie.imdb_rating}/10</p>`;
+        if (movie.rotten_tomatoes_rating) basicInfo += `<p><strong>Rotten Tomatoes:</strong> ${movie.rotten_tomatoes_rating}%</p>`;
         if (movie.mpaa_rating) basicInfo += `<p><strong>MPAA Rating:</strong> ${movie.mpaa_rating}</p>`;
         if (movie.genre && movie.genre.length > 0) basicInfo += `<p><strong>Genre:</strong> ${movie.genre.join(', ')}</p>`;
         if (movie.running_time) basicInfo += `<p><strong>Running Time:</strong> ${movie.running_time} minutes</p>`;

@@ -60,6 +60,8 @@ class MovieGuesser:
 
 Please respond with a JSON object containing the following fields:
 - name: The movie title
+- imdb_rating: The movie's IMDB rating (if known, otherwise null)
+- rotten_tomatoes_rating: The movie's Rotten Tomatoes rating (if known, otherwise null)
 - mpaa_rating: The movie's MPAA rating (G, PG, PG-13, R, NC-17, Not Rated)
 - genre: An array of the movie's genres
 - directed_by: An array of director names
