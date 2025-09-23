@@ -11,6 +11,7 @@ from event import event_guesser
 from business import business_guesser
 from invention import invention_guesser
 from movie import movie_guesser
+from tvshow import tvshow_guesser
 from settings import settings_manager
 
 app = FastAPI(title="Multi-Game App", version="1.0.0")
@@ -166,6 +167,13 @@ class MovieFeedback(BaseModel):
     session_id: int
     is_correct: bool
 
+class TVShowInput(BaseModel):
+    text: str
+
+class TVShowFeedback(BaseModel):
+    session_id: int
+    is_correct: bool
+
 class VoiceSettings(BaseModel):
     voice: str
 
@@ -217,6 +225,11 @@ async def read_invention():
 async def read_movie():
     """Serve the Guess the Movie game page."""
     return FileResponse("static/movie.html")
+
+@app.get("/tvshow")
+async def read_tvshow():
+    """Serve the Guess the TV Show game page."""
+    return FileResponse("static/tvshow.html")
 
 @app.get("/settings")
 async def read_settings():
@@ -474,6 +487,41 @@ async def get_movie_session(session_id: int):
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error getting movie session: {str(e)}")
+
+# TV Show Guessing Game API Routes
+@app.post("/api/start-tvshow-guess")
+async def start_tvshow_guess(user_input: TVShowInput):
+    """Start a new TV show guessing session."""
+    try:
+        if not user_input.text.strip():
+            raise HTTPException(status_code=400, detail="Input text cannot be empty")
+        
+        result = tvshow_guesser.start_new_session(user_input.text.strip())
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error starting TV show guess: {str(e)}")
+
+@app.post("/api/submit-tvshow-feedback")
+async def submit_tvshow_feedback(feedback: TVShowFeedback):
+    """Submit feedback for the current TV show guess."""
+    try:
+        result = tvshow_guesser.submit_feedback(feedback.session_id, feedback.is_correct)
+        if 'error' in result:
+            raise HTTPException(status_code=400, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error submitting TV show feedback: {str(e)}")
+
+@app.get("/api/tvshow-session/{session_id}")
+async def get_tvshow_session(session_id: int):
+    """Get TV show guessing session information."""
+    try:
+        result = tvshow_guesser.get_session_status(session_id)
+        if 'error' in result:
+            raise HTTPException(status_code=404, detail=result['error'])
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting TV show session: {str(e)}")
 
 # Settings API Routes
 @app.get("/api/get-settings")

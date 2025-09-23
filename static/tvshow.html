@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guess the City - Multi-Game App</title>
+    <title>Guess the TV Show - Multi-Game App</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="shortcut icon" href="/favicon.ico">
@@ -18,30 +18,30 @@
             <div class="toolbar-content">
                 <a href="/" class="toolbar-item">🏠 Home</a>
                 <a href="/person" class="toolbar-item">🎭 Guess the Famous Person</a>
-                <a href="/city" class="toolbar-item active">🏙️ Guess the City</a>
+                <a href="/city" class="toolbar-item">🏙️ Guess the City</a>
                 <a href="/odd" class="toolbar-item">🎪 Odd Situation Game</a>
                 <a href="/event" class="toolbar-item">📅 Guess the Event</a>
                 <a href="/business" class="toolbar-item">🏢 Guess the Business</a>
                 <a href="/invention" class="toolbar-item">🔧 Guess the Invention</a>
                 <a href="/movie" class="toolbar-item">🎬 Guess the Movie</a>
-                <a href="/tvshow" class="toolbar-item">📺 Guess the TV Show</a>
+                <a href="/tvshow" class="toolbar-item active">📺 Guess the TV Show</a>
                 <a href="/settings" class="toolbar-item">⚙️ Settings</a>
             </div>
         </nav>
 
         <header class="header">
-            <h1 class="title">🏙️ Guess the City</h1>
-            <p class="subtitle">Enter information about a city and I'll try to guess which city it is!</p>
+            <h1 class="title">📺 Guess the TV Show</h1>
+            <p class="subtitle">Enter information about a TV show and I'll try to guess which TV show it is!</p>
         </header>
 
         <main class="main-content">
             <div class="input-section">
                 <div class="input-group">
-                    <label for="userInput" class="input-label">Tell me about the city:</label>
+                    <label for="userInput" class="input-label">Tell me about the TV show:</label>
                     <textarea 
                         id="userInput" 
                         class="input-textarea" 
-                        placeholder="e.g., 'This city is the capital of France, known for the Eiffel Tower, and is located on the Seine River...'"
+                        placeholder="e.g., 'This show is about a chemistry teacher who starts cooking drugs. It aired on a cable network and ran for 5 seasons...'"
                         rows="4"
                     ></textarea>
                 </div>
@@ -51,9 +51,34 @@
             <div id="gameSection" class="game-section hidden">
                 <div class="guess-display">
                     <h3 class="guess-title">My Guess:</h3>
+                    <div id="showImageContainer" class="show-image-container" style="display: none;">
+                        <img id="showImage" class="show-image" alt="TV show poster" onerror="this.style.display='none'">
+                    </div>
                     <div id="guessText" class="guess-text"></div>
+                    <div id="guessTextOverview" class="guess-text overview-section"></div>
+                    <div id="showDetails" class="show-details">
+                        <div id="basicInfoSection" class="info-section hidden">
+                            <h4>Basic Information</h4>
+                            <div id="basicInfoContent"></div>
+                        </div>
+                        <div id="castCrewSection" class="info-section hidden">
+                            <h4>Cast & Crew</h4>
+                            <div id="castCrewContent"></div>
+                        </div>
+                        <div id="productionSection" class="info-section hidden">
+                            <h4>Production</h4>
+                            <div id="productionContent"></div>
+                        </div>
+                        <div id="networkSection" class="info-section hidden">
+                            <h4>Network & Release</h4>
+                            <div id="networkContent"></div>
+                        </div>
+                        <div id="moreInfoSection" class="info-section hidden">
+                            <h4>More Information</h4>
+                            <div id="moreInfoContent"></div>
+                        </div>
+                    </div>
                     <div id="guessTextReasoning" class="guess-text"></div>
-                    <div id="map" class="map-container" style="display: none;"></div>
                 </div>
                 
                 <div class="feedback-buttons">
@@ -89,8 +114,7 @@
         </footer>
     </div>
 
-    <!-- Google Maps API will be loaded dynamically by city.js -->
     <script src="/static/audio-manager.js"></script>
-    <script src="/static/city.js?v=1"></script>
+    <script src="/static/tvshow.js?v=1"></script>
 </body>
 </html>
