@@ -5,7 +5,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 ## Features
 
 ### Platform Features
-- 🎮 **Multi-Game Platform**: Choose from 7 interactive games in one unified platform
+- 🎮 **Multi-Game Platform**: Choose from 8 interactive games in one unified platform
 - 🧭 **Easy Navigation**: Seamless navigation between games with persistent toolbar
 - 🔗 **Cross-Game Linking**: Clickable links between related content across all games
 - 📱 **Mobile Friendly**: Fully responsive design that works perfectly on all devices
@@ -18,6 +18,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 🏢 **Guess the Business**
 - 🔧 **Guess the Invention**
 - 🎬 **Guess the Movie**
+- 📺 **Guess the TV Show**
 
 ### AI-Powered API Features
 - 🤖 **AI-Powered Guessing** Uses Google Gemini 2.5 Flash Lite API for intelligent entity identification (cutoff: January 2024)
@@ -30,6 +31,7 @@ A modern web platform featuring multiple interactive games powered by AI. Choose
 - 💰 **Real-time Financial Data**: Beautiful Soup extracts business information from trustworthy websites
 - 🗺️ **Interactive Maps**: Google Maps JavaScript API shows birth and death locations with custom markers
 - ⚡ **Real-time**: FastAPI responses with loading indicators and button states
+- 🎤 **Text-to-Speech Integration**: Google Cloud Text-to-Speech with Gemini 2.5 Flash Preview TTS model, featuring 30 voice options for reading AI-generated overviews
 
 ### Other Features
 - 🔄 **Session Management**: Tracks game progress and maintains state throughout the session
@@ -99,7 +101,7 @@ The application will be available at `http://localhost:8000`
 
 ```
 FirstAPI/
-├── app.py               # Main FastAPI application with multi-game routing
+├── app.py               # Main FastAPI application with multi-game routing and TTS endpoints
 ├── person.py            # Guess the Famous Person game logic with Gemini AI integration
 ├── city.py              # Guess the City game logic with Gemini AI integration
 ├── event.py             # Guess the Historical Event game logic with enhanced AI image generation
@@ -107,13 +109,16 @@ FirstAPI/
 ├── business.py          # Guess the Business game logic with Gemini AI integration
 ├── movie.py             # Guess the Movie game logic with Gemini AI integration
 ├── invention.py         # Guess the Invention game logic with Gemini AI integration
+├── tvshow.py            # Guess the TV Show game logic with Gemini AI integration
+├── settings.py          # Voice settings and user preference management
 ├── config.py            # API key configuration
 ├── requirements.txt     # Python dependencies
 ├── README.md           # This file
-├── .gitignore          # Git ignore rules
+├── GEMINI_TTS_SETUP.md # Comprehensive TTS setup guide
 ├── people.txt          # Famous people data for Odd Situation Game
 ├── outfits.txt         # Outfit data for Odd Situation Game
 ├── settings.txt        # Setting data for Odd Situation Game
+├── user_settings/      # Directory for storing user voice preferences
 └── static/             # Frontend files
     ├── index.html      # Home page with game selection
     ├── person.html     # Guess the Famous Person game interface
@@ -123,9 +128,12 @@ FirstAPI/
     ├── business.html   # Guess the Business game interface
     ├── movie.html      # Guess the Movie game interface
     ├── invention.html  # Guess the Invention game interface
+    ├── tvshow.html     # Guess the TV Show game interface
+    ├── settings.html   # Voice settings and preferences interface
     ├── styles.css      # Modern styling and responsive design
     ├── script.js       # General app utilities and shared functionality
     ├── toolbar.js      # Navigation toolbar functionality
+    ├── audio-manager.js # Optimized audio management with caching and TTS integration
     ├── person.js       # Famous Person game specific JavaScript logic
     ├── city.js         # City guessing game specific JavaScript logic
     ├── event.js        # Historical Event game specific JavaScript logic
@@ -133,12 +141,14 @@ FirstAPI/
     ├── business.js     # Business guessing game specific JavaScript logic
     ├── movie.js        # Movie guessing game specific JavaScript logic
     ├── invention.js    # Invention guessing game specific JavaScript logic
+    ├── tvshow.js       # TV Show guessing game specific JavaScript logic
+    ├── settings.js     # Voice settings interface and testing functionality
     ├── favicon.ico     # App favicon (ICO format)
     └── favicon.png     # App favicon (PNG format)
 ```
 
 ### Key Files:
-- **`app.py`** - Main FastAPI application with multi-game routing and API endpoints
+- **`app.py`** - Main FastAPI application with multi-game routing, API endpoints, and TTS integration
 - **`person.py`** - Guess the Famous Person game logic with Gemini AI integration, JSON response format, overview generation, image extraction, and session management
 - **`city.py`** - Guess the City game logic with Gemini AI integration, JSON response format, and session management
 - **`event.py`** - Guess the Historical Event game logic with enhanced AI image generation using complete event context
@@ -146,11 +156,15 @@ FirstAPI/
 - **`business.py`** - Guess the Business game logic with Gemini AI integration, comprehensive business data, financial information, and session management
 - **`movie.py`** - Guess the Movie game logic with Gemini AI integration, comprehensive movie data, cast/crew information, production details, and session management
 - **`invention.py`** - Guess the Invention game logic with Gemini AI integration, comprehensive technology data, inventor information, and session management
+- **`tvshow.py`** - Guess the TV Show game logic with Gemini AI integration, comprehensive TV show data, cast information, and session management
+- **`settings.py`** - Voice settings and user preference management with 30 Gemini TTS voices support
 - **`config.py`** - API key configuration (excluded from version control)
-- **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, and Google Maps client
+- **`requirements.txt`** - Python dependencies including Beautiful Soup, requests, Google Maps client, and TTS libraries
+- **`GEMINI_TTS_SETUP.md`** - Comprehensive setup guide for Google Cloud Text-to-Speech with Gemini TTS
 - **`people.txt`** - Famous people data file for Odd Situation Game scenarios
 - **`outfits.txt`** - Outfit data file for Odd Situation Game scenarios
 - **`settings.txt`** - Setting data file for Odd Situation Game scenarios
+- **`user_settings/`** - Directory for storing individual user voice preferences and settings
 - **`static/index.html`** - Home page with game selection grid
 - **`static/person.html`** - Guess the Famous Person game interface
 - **`static/city.html`** - Guess the City game interface
@@ -159,8 +173,11 @@ FirstAPI/
 - **`static/business.html`** - Guess the Business game interface
 - **`static/movie.html`** - Guess the Movie game interface
 - **`static/invention.html`** - Guess the Invention game interface
+- **`static/tvshow.html`** - Guess the TV Show game interface
+- **`static/settings.html`** - Voice settings and preferences interface with voice testing
 - **`static/toolbar.js`** - Navigation toolbar functionality and active state management
 - **`static/script.js`** - General app utilities and shared functionality for all games
+- **`static/audio-manager.js`** - Optimized audio management class with intelligent caching, TTS integration, and error handling
 - **`static/person.js`** - Famous Person game specific JavaScript logic and UI interactions
 - **`static/city.js`** - City guessing game specific JavaScript logic and UI interactions
 - **`static/event.js`** - Historical Event game specific JavaScript logic and UI interactions
@@ -168,6 +185,8 @@ FirstAPI/
 - **`static/business.js`** - Business guessing game specific JavaScript logic and UI interactions
 - **`static/movie.js`** - Movie guessing game specific JavaScript logic and UI interactions
 - **`static/invention.js`** - Invention guessing game specific JavaScript logic and UI interactions
+- **`static/tvshow.js`** - TV Show guessing game specific JavaScript logic and UI interactions
+- **`static/settings.js`** - Voice settings interface with voice testing, selection, and preference management
 - **`static/`** - All frontend files organized in a dedicated directory
 
 ## API Endpoints
@@ -181,6 +200,8 @@ FirstAPI/
 - `GET /business` - Serves the Guess the Business game page
 - `GET /movie` - Serves the Guess the Movie game page
 - `GET /invention` - Serves the Guess the Invention game page
+- `GET /tvshow` - Serves the Guess the TV Show game page
+- `GET /settings` - Serves the voice settings and preferences page
 - `GET /api/health` - Health check endpoint
 - `GET /static/*` - Serves static files (CSS, JS, images, favicons)
 - `GET /favicon.ico` - Serves app favicon (ICO format)
@@ -226,6 +247,17 @@ FirstAPI/
 - `POST /api/submit-invention-feedback` - Submits feedback for an invention guess
 - `GET /api/invention-session/{session_id}` - Gets invention guessing session information
 
+### Guess the TV Show Game
+- `POST /api/start-tvshow-guess` - Starts a new TV show guessing session
+- `POST /api/submit-tvshow-feedback` - Submits feedback for a TV show guess
+- `GET /api/tvshow-session/{session_id}` - Gets TV show guessing session information
+
+### Voice & Text-to-Speech Features
+- `POST /api/generate-tts` - Generates TTS audio with custom prompts using Gemini TTS
+- `POST /api/test-voice` - Tests a specific voice with sample text
+- `POST /api/save-settings` - Saves user voice preferences and settings
+- `GET /api/get-settings` - Retrieves user voice preferences and settings
+
 ## Tips for Better Results
 
 - **Be Specific**: Provide unique details about the person
@@ -235,9 +267,12 @@ FirstAPI/
 - **Try Different Angles**: If the first guess is wrong, the AI learns and improves
 - **Explore Family Trees**: Click on family member names to discover related famous people
 - **Start Fresh**: You can begin a new game anytime with different information
+- **Voice Settings**: Visit the settings page to customize your preferred voice for overview reading
+- **Test Voices**: Use the voice testing feature to find the perfect voice for your experience
 
 ## Troubleshooting
 
+### General Issues
 - **API Key Error**: Make sure both Gemini and Google Maps API keys are set in `config.py` or as environment variables
 - **Google Maps Not Loading**: Ensure you have enabled "Maps JavaScript API" and "Geocoding API" in Google Cloud Console
 - **Port Already in Use**: If port 8000 is busy, modify the port in `app.py`
@@ -250,27 +285,42 @@ FirstAPI/
 - **Map Display Issues**: Check browser console for Google Maps API errors and verify API key restrictions
 - **Billing Issues**: Google Maps APIs require billing to be enabled even for free tier usage
 
+### Text-to-Speech Issues
+- **TTS Not Working**: Ensure Google Cloud Text-to-Speech API is enabled and `google-cloud-texttospeech>=2.29.0` is installed
+- **Voice Not Found**: Verify you're using a valid Gemini TTS voice name and the correct model `gemini-2.5-flash-preview-tts`
+- **Permission Denied**: Check that your Google Cloud service account has the `Cloud Text-to-Speech User` role
+- **Audio Not Playing**: Verify browser audio permissions and check that audio files are being generated (MP3 format)
+- **TTS Credentials**: Set up Google Cloud credentials correctly - see `GEMINI_TTS_SETUP.md` for detailed instructions
+- **Voice Settings Not Saving**: Ensure the `user_settings/` directory exists and has write permissions
+- **Caching Issues**: Clear browser cache if experiencing outdated audio playback
+- **Audio Quality**: Ensure stable internet connection for optimal TTS generation and playback
+
 ## Technology Stack
 
 ### **Backend:**
 - **FastAPI**: Modern Python web framework with multi-game routing and API endpoints
-- **Modular Architecture**: Separate game logic modules (person.py, city.py, event.py) for scalability
-- **Google Gemini 2.5 Flash Lite**: AI model for person/city/event identification, overview generation, and reasoning with JSON response format
-- **Google Gemini 2.5 Flash Image Preview**: AI image generation with complete event context for historically accurate visual representations
+- **Modular Architecture**: Separate game logic modules (person.py, city.py, event.py, tvshow.py, etc.) for scalability
+- **Google Gemini 2.5 Flash Lite**: AI model for entity identification, overview generation, and reasoning with JSON response format
+- **Google Gemini 2.5 Flash Image Preview**: AI image generation with complete context for historically accurate visual representations
+- **Google Cloud Text-to-Speech**: Gemini 2.5 Flash Preview TTS model with 30 voice options for natural speech synthesis
 - **Beautiful Soup 4**: HTML parsing for image extraction from Wikipedia
 - **Requests**: HTTP library for web scraping
 - **Google Maps Python Client**: Geocoding API integration for address-to-coordinates conversion
 - **JSON Processing**: Structured data handling with markdown code block parsing
 - **Session Management**: Individual session tracking for each game
+- **Voice Settings Management**: User preference persistence with file-based storage
 
 ### **Frontend:**
 - **Modular JavaScript Architecture**: 
   - `script.js` - General app utilities and shared functionality
-  - `person.js` - Famous Person game specific logic and UI interactions
+  - `audio-manager.js` - Centralized TTS audio management with intelligent caching
+  - Individual game-specific JavaScript modules for each game type
 - **Multi-Page Architecture**: Separate HTML pages for each game with shared navigation
 - **Google Maps JavaScript API**: Interactive maps with custom markers and bounds
+- **Advanced Audio Management**: Optimized TTS integration with caching, error handling, and playback controls
+- **Settings Interface**: Comprehensive voice preference management with real-time testing
 - **CSS3**: Modern styling with gradients, animations, and responsive design
-- **HTML5**: Semantic markup with accessibility features
+- **HTML5**: Semantic markup with accessibility features and audio support
 - **JSON Parsing**: Robust handling of both JSON objects and JSON strings with fallback mechanisms
 
 ### **Platform Features:**
