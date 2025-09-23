@@ -1,40 +1,40 @@
-medieval knight armor
-space suit
-pirate costume
-superhero costume
-chef's uniform
-doctor's lab coat
-construction worker outfit
-police uniform
+a medieval knight's armor
+a space suit
+a pirate costume
+a superhero costume
+a chef's uniform
+a doctor's lab coat
+a construction worker outfit
+a police uniform
 firefighter gear
-astronaut suit
+an astronaut suit
 scuba diving gear
-skiing outfit
+a skiing outfit
 swimming trunks
-formal tuxedo
-wedding dress
-ballerina tutu
-clown costume
-wizard robe
-viking outfit
+a formal tuxedo
+a wedding dress
+a ballerina tutu
+a clown costume
+a wizard robe
+a viking outfit
 cowboy attire
-ninja outfit
-zombie costume
-vampire costume
-ghost costume
-robot costume
-alien costume
-dinosaur costume
-unicorn costume
-fairy costume
-mermaid costume
-penguin costume
-bear costume
-cat costume
-dog costume
-elephant costume
-lion costume
-tiger costume
-monkey costume
-rabbit costume
-mouse costume
+a ninja outfit
+a zombie costume
+a vampire costume
+a ghost costume
+a robot costume
+an alien costume
+a dinosaur costume
+a unicorn costume
+a fairy costume
+a mermaid costume
+a penguin costume
+a bear costume
+a cat costume
+a dog costume
+an elephant costume
+a lion costume
+a tiger costume
+a monkey costume
+a rabbit costume
+a mouse costume
