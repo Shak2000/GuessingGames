@@ -30,10 +30,17 @@ class TVShowGame {
         this.networkContent = document.getElementById('networkContent');
         this.moreInfoSection = document.getElementById('moreInfoSection');
         this.moreInfoContent = document.getElementById('moreInfoContent');
+        this.inspirationSection = document.getElementById('inspirationSection');
+        this.inspirationContent = document.getElementById('inspirationContent');
         
         this.currentSessionId = null;
+        this.mapsApiKey = null;
+        this.map = null;
+        this.googleMapsScriptLoaded = false;
+        this.mapEl = document.getElementById('map');
         
         this.initializeEventListeners();
+        this.loadGoogleMapsScript();
     }
 
     initializeEventListeners() {
@@ -91,6 +98,10 @@ class TVShowGame {
         this.userInput.value = '';
         this.currentSessionId = null;
         this.userInput.focus();
+        // Hide the map
+        if (this.mapEl) {
+            this.mapEl.style.display = 'none';
+        }
     }
 
     async startNewGameFromButton() {
@@ -213,9 +224,29 @@ class TVShowGame {
         ).join(', ');
     }
 
+    formatClickableCityList(cities) {
+        if (!cities || cities.length === 0) return '';
+        
+        return cities.map(city => 
+            `<span class="clickable-city" data-city="${city.trim()}">${city.trim()}</span>`
+        ).join(', ');
+    }
+
+    formatClickableEventList(events) {
+        if (!events || events.length === 0) return '';
+        
+        return events.map(event => 
+            `<span class="clickable-event" data-event="${event.trim()}">${event.trim()}</span>`
+        ).join(', ');
+    }
+
     displayTVShowDetails(show) {
         // Basic Information
         let basicInfo = '';
+        // Add ratings at the top of basic information
+        if (show.imdb_rating) basicInfo += `<p><strong>IMDb Rating:</strong> ${show.imdb_rating}/10</p>`;
+        if (show.rotten_tomatoes_rating) basicInfo += `<p><strong>Rotten Tomatoes:</strong> ${show.rotten_tomatoes_rating}%</p>`;
+        if (show.tv_parental_guidelines_rating) basicInfo += `<p><strong>TV Parental Guidelines:</strong> ${show.tv_parental_guidelines_rating}</p>`;
         if (show.genre && show.genre.length > 0) basicInfo += `<p><strong>Genre:</strong> ${show.genre.join(', ')}</p>`;
         if (show.number_of_seasons) basicInfo += `<p><strong>Number of Seasons:</strong> ${show.number_of_seasons}</p>`;
         if (show.number_of_episodes) basicInfo += `<p><strong>Number of Episodes:</strong> ${show.number_of_episodes}</p>`;
@@ -265,6 +296,12 @@ class TVShowGame {
 
         // More Information
         let moreInfo = '';
+        if (show.imdb_url) {
+            moreInfo += `<p><strong>IMDb:</strong> <a href="${show.imdb_url}" target="_blank" rel="noopener noreferrer">View on IMDb</a></p>`;
+        }
+        if (show.rotten_tomatoes_url) {
+            moreInfo += `<p><strong>Rotten Tomatoes:</strong> <a href="${show.rotten_tomatoes_url}" target="_blank" rel="noopener noreferrer">View on Rotten Tomatoes</a></p>`;
+        }
         if (show.wikipedia_url) {
             moreInfo += `<p><strong>Wikipedia:</strong> <a href="${show.wikipedia_url}" target="_blank" rel="noopener noreferrer">View on Wikipedia</a></p>`;
         }
@@ -274,9 +311,31 @@ class TVShowGame {
             this.moreInfoSection.classList.remove('hidden');
         }
 
-        // Set up clickable person and business links
+        // Inspiration
+        let inspiration = '';
+        if (show.people && show.people.length > 0) {
+            inspiration += `<p><strong>Real-World People:</strong> ${this.formatClickablePersonList(show.people)}</p>`;
+        }
+        if (show.cities && show.cities.length > 0) {
+            inspiration += `<p><strong>Real-World Cities:</strong> ${this.formatClickableCityList(show.cities)}</p>`;
+        }
+        if (show.events && show.events.length > 0) {
+            inspiration += `<p><strong>Real-World Events:</strong> ${this.formatClickableEventList(show.events)}</p>`;
+        }
+        
+        if (inspiration) {
+            this.inspirationContent.innerHTML = inspiration;
+            this.inspirationSection.classList.remove('hidden');
+        }
+
+        // Set up clickable person, business, city, and event links
         this.setupClickablePersonLinks();
         this.setupClickableBusinessLinks();
+        this.setupClickableCityLinks();
+        this.setupClickableEventLinks();
+        
+        // Initialize map if cities are available
+        this.initializeMap(show);
     }
 
     setupClickablePersonLinks() {
@@ -310,6 +369,163 @@ class TVShowGame {
                 }
             });
         });
+    }
+
+    setupClickableCityLinks() {
+        // Add event listeners to all clickable city links
+        const clickableCities = document.querySelectorAll('.clickable-city');
+        clickableCities.forEach(cityElement => {
+            cityElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const cityName = cityElement.getAttribute('data-city');
+                if (cityName) {
+                    // Store the city name in localStorage for the city game to use
+                    localStorage.setItem('citySearchFromTVShow', cityName);
+                    // Navigate to the city game
+                    window.location.href = '/city';
+                }
+            });
+        });
+    }
+
+    setupClickableEventLinks() {
+        // Add event listeners to all clickable event links
+        const clickableEvents = document.querySelectorAll('.clickable-event');
+        clickableEvents.forEach(eventElement => {
+            eventElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                const eventName = eventElement.getAttribute('data-event');
+                if (eventName) {
+                    // Store the event name in localStorage for the event game to use
+                    localStorage.setItem('eventSearchFromTVShow', eventName);
+                    // Navigate to the event game
+                    window.location.href = '/event';
+                }
+            });
+        });
+    }
+
+    async loadGoogleMapsScript() {
+        if (this.googleMapsScriptLoaded) {
+            console.log('Google Maps script already loaded');
+            return;
+        }
+        
+        console.log('Loading Google Maps script...');
+        try {
+            const response = await fetch('/api/maps-key');
+            if (!response.ok) {
+                throw new Error('Could not fetch Google Maps API key.');
+            }
+            const data = await response.json();
+            this.mapsApiKey = data.maps_key;
+            console.log('Got API key, loading script...');
+
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${this.mapsApiKey}`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+            this.googleMapsScriptLoaded = true;
+            console.log('Google Maps script added to DOM');
+        } catch (error) {
+            console.error('Failed to load Google Maps script:', error);
+        }
+    }
+
+    initializeMap(show) {
+        const citiesCoordinates = show.cities_coordinates || [];
+        
+        if (citiesCoordinates.length > 0) {
+            try {
+                // Show the map container
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'block';
+                    this.mapEl.style.height = '400px';
+                    this.mapEl.style.width = '100%';
+                    this.mapEl.style.marginTop = '15px';
+                    this.mapEl.style.borderRadius = '10px';
+                    this.mapEl.style.border = '1px solid #bae6fd';
+                }
+                
+                // Initialize the map with multiple cities
+                this.initMapWithMultipleCities(citiesCoordinates);
+            } catch (e) {
+                console.error('Error initializing map:', e);
+                if (this.mapEl) {
+                    this.mapEl.style.display = 'none';
+                }
+            }
+        } else {
+            // Hide the map container if no cities
+            if (this.mapEl) {
+                this.mapEl.style.display = 'none';
+            }
+        }
+    }
+
+    initMapWithMultipleCities(citiesCoordinates) {
+        console.log('initMapWithMultipleCities called with cities:', citiesCoordinates);
+        console.log('Google Maps available:', typeof google !== 'undefined' && typeof google.maps !== 'undefined');
+        
+        if (typeof google === 'undefined' || typeof google.maps === 'undefined') {
+            console.log('Google Maps not available, showing error message');
+            if (this.mapEl) {
+                this.mapEl.innerHTML = '<p class="text-center text-red-500">Map could not be loaded.</p>';
+            }
+            return;
+        }
+
+        if (!this.mapEl) {
+            return;
+        }
+
+        // Calculate center point from all city coordinates
+        const bounds = new google.maps.LatLngBounds();
+        let centerLat = 0, centerLng = 0;
+        
+        citiesCoordinates.forEach(cityData => {
+            const coords = cityData.coordinates;
+            bounds.extend(new google.maps.LatLng(coords.lat, coords.lng));
+            centerLat += coords.lat;
+            centerLng += coords.lng;
+        });
+        
+        centerLat /= citiesCoordinates.length;
+        centerLng /= citiesCoordinates.length;
+
+        const mapOptions = {
+            zoom: 8,
+            center: { lat: centerLat, lng: centerLng },
+            mapTypeId: 'terrain'
+        };
+        this.map = new google.maps.Map(this.mapEl, mapOptions);
+
+        // Add markers for each city
+        citiesCoordinates.forEach((cityData, index) => {
+            const coords = cityData.coordinates;
+            const cityName = cityData.city;
+            
+            const markerTitle = `TV Show Location: ${cityName}`;
+            const cityMarker = new google.maps.Marker({
+                position: coords,
+                map: this.map,
+                title: markerTitle,
+                icon: {
+                    url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" fill="#DC2626" stroke="white" stroke-width="2"/>
+                            <text x="12" y="16" text-anchor="middle" fill="white" font-size="12" font-weight="bold">T</text>
+                        </svg>
+                    `)
+                }
+            });
+        });
+
+        // Fit map to show all markers if there are multiple cities
+        if (citiesCoordinates.length > 1) {
+            this.map.fitBounds(bounds);
+        }
     }
 
     async submitFeedback(isCorrect) {

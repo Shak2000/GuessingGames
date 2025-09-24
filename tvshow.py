@@ -61,6 +61,9 @@ class TVShowGuesser:
 Please respond with a JSON object containing the following fields:
 - name: The TV show title
 - genre: An array of the show's genres
+- imdb_rating: The show's IMDB rating (if known, otherwise null)
+- rotten_tomatoes_rating: The show's Rotten Tomatoes rating (if known, otherwise null)
+- tv_parental_guidelines_rating: The show's TV Parental Guidelines rating (TV-Y, TV-Y7, TV-G, TV-PG, TV-14, TV-MA, Not Rated)
 - created_by: An array of creator names
 - written_by: An array of writer names
 - starring: An array of main cast member names
@@ -77,7 +80,12 @@ Please respond with a JSON object containing the following fields:
 - production_companies: An array of production company names
 - network: An array of networks/channels that aired the show
 - release_date: The original air date or premiere date
+- imdb_url: IMDB URL for the show (if available, otherwise null)
+- rotten_tomatoes_url: Rotten Tomatoes URL for the show (if available, otherwise null)
 - wikipedia_url: Wikipedia URL for the show (if available, otherwise null)
+- people: An array of real-world people who appear as characters in the show, or empty array [] if unknown
+- cities: An array of real-world cities where the show takes place, entered with the administrative division and country, separated by commas (e.g., "Dallas, Texas, United States"), or empty array [] if unknown
+- events: An array of real-world events where the show takes place, or empty array [] if unknown
 - reasoning: Your reasoning for why you think this is the correct TV show
 - overview: A concise 50-75 word overview of the show's plot, significance, and notable features
 
@@ -107,6 +115,20 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                 show_data['image_url'] = image_url if image_url != "N/A" else None
             else:
                 show_data['image_url'] = None
+            
+            # Get coordinates for all cities
+            cities_coordinates = []
+            cities = show_data.get('cities', [])
+            if cities:
+                for city in cities:
+                    coords = self._get_location_coordinates(city)
+                    if coords:
+                        cities_coordinates.append({
+                            'city': city,
+                            'coordinates': coords
+                        })
+            
+            show_data['cities_coordinates'] = cities_coordinates
             
             return show_data
             
@@ -228,6 +250,21 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
         except Exception as e:
             print(f"Error extracting image from {url}: {str(e)}")
             return "N/A"
+    
+    def _get_location_coordinates(self, location: str) -> Optional[Dict[str, float]]:
+        """Get coordinates for a location using Google Maps Geocoding API."""
+        try:
+            geocode_result = self.gmaps.geocode(location)
+            if geocode_result:
+                location_data = geocode_result[0]['geometry']['location']
+                return {
+                    'lat': location_data['lat'],
+                    'lng': location_data['lng']
+                }
+        except Exception as e:
+            print(f"Error getting coordinates for {location}: {e}")
+        
+        return None
 
 # Create a global instance
 tvshow_guesser = TVShowGuesser()
