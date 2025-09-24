@@ -1323,6 +1323,31 @@ body {
     box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
 }
 
+/* TV Show Image Styling */
+.show-image-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.show-image {
+    max-width: 300px;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border: 3px solid #e5e7eb;
+    object-fit: cover;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: block;
+    margin: 0 auto;
+}
+
+.show-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
 .clickable-invention {
     color: #059669;
     cursor: pointer;
