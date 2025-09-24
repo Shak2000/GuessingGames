@@ -600,6 +600,8 @@ class CityGame {
                     } else {
                         // Check if there's a city name stored in localStorage from the movie game
                         const cityFromMovie = localStorage.getItem('citySearchFromMovie');
+                        // Check if there's a city name stored in localStorage from the TV show game
+                        const cityFromTVShow = localStorage.getItem('citySearchFromTVShow');
                         
                         if (cityFromMovie) {
                             // Clear the stored value
@@ -607,6 +609,17 @@ class CityGame {
                             // Set the input field with the city name
                             if (this.userInput) {
                                 this.userInput.value = cityFromMovie;
+                                // Automatically start the search after a short delay to ensure everything is loaded
+                                setTimeout(() => {
+                                    this.startNewGame();
+                                }, 500);
+                            }
+                        } else if (cityFromTVShow) {
+                            // Clear the stored value
+                            localStorage.removeItem('citySearchFromTVShow');
+                            // Set the input field with the city name
+                            if (this.userInput) {
+                                this.userInput.value = cityFromTVShow;
                                 // Automatically start the search after a short delay to ensure everything is loaded
                                 setTimeout(() => {
                                     this.startNewGame();

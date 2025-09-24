@@ -610,6 +610,8 @@ class EventGame {
                 } else {
                     // Check if there's an event name stored in localStorage from the movie game
                     const eventFromMovie = localStorage.getItem('eventSearchFromMovie');
+                    // Check if there's an event name stored in localStorage from the TV show game
+                    const eventFromTVShow = localStorage.getItem('eventSearchFromTVShow');
                     
                     if (eventFromMovie) {
                         // Clear the stored value
@@ -617,6 +619,17 @@ class EventGame {
                         // Set the input field with the event name
                         if (this.userInput) {
                             this.userInput.value = eventFromMovie;
+                            // Automatically start the search after a short delay to ensure everything is loaded
+                            setTimeout(() => {
+                                this.startNewSession();
+                            }, 500);
+                        }
+                    } else if (eventFromTVShow) {
+                        // Clear the stored value
+                        localStorage.removeItem('eventSearchFromTVShow');
+                        // Set the input field with the event name
+                        if (this.userInput) {
+                            this.userInput.value = eventFromTVShow;
                             // Automatically start the search after a short delay to ensure everything is loaded
                             setTimeout(() => {
                                 this.startNewSession();

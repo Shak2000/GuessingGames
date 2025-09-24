@@ -739,6 +739,8 @@ class BusinessGame {
                 } else {
                     // Check if there's a business name stored in localStorage from the movie game
                     const businessFromMovie = localStorage.getItem('businessSearchFromMovie');
+                    // Check if there's a business name stored in localStorage from the TV show game
+                    const businessFromTVShow = localStorage.getItem('businessSearchFromTVShow');
                     
                     if (businessFromMovie) {
                         // Clear the stored value
@@ -746,6 +748,17 @@ class BusinessGame {
                         // Set the input field with the business name
                         if (this.userInput) {
                             this.userInput.value = businessFromMovie;
+                            // Automatically start the search after a short delay to ensure everything is loaded
+                            setTimeout(() => {
+                                this.startNewGame();
+                            }, 500);
+                        }
+                    } else if (businessFromTVShow) {
+                        // Clear the stored value
+                        localStorage.removeItem('businessSearchFromTVShow');
+                        // Set the input field with the business name
+                        if (this.userInput) {
+                            this.userInput.value = businessFromTVShow;
                             // Automatically start the search after a short delay to ensure everything is loaded
                             setTimeout(() => {
                                 this.startNewGame();
