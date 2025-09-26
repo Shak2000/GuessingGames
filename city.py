@@ -343,13 +343,13 @@ Make sure to return ONLY valid JSON. Do not include any text before or after the
                     width = img.get('width')
                     height = img.get('height')
                     
-                    # Check if it's a reasonable size for a city photo
+                    # Accept any image with size attributes as potentially valid
                     if width and height:
                         try:
                             w, h = int(width), int(height)
-                            if w >= 100 and h >= 100:  # Minimum size threshold
-                                image_url = src
-                                break
+                            # Remove pixel limits - accept any reasonably sized image
+                            image_url = src
+                            break
                         except ValueError:
                             continue
                     

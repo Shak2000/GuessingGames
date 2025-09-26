@@ -160,8 +160,8 @@ class TVShowGame {
             // Use a CORS proxy for Wikipedia images
             let proxyUrl = '';
             if (guess.image_url.includes('upload.wikimedia.org')) {
-                // Use images.weserv.nl as a CORS proxy for Wikipedia images
-                proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(guess.image_url)}&w=300&h=400&fit=cover`;
+                // Use images.weserv.nl as a CORS proxy for Wikipedia images (no size limits)
+                proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(guess.image_url)}`;
             } else {
                 proxyUrl = guess.image_url;
             }

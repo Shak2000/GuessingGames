@@ -377,8 +377,8 @@ class FamousPersonGame {
             // Use a CORS proxy for Wikipedia images
             let proxyUrl = '';
             if (imageUrl && imageUrl.includes('upload.wikimedia.org')) {
-                // Use images.weserv.nl as a CORS proxy for Wikipedia images
-                proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&w=200&h=200&fit=cover`;
+                // Use images.weserv.nl as a CORS proxy for Wikipedia images (no size limits)
+                proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}`;
             } else {
                 proxyUrl = imageUrl;
             }
@@ -1253,7 +1253,7 @@ class FamousPersonGame {
             if (imageUrl && imageUrl.toLowerCase() !== 'n/a') {
                 let proxyUrl = '';
                 if (imageUrl && imageUrl.includes('upload.wikimedia.org')) {
-                    proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}&w=200&h=200&fit=cover`;
+                    proxyUrl = `https://images.weserv.nl/?url=${encodeURIComponent(imageUrl)}`;
                 } else {
                     proxyUrl = imageUrl;
                 }
